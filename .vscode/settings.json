@@ -1,0 +1,17 @@
+{
+    "editor.renderWhitespace": "all",
+    "editor.dragAndDrop": false,
+    "editor.minimap.enabled": false,
+    "editor.rulers": [
+        100
+    ],
+    "eslint.alwaysShowStatus": true,
+    "eslint.debug": true,
+    "eslint.format.enable": true,
+    "eslint.lintTask.enable": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+    // "editor.fontSize": 25,
+    "editor.tabSize": 2
+}
