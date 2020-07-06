@@ -4,7 +4,7 @@ const DefaultCommand = require('../Default')
 
 class Profile extends DefaultCommand {
     async main (_args, _message) {
-        if (await (this.get({ user_id: this.userId(_message), }))) {
+        if (await (this.get({ user_id: this.authorId(_message), }))) {
             // this.view(_args, _message)
         }
         else {
@@ -13,13 +13,13 @@ class Profile extends DefaultCommand {
     }
 
     create (_args, _message) {
-        this.add({ user_id: this.userId(_message), })
+        this.add({ user_id: this.authorId(_message), })
 
         _message.reply('Perfil criado')
     }
 
     async view (_args, _message) {
-        const data = await (this.get({ user_id: this.userId(_message), }))
+        const data = await (this.get({ user_id: this.authorId(_message), }))
 
         const message = []
 

@@ -16,11 +16,11 @@ class DefaultCommand {
     }
 
     /**
-     * @description Retorna o ID do usuário
+     * @description Retorna o ID do autor da mensagem
      * @param {Object} Objeto da mensagem
      * @returns {String} O ID
      */
-    userId (_message) {
+    authorId (_message) {
         return _message.author.id
     }
 
@@ -31,6 +31,24 @@ class DefaultCommand {
      */
     serverId (_message) {
         return _message.channel.guild.id
+    }
+
+    /**
+     * @description Retorna o ID do dono do servidor
+     * @param {Object} Objeto da mensagem
+     * @returns {String} O ID
+     */
+    serverOwnerID (_message) {
+        return _message.guild.ownerID
+    }
+
+    /**
+     * @description Retorna se o autor da mensagem é dono do servidor
+     * @param {Object} Objeto da mensagem
+     * @returns {Boolean}} Se é dono
+     */
+    authorOwnerServerID (_message) {
+        return this.authorId(_message) === this.serverOwnerID(_message)
     }
 }
 
