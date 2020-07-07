@@ -2,11 +2,11 @@ const DefaultEntity = require('./Default')
 
 // Entidade de configurações
 class Config extends DefaultEntity {
-    constructor () {
-        super()
+  constructor () {
+    super()
 
-        this.table = 'configs'
-    }
+    this.table = 'configs'
+  }
 }
 
 module.exports = new Config()
