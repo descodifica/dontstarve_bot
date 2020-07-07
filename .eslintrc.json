@@ -9,7 +9,8 @@
     ],
     "globals": {
         "Atomics": "readonly",
-        "SharedArrayBuffer": "readonly"
+        "SharedArrayBuffer": "readonly",
+        "resolveLangMessage": "readonly"
     },
     "parserOptions": {
         "ecmaVersion": 2018
@@ -34,7 +35,7 @@
         "no-trailing-spaces": 1,
         "no-multi-spaces": 1,
         "eol-last": [ 1, "never" ],
-        "indent": [ 1, 4, { "SwitchCase": 1 } ],
+        "indent": [ 1, 2, { "SwitchCase": 1 } ],
         "brace-style": [ 1, "stroustrup", { "allowSingleLine": true } ],
         "no-return-assign": [ 0 ],
         "no-console": "off"
