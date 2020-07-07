@@ -7,11 +7,30 @@ const Db = require('./Db')
 // Importa todos os módulos
 const commands = require('./commands')
 
-// Importa entidade de configuração
-const configEntity = require('./entities/Config')
-
 // Importa configurações
 const { token, prefix, } = require('./config')
+
+// Adiciona nas globais a função de envio de mensagem
+global.resolveLangMessage = require('./resolveLangMessage')
+
+// Retorna configurações do servidor
+async function getServerConfig (_message) {
+  // Importa entidade de configuração
+  const ConfigEntity = require('./entities/Config')
+
+  // Captura configurações
+  let config = (await ConfigEntity.getBy({ server_id: _message.guild.id.toString(), }))[0]
+
+  // Se não achou, cria
+  if (!config) {
+    await ConfigEntity.create({ server_id: _message.guild.id.toString(), })
+
+    config = (await ConfigEntity.getBy({ server_id: _message.guild.id.toString(), }))[0]
+  }
+
+  // Retorna
+  return config
+}
 
 // Declara conexão com o cliente
 const client = new Discord.Client()
@@ -37,7 +56,7 @@ client.on('message', async message => {
     .map(i => i.toLowerCase())
 
   // Configurações do servidor
-  const serverConfig = (await configEntity.getBy({ server_id: message.guild.id.toString(), }))[0]
+  const serverConfig = await getServerConfig(message)
 
   // Comandos no idioma do servidor
   const translateCommands = commands[serverConfig.lang]
@@ -45,9 +64,31 @@ client.on('message', async message => {
   // Recebe o comando (remove do primeiro argumento)
   const command = args.shift()
 
-  // // Se não possui o comando, informa e finaliza
+  // Se não possui o comando, informa e finaliza
   if (!translateCommands[command]) {
-    message.reply(`Comando ${command} não existe`)
+    message.reply(
+      resolveLangMessage(serverConfig.lang, {
+        ptbr: `Comando ${command} não existe`,
+        en: `Command ${command} does not exist`,
+      })
+    )
+
+    return
+  }
+
+  // Se não passou método, vira main
+  if (!args[0]) {
+    args[0] = 'main'
+  }
+
+  // Se método não existe, informa e finaliza
+  if (!translateCommands[command].methodExists(args[0], serverConfig.lang)) {
+    message.reply(
+      resolveLangMessage(serverConfig.lang, {
+        ptbr: `Método ${args[0]} não existe`,
+        en: `Method ${args[0]} does not exist`,
+      })
+    )
 
     return
   }

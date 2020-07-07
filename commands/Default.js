@@ -24,7 +24,7 @@ class DefaultCommand {
 
   /**
     * @description Retorna o ID do autor da mensagem
-    * @param {Object} Objeto da mensagem
+    * @param {Object} _message Objeto da mensagem
     * @returns {String} O ID
     */
   authorId (_message) {
@@ -33,7 +33,7 @@ class DefaultCommand {
 
   /**
     * @description Retorna o ID do servidor
-    * @param {Object} Objeto da mensagem
+    * @param {Object} _message Objeto da mensagem
     * @returns {String} O ID
     */
   serverId (_message) {
@@ -51,11 +51,21 @@ class DefaultCommand {
 
   /**
     * @description Retorna se o autor da mensagem é dono do servidor
-    * @param {Object} Objeto da mensagem
+    * @param {Object} _message Objeto da mensagem
     * @returns {Boolean}} Se é dono
     */
   authorOwnerServerID (_message) {
     return this.authorId(_message) === this.serverOwnerID(_message)
+  }
+
+  /**
+    * @description Retorna se um dado método existe em um dado idioma
+    * @param {String} _method Nome do método
+    * @param {String} _lang Idioma
+    * @returns {Boolean} Se existe
+    */
+  methodExists (_method, _lang) {
+    return _method === 'main' || !!this.methodsDictionary[_lang][_method]
   }
 }
 
