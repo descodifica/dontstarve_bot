@@ -15,9 +15,12 @@ class Db {
      * @name query
      * @description Executa um comando e retorna o resultado
      * @param {String} _query O comando sql
+     * @param {Bolean} _log Se deve exibir um log no console
      * @returns {Object} O resultado
      */
-    query (_query) {
+    query (_query, _log = false) {
+        if (_log) console.log(_query)
+
         return this.Conn.query(_query)
     }
 }

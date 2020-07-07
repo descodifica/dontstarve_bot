@@ -1,7 +1,7 @@
 // Importa classe padrão de comand
-const DefaultCommand = require('../Default')
+const DefaultCommand = require('./Default')
 
-const ConfigEntity = require('../../entities/Config')
+const ConfigEntity = require('../entities/Config')
 
 // Comando de configurações
 class Config extends DefaultCommand {

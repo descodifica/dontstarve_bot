@@ -1,6 +1,6 @@
 const { MessageEmbed, } = require('discord.js')
 
-const DefaultCommand = require('../Default')
+const DefaultCommand = require('./Default')
 
 const channels = [
     {

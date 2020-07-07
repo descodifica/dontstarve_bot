@@ -1,6 +1,9 @@
 // Mapea um objeto
 const objectMap = require('object.map')
 
+// Converte um JSON para clausula where do SQL
+const jsonToSqlWhere = require('@desco/json-to-sql-where')
+
 // Importa conexão com o banco
 const Db = require('../Db')
 
@@ -12,12 +15,25 @@ class Default {
     }
 
     /**
-     * @description Retorna um registro
+     * @description Retorna um registro dado um Id
      * @param {String} _id Id do registro a ser recuperado
      * @returns {Object} O resultado
      */
     async get (_id) {
-        return (await Db.query(`SELECT * FROM ${this.table} WHERE id = ${_id} LIMIT 1`))[0]
+        const result = await this.getBy({ id: _id, })
+
+        return result[0]
+    }
+
+    /**
+     * @description Retorna um registro dado um ou mais condições
+     * @param {Object} _where Condições
+     * @returns {Object} O resultado
+     */
+    async getBy (_where) {
+        const result = await Db.query(`SELECT * FROM ${this.table} WHERE ${jsonToSqlWhere(_where)}`)
+
+        return result
     }
 
     /**
@@ -53,9 +69,7 @@ class Default {
         })
 
         // Executa SQL de atualização e retorna o resultado
-        const sql = `UPDATE ${this.table} SET ${data.join(', ')} WHERE ${where.join(' AND ')}`
-        console.log(sql)
-        return Db.query(sql)
+        return Db.query(`UPDATE ${this.table} SET ${data.join(', ')} WHERE ${where.join(' AND ')}`)
     }
 }
 

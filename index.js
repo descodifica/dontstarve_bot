@@ -5,7 +5,10 @@ const Discord = require('discord.js')
 const Db = require('./Db')
 
 // Importa todos os módulos
-const commands = require('./commands/ptbr')
+const commands = require('./commands')
+
+// Importa entidade de configuração
+const configEntity = require('./entities/Config')
 
 // Importa configurações
 const { token, prefix, } = require('./config')
@@ -22,28 +25,36 @@ client.on('ready', () => {
 })
 
 // Quando receber uma mensagem
-client.on('message', message => {
+client.on('message', async message => {
     // Se a mensagem não começar com o prefixo ou for de boot, finaliza
     if (!message.content.startsWith(prefix) || message.author.bot) return {}
 
     // Recebe todos os argumentos do comando, garantindo que não haja nada em branco
-    const args = message.content.slice(prefix.length).split(' ').filter(i => i.trim() !== '')
+    const args = message.content
+        .slice(prefix.length)
+        .split(' ')
+        .filter(i => i.trim() !== '')
+        .map(i => i.toLowerCase())
+
+    // Configurações do servidor
+    const serverConfig = (await configEntity.getBy({ server_id: message.guild.id.toString(), }))[0]
+
+    // Comandos no idioma do servidor
+    const translateCommands = commands[serverConfig.lang]
 
     // Recebe o comando (remove do primeiro argumento)
-    const command = args.shift().toLowerCase()
+    const command = args.shift()
 
     // Se não possui o comando, informa e finaliza
-    if (!commands[command]) {
-        message.reply(`Módulo ${command} não existe`)
-
-        return
+    if (!translateCommands[command]) {
+        message.reply(`Comando ${command} não existe`)
     }
 
     // Detecta nome do método (se não tiver, vira main)
-    const method = (commands[command][args[0]] ? args.shift() : 'main').toLowerCase()
+    const method = translateCommands[command][args[0]] ? args.shift() : 'main'
 
     // Executa comando
-    commands[command].exec(method, args, message)
+    translateCommands[command].exec(method, args, message)
 })
 
 // Loga o cliente
