@@ -1,3 +1,5 @@
+const objectMap = require('object.map')
+
 // Classe padrão dos comandos
 class DefaultCommand {
   constructor ({ methodsDictionary, } = {}) {
@@ -5,7 +7,7 @@ class DefaultCommand {
     this.command = this.constructor.name
 
     // Dicionário de métodos
-    this.methodsDictionary = methodsDictionary || {}
+    this.addMethodTranslate(methodsDictionary || {})
   }
 
   /**
@@ -66,6 +68,22 @@ class DefaultCommand {
     */
   methodExists (_method, _lang) {
     return _method === 'main' || !!this.methodsDictionary[_lang][_method]
+  }
+
+  /**
+    * @description Adiciona métodos ao dicionário de métodos
+    * @param {Object} _methods Dicionário de métodos
+    */
+  addMethodTranslate (_methods = {}) {
+    // Se não tem ainda um dicionário, apenas adiciona
+    if (!this.methodsDictionary) {
+      this.methodsDictionary = _methods
+    }
+
+    // Percorre todos os idiomas e adiciona ao dicionário
+    objectMap(_methods, (methods, lang) => {
+      this.methodsDictionary[lang] = { ...(this.methodsDictionary[lang] || {}), ...methods, }
+    })
   }
 }
 
