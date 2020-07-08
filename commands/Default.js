@@ -7,7 +7,7 @@ class DefaultCommand {
     this.command = this.constructor.name
 
     // Dicionário de métodos
-    this.addMethodTranslate(methodsDictionary || {})
+    this.addMethodTranslate(methodsDictionary || { ptbr: {}, en: {}, })
   }
 
   /**
