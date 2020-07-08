@@ -2,12 +2,15 @@ const objectMap = require('object.map')
 
 // Classe padrão dos comandos
 class DefaultCommand {
-  constructor ({ methodsDictionary, } = {}) {
+  constructor ({ methodsDictionary, resume } = {}) {
     // Recebe o nome do comando
     this.command = this.constructor.name
 
     // Dicionário de métodos
     this.addMethodTranslate(methodsDictionary || { ptbr: {}, en: {}, })
+
+    // Descrição do comando
+    this.resume = resume || 'Descrição não definida'
   }
 
   /**
@@ -21,6 +24,7 @@ class DefaultCommand {
     // Traduz o nome do método de acordo com o idioma dobot
     const method = this.methodsDictionary[_config.lang][_method] || _method
 
+    // Chama o método passando os parâmetros
     this[method](_args, _message, _config)
   }
 

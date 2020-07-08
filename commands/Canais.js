@@ -41,6 +41,7 @@ class Canais extends DefaultCommand {
   constructor () {
     // Seta os nomes dos métodos de acordo com o idioma do servidor
     super({
+      resume: 'Lista canais do YouTube com foco em Don\'t Starve',
       methodsDictionary: {
         ptbr: {
           listar: 'listar',

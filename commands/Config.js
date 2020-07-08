@@ -9,6 +9,7 @@ class Config extends DefaultCommand {
   constructor () {
     // Seta os nomes dos métodos de acordo com o idioma do servidor
     super({
+      resume: 'Configura o bot no servidor (somente dono do servidor)',
       methodsDictionary: {
         ptbr: {
           lang: 'lang',
@@ -35,7 +36,6 @@ class Config extends DefaultCommand {
           en: 'esse comando só pode ser usado pelo dono do servidor!',
         })
       )
-      _message.reply('')
 
       return
     }
@@ -61,8 +61,6 @@ class Config extends DefaultCommand {
             en: 'there was a problem updating the configuration',
           })
         )
-
-        _message.reply()
       })
   }
 
@@ -73,7 +71,12 @@ class Config extends DefaultCommand {
    * @param {Object} _config As configurações do servidor
    */
   help (_args, _message, _config) {
-    console.log(_args)
+    // Seleciona pedido de ajuda
+    switch (_args.join(' ')) {
+      case '': {
+        // _message.reply('ok')
+      }
+    }
   }
 }
 
