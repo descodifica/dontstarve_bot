@@ -24,7 +24,13 @@ class Config extends DefaultCommand {
   main (_args, _message, _config) {
     // Impede uso se não for por usuário do servidor
     if (!this.authorOwnerServerID(_message)) {
-      _message.reply('Esse comando só pode ser usado pelo dono do servidor!')
+      _message.reply(
+        resolveLangMessage(_config.lang, {
+          ptbr: 'this command can only be used by the server owner!',
+          en: 'esse comando só pode ser usado pelo dono do servidor!',
+        })
+      )
+      _message.reply('')
 
       return
     }
@@ -36,10 +42,22 @@ class Config extends DefaultCommand {
     // Atualiza e responde
     ConfigEntity.update(data, { server_id: this.serverId(_message), })
       .then(() => {
-        _message.reply('Configuração atualizada com sucesso')
+        _message.reply(
+          resolveLangMessage(_config.lang, {
+            ptbr: 'configuração atualizada com sucesso',
+            en: 'configuration updated successfully',
+          })
+        )
       })
       .catch(() => {
-        _message.reply('Ocorreu algum problema ao atualizar a configuração')
+        _message.reply(
+          resolveLangMessage(_config.lang, {
+            ptbr: 'ocorreu algum problema ao atualizar a configuração',
+            en: 'there was a problem updating the configuration',
+          })
+        )
+
+        _message.reply()
       })
   }
 }

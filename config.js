@@ -1,7 +1,7 @@
 // Importa o token
 const token = require('./token')
 
-// Configurações do boot
+// Configurações dobot
 const config = {
   token, // Token de acesso
   prefix: 'ds:', // Prefixo padrão

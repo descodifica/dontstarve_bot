@@ -13,10 +13,10 @@ class DefaultCommand {
     * @param {String} _command Nome do método
     * @param {Array[String]} _args Array com todos os argumentos
     * @param {Object} _message Objeto da mensagem
-    * @param {Object} _config Configurações do boot no servidor
+    * @param {Object} _config Configurações dobot no servidor
     */
   exec (_method, _args, _message, _config) {
-    // Traduz o nome do método de acordo com o idioma do boot
+    // Traduz o nome do método de acordo com o idioma dobot
     const method = this.methodsDictionary[_config.lang][_method] || _method
 
     this[method](_args, _message, _config)

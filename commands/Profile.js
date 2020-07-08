@@ -12,10 +12,15 @@ class Profile extends DefaultCommand {
     }
   }
 
-  create (_args, _message) {
+  create (_args, _message, _config) {
     this.add({ user_id: this.authorId(_message), })
 
-    _message.reply('Perfil criado')
+    _message.reply(
+      resolveLangMessage(_config.lang, {
+        ptbr: 'perfil criado',
+        en: 'profile created',
+      })
+    )
   }
 
   async view (_args, _message) {
