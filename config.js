@@ -11,6 +11,7 @@ const config = {
     password: '12345678',
     database: 'dontstarveboot',
   },
+  langs: [ 'ptbr', 'en', ],
 }
 
 module.exports = config

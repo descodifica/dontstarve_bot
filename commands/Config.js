@@ -20,7 +20,12 @@ class Config extends DefaultCommand {
     })
   }
 
-  // Método padrão quando nada for chamado
+  /**
+   * @description Método padrão quando nada for chamado
+   * @param {Array} _args Os argumentos passados
+   * @param {Object} _message O objeto da mensagem
+   * @param {Object} _config As configurações do servidor
+   */
   main (_args, _message, _config) {
     // Impede uso se não for por usuário do servidor
     if (!this.authorOwnerServerID(_message)) {
@@ -59,6 +64,16 @@ class Config extends DefaultCommand {
 
         _message.reply()
       })
+  }
+
+  /**
+   * @description Método de ajuda do comando
+   * @param {Array} _args Os argumentos passados
+   * @param {Object} _message O objeto da mensagem
+   * @param {Object} _config As configurações do servidor
+   */
+  help (_args, _message, _config) {
+    console.log(_args)
   }
 }
 

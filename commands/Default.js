@@ -75,6 +75,12 @@ class DefaultCommand {
     * @param {Object} _methods Dicionário de métodos
     */
   addMethodTranslate (_methods = {}) {
+    // Importa verificação de idiomas
+    const { checkLangs, } = require('../lang')
+
+    // Verifica idiomas
+    checkLangs(_methods)
+
     // Se não tem ainda um dicionário, apenas adiciona
     if (!this.methodsDictionary) {
       this.methodsDictionary = _methods
