@@ -17,14 +17,6 @@ class Help extends DefaultCommand {
         ptbr: 'Busca ajuda do bot e de seus comandos',
         en: 'Seek help from the bot and its commands',
       },
-      methods: {
-        ptbr: {
-          ajuda: { name: 'help', resume: 'x', },
-        },
-        en: {
-          help: { name: 'help', resume: 'x', },
-        },
-      },
     })
   }
 
@@ -77,6 +69,8 @@ class Help extends DefaultCommand {
    * @param {Object} _config As configurações do servidor
    */
   moduleHelp (_args, _message, _config) {
+    if (_args[0] === resolveLangMessage(_config.lang, { en: 'help', ptbr: 'ajuda', })) return
+
     // Importa todos os comandos
     const commands = require('./')[_config.lang]
 
@@ -117,21 +111,6 @@ class Help extends DefaultCommand {
 
     // Responde
     _message.reply(msg.join('\n'))
-  }
-
-  /**
-   * @description Chamado quando pede ajuda da ajuda
-   * @param {Array} _args Os argumentos passados
-   * @param {Object} _message O objeto da mensagem
-   * @param {Object} _config As configurações do servidor
-   */
-  help (_args, _message, _config) {
-    _message.reply(
-      resolveLangMessage(_config.lang, {
-        ptbr: 'Não existe ajuda para a ajuda',
-        en: 'There is no help for help',
-      })
-    )
   }
 
   /**
