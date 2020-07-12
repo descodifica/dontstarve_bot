@@ -6,6 +6,7 @@ const DefaultCommand = require('./Default')
 
 // Prefixo
 const { prefix, } = require('../config')
+const { resolveLangMessage, } = require('../lang')
 
 // O comando de ajuda
 class Help extends DefaultCommand {
@@ -119,6 +120,21 @@ class Help extends DefaultCommand {
   }
 
   /**
+   * @description Chamado quando pede ajuda da ajuda
+   * @param {Array} _args Os argumentos passados
+   * @param {Object} _message O objeto da mensagem
+   * @param {Object} _config As configurações do servidor
+   */
+  help (_args, _message, _config) {
+    _message.reply(
+      resolveLangMessage(_config.lang, {
+        ptbr: 'Não existe ajuda para a ajuda',
+        en: 'There is no help for help',
+      })
+    )
+  }
+
+  /**
    * @description Chamado quando chamar um método não existente
    * @param {Array} _args Os argumentos passados
    * @param {Object} _message O objeto da mensagem
@@ -159,11 +175,11 @@ class Help extends DefaultCommand {
   _finalMessage (_config, _argName, _command) {
     switch (_argName) {
       case 'method': _argName = resolveLangMessage(_config.lang, {
-        ptbr: 'métodos', en: 'method',
+        ptbr: 'método', en: 'method',
       })
         break
       case 'command': _argName = resolveLangMessage(_config.lang, {
-        ptbr: 'comandos', en: 'command',
+        ptbr: 'comando', en: 'command',
       })
     }
 
