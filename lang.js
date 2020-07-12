@@ -22,6 +22,7 @@ function checkLangs (_msgs = {}) {
     if (_msgs[l]) return
 
     console.log('Faltando idioma ' + l)
+    console.log(_msgs)
   })
 }
 

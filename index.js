@@ -137,7 +137,7 @@ class DontStarve {
       }
 
       // Detecta nome do método (se não existir, vira main)
-      const method = translateCommands[command][args[0]] ? args.shift() : 'main'
+      const method = args.shift()
 
       // Executa comando
       translateCommands[command].exec(method, args, message, serverConfig)

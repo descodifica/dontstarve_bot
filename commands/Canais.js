@@ -42,12 +42,16 @@ class Canais extends DefaultCommand {
     // Seta os nomes dos métodos de acordo com o idioma do servidor
     super({
       resume: 'Lista canais do YouTube com foco em Don\'t Starve',
-      methodsDictionary: {
+      methods: {
         ptbr: {
-          listar: 'listar',
+          listar: {
+            name: 'list', resume: 'Lista todos os canais de Youtube focados em Don\t Starve',
+          },
         },
         en: {
-          list: 'listar',
+          list: {
+            name: 'list', resume: 'Lists all Youtube channels focused on Don\'t Starve',
+          },
         },
       },
     })
@@ -55,11 +59,11 @@ class Canais extends DefaultCommand {
 
   // Método padrão quando nada for chamado
   main (_args, _message, _config) {
-    this.listar(_args, _message, _config)
+    this.list(_args, _message, _config)
   }
 
   // Método que lista os canais
-  listar (_args, _message, _config) {
+  list (_args, _message, _config) {
     // Canais a serem listados
     const message = []
 
