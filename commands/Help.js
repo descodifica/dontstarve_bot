@@ -63,12 +63,13 @@ class Help extends DefaultCommand {
   }
 
   /**
-   * @description Chama a ajuda de um dado módulo
+   * @description Chama a ajuda de um dado comando
    * @param {Array} _args Os argumentos passados
    * @param {Object} _message O objeto da mensagem
    * @param {Object} _config As configurações do servidor
    */
-  moduleHelp (_args, _message, _config) {
+  commandHelp (_args, _message, _config) {
+    // Ignora se pediu ajuda da ajuda
     if (_args[0] === resolveLangMessage(_config.lang, { en: 'help', ptbr: 'ajuda', })) return
 
     // Importa todos os comandos
@@ -94,20 +95,65 @@ class Help extends DefaultCommand {
     }
 
     // Mensagem a ser exibida
-    const msg = [ this._initialMessage(_config, 'method'), ]
+    let msg = []
 
-    objectMap(command.methods[_config.lang], (data, method) => {
-      msg.push(`> ${prefix}${_args[0]} ${method} - ${data.resume}`)
-    })
+    // Se passou método
+    if (_args[1]) {
+      // Importa o método escolhido
+      const method = command.methods[_config.lang][_args[1]]
 
-    // Entra com mensagem de detalhamento
-    msg.push(
-      this._finalMessage(
-        _config,
-        'method',
-        prefix + resolveLangMessage(_config.lang, { en: 'help', ptbr: 'ajuda', }) + ' ' + _args[0]
+      // Se não achou o método, informa e finaliza
+      if (!method) {
+        _message.reply(
+          resolveLangMessage(_config.lang, {
+            ptbr: `Método "${_args[1]}" não encontrado`,
+            en: `Method "${_args[1]}" not found`,
+          }))
+
+        return
+      }
+
+      // Texto padrão
+      msg.push(
+        resolveLangMessage(_config.lang, {
+          ptbr: `Veja maiores informações de ${prefix}${_args[0]} ${_args[1]}:\n`,
+          en: `See more information about ${prefix} ${_args[0]} ${_args[1]}: \n`,
+        }))
+      msg.push(`${method.resume}\n`)
+
+      // Se tem doc, adiciona ela
+      if (method.doc) {
+        // Se for string, vira array
+        method.doc = typeof method.doc === 'string' ? [ method.doc, ] : method.doc
+
+        // Concatena array da doc a mensagem
+        msg = msg.concat(method.doc)
+      }
+      else {
+        msg.push(
+          resolveLangMessage(_config.lang, {
+            ptbr: 'Nenhuma informação extra disponível',
+            en: 'No extra information available',
+          }))
+      }
+    }
+    else {
+      // Mensagem inicial
+      msg.push(this._initialMessage(_config, 'method'))
+
+      objectMap(command.methods[_config.lang], (data, method) => {
+        msg.push(`> ${prefix}${_args[0]} ${method} - ${data.resume}`)
+      })
+
+      // Entra com mensagem de detalhamento
+      msg.push(
+        this._finalMessage(
+          _config,
+          'method',
+          prefix + resolveLangMessage(_config.lang, { en: 'help', ptbr: 'ajuda', }) + ' ' + _args[0]
+        )
       )
-    )
+    }
 
     // Responde
     _message.reply(msg.join('\n'))
@@ -120,7 +166,7 @@ class Help extends DefaultCommand {
    * @param {Object} _config As configurações do servidor
    */
   invalidRedir (_args, _message, _config) {
-    this.moduleHelp(_args, _message, _config)
+    this.commandHelp(_args, _message, _config)
   }
 
   /**

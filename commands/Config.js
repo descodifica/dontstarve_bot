@@ -15,10 +15,26 @@ class Config extends DefaultCommand {
       },
       methods: {
         ptbr: {
-          lang: { name: 'lang', resume: 'Altera o idioma do Bot', },
+          lang: {
+            name: 'lang',
+            resume: 'Altera o idioma do Bot',
+            doc: [
+              'Aceita os valores:\n',
+              '> en - Inglês',
+              '> ptbr - Portugês do Brasil',
+            ],
+          },
         },
         en: {
-          lang: { name: 'lang', resume: 'Change the Bot language', },
+          lang: {
+            name: 'lang',
+            resume: 'Change the Bot language',
+            doc: [
+              'Accepts the values:\n',
+              '> en - English',
+              '> ptbr - Brazilian Portuguese',
+            ],
+          },
         },
       },
     })
