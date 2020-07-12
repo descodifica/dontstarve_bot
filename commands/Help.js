@@ -5,7 +5,7 @@ const objectMap = require('object.map')
 const DefaultCommand = require('./Default')
 
 // Prefixo
-const { prefix } = require('../config')
+const { prefix, } = require('../config')
 
 // O comando de ajuda
 class Help extends DefaultCommand {
@@ -60,15 +60,22 @@ class Help extends DefaultCommand {
     // Mensagem a ser exibida
     const msg = [
       resolveLangMessage(_config.lang, {
-        ptbr: `veja aqui uma lista de todos os comandos disponíveis`,
-        en: `see here a list of all available commands`,
-      }) + '\n'
+        ptbr: 'veja aqui uma lista de todos os comandos disponíveis',
+        en: 'see here a list of all available commands',
+      }) + '\n',
     ]
 
     // Percorre todos os módulos e adiciona sua descrição à mensagem
     objectMap(modules, (m, k) => {
       msg.push(`> ${prefix}${k} - ${m.resume}`)
     })
+
+    msg.push(
+      '\n' + resolveLangMessage(_config.lang, {
+        ptbr: `Entre ${prefix}help seguido de um comando para ter maiores detalhes`,
+        en: `Enter ${prefix} help followed by a command for more details`,
+      })
+    )
 
     // Responde
     _message.reply(msg.join('\n'))

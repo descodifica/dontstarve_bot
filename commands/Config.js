@@ -71,12 +71,23 @@ class Config extends DefaultCommand {
    * @param {Object} _config As configurações do servidor
    */
   help (_args, _message, _config) {
+    // Mensagem a ser exibida
+    const msg = []
+
     // Seleciona pedido de ajuda
     switch (_args.join(' ')) {
       case '': {
-        // _message.reply('ok')
+        msg.push(
+          resolveLangMessage(_config.lang, {
+            ptbr: 'veja aqui uma lista de todos os comandos disponíveis',
+            en: 'see here a list of all available commands',
+          }) + '\n'
+        )
       }
     }
+
+    // Responde
+    _message.reply(msg.join('\n'))
   }
 }
 
