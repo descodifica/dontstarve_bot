@@ -11,7 +11,7 @@ const commands = require('./commands')
 const { token, prefix, } = require('./config')
 
 // Adiciona nas globais a função de envio de mensagem
-global.resolveLangMessage = require('./resolveLangMessage')
+global.resolveLangMessage = require('./lang').resolveLangMessage
 
 // Classe principal do bot
 class DontStarve {
@@ -117,20 +117,27 @@ class DontStarve {
         args[0] = 'main'
       }
 
-      // Se método não existe, informa e finaliza
+      // Se método não existe
       if (!translateCommands[command].methodExists(args[0], serverConfig.lang)) {
-        message.reply(
-          resolveLangMessage(serverConfig.lang, {
-            ptbr: `método ${args[0]} não existe`,
-            en: `method ${args[0]} does not exist`,
-          })
-        )
+        // Se não tem método de redirecionar inválido, informa e finaliza
+        if (!translateCommands[command].invalidRedir) {
+          message.reply(
+            resolveLangMessage(serverConfig.lang, {
+              ptbr: `método ${args[0]} não existe`,
+              en: `method ${args[0]} does not exist`,
+            })
+          )
 
-        return
+          return
+        }
+        // Se tem o método, vira método a ser usado
+        else {
+          args.unshift('invalidRedir')
+        }
       }
 
       // Detecta nome do método (se não existir, vira main)
-      const method = translateCommands[command][args[0]] ? args.shift() : 'main'
+      const method = args.shift()
 
       // Executa comando
       translateCommands[command].exec(method, args, message, serverConfig)

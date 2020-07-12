@@ -1,11 +1,33 @@
+const objectMap = require('object.map')
+
 // Classe padrão dos comandos
 class DefaultCommand {
-  constructor ({ methodsDictionary, } = {}) {
+  constructor ({ methods, resume, } = {}) {
     // Recebe o nome do comando
     this.command = this.constructor.name
 
-    // Dicionário de métodos
-    this.methodsDictionary = methodsDictionary || {}
+    // Mapa de métodos
+    this.addMethods(methods || { ptbr: {}, en: {}, })
+
+    // Descrição do comando
+    this.resume = resume || 'Descrição não definida'
+  }
+
+  /**
+   * @description Método padrão
+   * @param {Array} _args Os argumentos passados
+   * @param {Object} _message O objeto da mensagem
+   * @param {Object} _config As configurações do servidor
+   */
+  main (_args, _message, _config) {
+    _message.reply(
+      resolveLangMessage(_config.lang, {
+        ptbr: 'É necessário passar um método para o comando. Entre com o comando de ajuda para ' +
+          'maiores detalhes',
+        en: 'It is necessary to pass a method to the command. Enter the help command for ' +
+          'more details',
+      })
+    )
   }
 
   /**
@@ -17,8 +39,9 @@ class DefaultCommand {
     */
   exec (_method, _args, _message, _config) {
     // Traduz o nome do método de acordo com o idioma dobot
-    const method = this.methodsDictionary[_config.lang][_method] || _method
+    const method = (this.methods[_config.lang][_method] || {}).name || _method
 
+    // Chama o método passando os parâmetros
     this[method](_args, _message, _config)
   }
 
@@ -65,7 +88,29 @@ class DefaultCommand {
     * @returns {Boolean} Se existe
     */
   methodExists (_method, _lang) {
-    return _method === 'main' || !!this.methodsDictionary[_lang][_method]
+    return _method === 'main' || !!this.methods[_lang][_method]
+  }
+
+  /**
+    * @description Adiciona métodos ao mapa  de métodos
+    * @param {Object} _methods Mapa de métodos
+    */
+  addMethods (_methods = {}) {
+    // Importa verificação de idiomas
+    const { checkLangs, } = require('../lang')
+
+    // Verifica idiomas
+    checkLangs(_methods)
+
+    // Se não tem ainda um dicionário, apenas adiciona
+    if (!this.methods) {
+      this.methods = _methods
+    }
+
+    // Percorre todos os idiomas e adiciona ao dicionário
+    objectMap(_methods, (methods, lang) => {
+      this.methods[lang] = { ...(this.methods[lang] || {}), ...methods, }
+    })
   }
 }
 

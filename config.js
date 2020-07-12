@@ -9,8 +9,9 @@ const config = {
     host: 'localhost',
     user: 'root',
     password: '12345678',
-    database: 'dontstarveboot',
+    database: 'dontstarve_bot',
   },
+  langs: [ 'ptbr', 'en', ], // Idiomas contemplados pelo bot
 }
 
 module.exports = config
