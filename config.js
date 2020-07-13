@@ -11,7 +11,27 @@ const config = {
     password: '12345678',
     database: 'dontstarve_bot',
   },
-  langs: [ 'ptbr', 'en', ], // Idiomas contemplados pelo bot
+  langs: [ // Idiomas contemplados pelo bot
+    'bg', // Búlgaro
+    'de', // Alemão
+    'en', // Inglês
+    'es', // Espalnhol
+    'fa', // Persa, Parsi, Farsi
+    'fr', // Francês
+    'hu', // 'Húngaro'
+    'id', // Indonésio
+    'it', // Italiano
+    'ptbr', // Portgugês Brasil
+    'ptpt', // Portgugês Portugal
+    'nl', // Holandês
+    'ro', // Romeno
+    'ru', // Russo
+    'sv', // Sueco
+    'th', // Tailandês
+    'tr', // Turco
+    'ko', // Koreano
+    'zhcn', // Chinês Simplificado
+  ],
 }
 
 module.exports = config
