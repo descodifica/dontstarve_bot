@@ -16,6 +16,7 @@ class Help extends DefaultCommand {
       resume: {
         ptbr: 'Busca ajuda do bot e de seus comandos',
         en: 'Seek help from the bot and its commands',
+        zhcn: '向机器人及其命令寻求帮助',
       },
     })
   }
@@ -54,7 +55,7 @@ class Help extends DefaultCommand {
       this._finalMessage(
         _config,
         'command',
-        prefix + resolveLangMessage(_config.lang, { en: 'help', ptbr: 'ajuda', })
+        prefix + resolveLangMessage(_config.lang, { en: 'help', ptbr: 'ajuda', zhcn: '救命', })
       )
     )
 
@@ -70,7 +71,8 @@ class Help extends DefaultCommand {
    */
   commandHelp (_args, _message, _config) {
     // Ignora se pediu ajuda da ajuda
-    if (_args[0] === resolveLangMessage(_config.lang, { en: 'help', ptbr: 'ajuda', })) return
+    const lang = resolveLangMessage(_config.lang, { en: 'help', ptbr: 'ajuda', zhcn: '救命', })
+    if (_args[0] === lang) return
 
     // Importa todos os comandos
     const commands = require('./')[_config.lang]
@@ -88,6 +90,7 @@ class Help extends DefaultCommand {
           en: (
             `the command" ${_args[0]} "does not exist, between "${prefix}help" to see all commands`
           ),
+          zhcn: `命令 "${_args[0]}" 不存在，输入 "${prefix} 救命" 以查看所有命令`,
         })
       )
 
@@ -108,6 +111,7 @@ class Help extends DefaultCommand {
           resolveLangMessage(_config.lang, {
             ptbr: `Método "${_args[1]}" não encontrado`,
             en: `Method "${_args[1]}" not found`,
+            zhcn: `找不到方法 "${_args[1]}"`,
           }))
 
         return
@@ -118,6 +122,7 @@ class Help extends DefaultCommand {
         resolveLangMessage(_config.lang, {
           ptbr: `Veja maiores informações de ${prefix}${_args[0]} ${_args[1]}:\n`,
           en: `See more information about ${prefix} ${_args[0]} ${_args[1]}: \n`,
+          zhcn: `查看有关 ${prefix} ${_args[0]} ${_args[1]} 的更多信息：\n`,
         }))
       msg.push(`${method.resume}\n`)
 
@@ -134,6 +139,7 @@ class Help extends DefaultCommand {
           resolveLangMessage(_config.lang, {
             ptbr: 'Nenhuma informação extra disponível',
             en: 'No extra information available',
+            zhcn: '没有可用的额外信息',
           }))
       }
     }
@@ -150,7 +156,12 @@ class Help extends DefaultCommand {
         this._finalMessage(
           _config,
           'method',
-          prefix + resolveLangMessage(_config.lang, { en: 'help', ptbr: 'ajuda', }) + ' ' + _args[0]
+          (
+            prefix +
+            resolveLangMessage(_config.lang, { en: 'help', ptbr: 'ajuda', zhcn: '救命', }) +
+            ' ' +
+            _args[0]
+          )
         )
       )
     }
@@ -177,17 +188,18 @@ class Help extends DefaultCommand {
   _initialMessage (_config, _argName) {
     switch (_argName) {
       case 'method': _argName = resolveLangMessage(_config.lang, {
-        ptbr: 'métodos', en: 'methods',
+        ptbr: 'métodos', en: 'methods', zhcn: '方法',
       })
         break
       case 'command': _argName = resolveLangMessage(_config.lang, {
-        ptbr: 'comandos', en: 'commands',
+        ptbr: 'comandos', en: 'commands', zhcn: '命令s',
       })
     }
 
     return resolveLangMessage(_config.lang, {
       ptbr: `veja aqui uma lista de todos os ${_argName} disponíveis`,
       en: `see here a list of all available ${_argName}`,
+      zhcn: `在这里看到所有可用的 ${_argName} 的列表`,
     }) + '\n'
   }
 
@@ -200,17 +212,18 @@ class Help extends DefaultCommand {
   _finalMessage (_config, _argName, _command) {
     switch (_argName) {
       case 'method': _argName = resolveLangMessage(_config.lang, {
-        ptbr: 'método', en: 'method',
+        ptbr: 'método', en: 'method', zhcn: '方法',
       })
         break
       case 'command': _argName = resolveLangMessage(_config.lang, {
-        ptbr: 'comando', en: 'command',
+        ptbr: 'comando', en: 'command', zhcn: '命令',
       })
     }
 
     return '\n' + resolveLangMessage(_config.lang, {
       ptbr: `Entre "${_command}" seguido de um ${_argName} para ter maiores detalhes`,
       en: `Enter" "${_command}" followed by a ${_argName} for more details`,
+      zhcn: `输入 "${_command}" ，然后输入 ${_argName} 以获取更多详细信息`,
     }) + '\n'
   }
 }

@@ -53,6 +53,11 @@ class Canais extends DefaultCommand {
             name: 'list', resume: 'Lists all Youtube channels focused on Don\'t Starve',
           },
         },
+        zhcn: {
+          清单: {
+            name: 'list', resume: '列出所有关注“不要饿死”的Youtube频道',
+          },
+        },
       },
     })
   }

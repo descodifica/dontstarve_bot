@@ -7,7 +7,7 @@ class DefaultCommand {
     this.command = this.constructor.name
 
     // Mapa de métodos
-    this.addMethods(methods || { ptbr: {}, en: {}, })
+    this.addMethods(methods || { ptbr: {}, en: {}, zhcn: {}, })
 
     // Descrição do comando
     this.resume = resume || 'Descrição não definida'
@@ -26,6 +26,7 @@ class DefaultCommand {
           'maiores detalhes',
         en: 'It is necessary to pass a method to the command. Enter the help command for ' +
           'more details',
+        zhcn: '有必要将一种方法传递给命令。 输入帮助命令以获取更多详细信息',
       })
     )
   }
@@ -41,7 +42,7 @@ class DefaultCommand {
     // Traduz o nome do método de acordo com o idioma dobot
     const method = (this.methods[_config.lang][_method] || {}).name || _method
 
-    // Chama o método passando os parâmetros
+    // // Chama o método passando os parâmetros
     this[method](_args, _message, _config)
   }
 

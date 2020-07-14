@@ -10,4 +10,8 @@ module.exports = {
     config: Config,
     help: Help,
   },
+  zhcn: {
+    配置: Config,
+    救命: Help,
+  },
 }

@@ -12,24 +12,24 @@ const config = {
     database: 'dontstarve_bot',
   },
   langs: [ // Idiomas contemplados pelo bot
-    'bg', // Búlgaro
-    'de', // Alemão
+    // 'bg', // Búlgaro
+    // 'de', // Alemão
     'en', // Inglês
-    'es', // Espalnhol
-    'fa', // Persa, Parsi, Farsi
-    'fr', // Francês
-    'hu', // 'Húngaro'
-    'id', // Indonésio
-    'it', // Italiano
+    // 'es', // Espanhol
+    // 'fa', // Persa, Parsi, Farsi
+    // 'fr', // Francês
+    // 'hu', // 'Húngaro'
+    // 'id', // Indonésio
+    // 'it', // Italiano
     'ptbr', // Portgugês Brasil
-    'ptpt', // Portgugês Portugal
-    'nl', // Holandês
-    'ro', // Romeno
-    'ru', // Russo
-    'sv', // Sueco
-    'th', // Tailandês
-    'tr', // Turco
-    'ko', // Koreano
+    // 'ptpt', // Portgugês Portugal
+    // 'nl', // Holandês
+    // 'ro', // Romeno
+    // 'ru', // Russo
+    // 'sv', // Sueco
+    // 'th', // Tailandês
+    // 'tr', // Turco
+    // 'ko', // Koreano
     'zhcn', // Chinês Simplificado
   ],
 }
