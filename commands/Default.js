@@ -1,10 +1,20 @@
 const objectMap = require('object.map')
 
+// Idiomas
+const langs = require('../config').langs
+
 // Classe padrão dos comandos
 class DefaultCommand {
   constructor ({ methods, resume, } = {}) {
     // Recebe o nome do comando
     this.command = this.constructor.name
+
+    // Se não passou métodos, adiciona padrão com todos os idiomas
+    if (!methods) {
+      methods = {}
+
+      langs.map(i => methods[i] = {})
+    }
 
     // Mapa de métodos
     this.addMethods(methods || { ptbr: {}, en: {}, zhcn: {}, })
