@@ -15,7 +15,7 @@ const config = {
     // 'bg', // Búlgaro
     // 'de', // Alemão
     'en', // Inglês
-    // 'es', // Espanhol
+    'es', // Espanhol
     // 'fa', // Persa, Parsi, Farsi
     // 'fr', // Francês
     // 'hu', // 'Húngaro'

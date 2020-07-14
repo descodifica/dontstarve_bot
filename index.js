@@ -106,6 +106,7 @@ class DontStarve {
           resolveLangMessage(serverConfig.lang, {
             ptbr: `comando "${command}" não existe`,
             en: `command "${command}" does not exist`,
+            es: `comando "${command}" no existe`,
             zhcn: `命令 "${command}" 不存在`,
           })
         )
@@ -124,8 +125,9 @@ class DontStarve {
         if (!translateCommands[command].invalidRedir) {
           message.reply(
             resolveLangMessage(serverConfig.lang, {
-              ptbr: `método ${args[0]} não existe`,
-              en: `method ${args[0]} does not exist`,
+              ptbr: `método "${args[0]}" não existe`,
+              en: `method "${args[0]}" does not exist`,
+              es: `el método "${args[0]}" no existe`,
               zhcn: `"${args[0]}" 方法不存在`,
             })
           )

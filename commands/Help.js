@@ -16,6 +16,7 @@ class Help extends DefaultCommand {
       resume: {
         ptbr: 'Busca ajuda do bot e de seus comandos',
         en: 'Seek help from the bot and its commands',
+        es: 'Busque ayuda del bot y sus comandos',
         zhcn: '向机器人及其命令寻求帮助',
       },
     })
@@ -55,7 +56,12 @@ class Help extends DefaultCommand {
       this._finalMessage(
         _config,
         'command',
-        prefix + resolveLangMessage(_config.lang, { en: 'help', ptbr: 'ajuda', zhcn: '救命', })
+        prefix + resolveLangMessage(_config.lang, {
+          en: 'help',
+          es: 'ayuda',
+          ptbr: 'ajuda',
+          zhcn: '救命',
+        })
       )
     )
 
@@ -71,7 +77,13 @@ class Help extends DefaultCommand {
    */
   commandHelp (_args, _message, _config) {
     // Ignora se pediu ajuda da ajuda
-    const lang = resolveLangMessage(_config.lang, { en: 'help', ptbr: 'ajuda', zhcn: '救命', })
+    const lang = resolveLangMessage(_config.lang, {
+      en: 'help',
+      es: 'ayuda',
+      ptbr: 'ajuda',
+      zhcn: '救命',
+    })
+
     if (_args[0] === lang) return
 
     // Importa todos os comandos
@@ -84,13 +96,13 @@ class Help extends DefaultCommand {
     if (!command) {
       _message.reply(
         resolveLangMessage(_config.lang, {
-          ptbr: (
-            `o comando "${_args[0]}" não existe, entre "${prefix}ajuda" para ver todos os comandos`
-          ),
-          en: (
-            `the command" ${_args[0]} "does not exist, between "${prefix}help" to see all commands`
-          ),
-          zhcn: `命令 "${_args[0]}" 不存在，输入 "${prefix} 救命" 以查看所有命令`,
+          ptbr: `o comando "${_args[0]}" não existe, entre "${prefix}ajuda" para ver todos os ` +
+            'comandos',
+          es: `el comando "${_args[0]}" no existe, ingrese "${prefix}ayuda" para ver todos los ` +
+            'comandos',
+          en: `the command" ${_args[0]} "does not exist, between "${prefix}help" to see all ` +
+            'commands',
+          zhcn: `命令 "${_args[0]}" 不存在，输入 "${prefix}救命" 以查看所有命令`,
         })
       )
 
@@ -109,8 +121,9 @@ class Help extends DefaultCommand {
       if (!method) {
         _message.reply(
           resolveLangMessage(_config.lang, {
-            ptbr: `Método "${_args[1]}" não encontrado`,
             en: `Method "${_args[1]}" not found`,
+            es: `Método "${_args[1]}" no encontrado`,
+            ptbr: `Método "${_args[1]}" não encontrado`,
             zhcn: `找不到方法 "${_args[1]}"`,
           }))
 
@@ -122,6 +135,7 @@ class Help extends DefaultCommand {
         resolveLangMessage(_config.lang, {
           ptbr: `Veja maiores informações de ${prefix}${_args[0]} ${_args[1]}:\n`,
           en: `See more information about ${prefix} ${_args[0]} ${_args[1]}: \n`,
+          es: `Ver más información sobre ${prefix} ${_args[0]} ${_args[1]}:\n`,
           zhcn: `查看有关 ${prefix} ${_args[0]} ${_args[1]} 的更多信息：\n`,
         }))
       msg.push(`${method.resume}\n`)
@@ -139,6 +153,7 @@ class Help extends DefaultCommand {
           resolveLangMessage(_config.lang, {
             ptbr: 'Nenhuma informação extra disponível',
             en: 'No extra information available',
+            es: 'No hay información adicional disponible',
             zhcn: '没有可用的额外信息',
           }))
       }
@@ -158,7 +173,12 @@ class Help extends DefaultCommand {
           'method',
           (
             prefix +
-            resolveLangMessage(_config.lang, { en: 'help', ptbr: 'ajuda', zhcn: '救命', }) +
+            resolveLangMessage(_config.lang, {
+              en: 'help',
+              es: 'ayuda',
+              ptbr: 'ajuda',
+              zhcn: '救命',
+            }) +
             ' ' +
             _args[0]
           )
@@ -188,17 +208,18 @@ class Help extends DefaultCommand {
   _initialMessage (_config, _argName) {
     switch (_argName) {
       case 'method': _argName = resolveLangMessage(_config.lang, {
-        ptbr: 'métodos', en: 'methods', zhcn: '方法',
+        ptbr: 'métodos', en: 'methods', es: 'métodos', zhcn: '方法',
       })
         break
       case 'command': _argName = resolveLangMessage(_config.lang, {
-        ptbr: 'comandos', en: 'commands', zhcn: '命令s',
+        ptbr: 'comandos', en: 'commands', es: 'comandos', zhcn: '命令s',
       })
     }
 
     return resolveLangMessage(_config.lang, {
       ptbr: `veja aqui uma lista de todos os ${_argName} disponíveis`,
       en: `see here a list of all available ${_argName}`,
+      es: `mira aquí una lista de todos los ${_argName} disponibles`,
       zhcn: `在这里看到所有可用的 ${_argName} 的列表`,
     }) + '\n'
   }
@@ -216,13 +237,14 @@ class Help extends DefaultCommand {
       })
         break
       case 'command': _argName = resolveLangMessage(_config.lang, {
-        ptbr: 'comando', en: 'command', zhcn: '命令',
+        ptbr: 'comando', en: 'command', es: 'método', zhcn: '命令',
       })
     }
 
     return '\n' + resolveLangMessage(_config.lang, {
       ptbr: `Entre "${_command}" seguido de um ${_argName} para ter maiores detalhes`,
       en: `Enter" "${_command}" followed by a ${_argName} for more details`,
+      es: `Ingrese "${_command}" seguido de un ${_argName} para más detalles`,
       zhcn: `输入 "${_command}" ，然后输入 ${_argName} 以获取更多详细信息`,
     }) + '\n'
   }

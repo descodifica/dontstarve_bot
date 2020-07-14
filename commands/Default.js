@@ -36,6 +36,8 @@ class DefaultCommand {
           'maiores detalhes',
         en: 'It is necessary to pass a method to the command. Enter the help command for ' +
           'more details',
+        es: 'Es necesario pasar un método al comando. Ingrese el comando de ayuda para ' +
+          'más detalles',
         zhcn: '有必要将一种方法传递给命令。 输入帮助命令以获取更多详细信息',
       })
     )

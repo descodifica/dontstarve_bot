@@ -41,7 +41,12 @@ class Canais extends DefaultCommand {
   constructor () {
     // Seta os nomes dos métodos de acordo com o idioma do servidor
     super({
-      resume: 'Lista canais do YouTube com foco em Don\'t Starve',
+      resume: {
+        ptbr: 'Lista canais do YouTube com foco em Don\'t Starve',
+        en: 'Lists YouTube channels focused on Don\'t Starve',
+        es: 'Enumera los canales de YouTube centrados en Don\'t Starve',
+        zhcn: '列出以“不要饿死”为中心的 YouTube 频道',
+      },
       methods: {
         ptbr: {
           listar: {
@@ -51,6 +56,11 @@ class Canais extends DefaultCommand {
         en: {
           list: {
             name: 'list', resume: 'Lists all Youtube channels focused on Don\'t Starve',
+          },
+        },
+        es: {
+          lista: {
+            name: 'list', resume: 'Lista todos os canais de Youtube focados em Don\'t Starve',
           },
         },
         zhcn: {
