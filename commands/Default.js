@@ -18,9 +18,6 @@ class DefaultCommand {
 
     // Mapa de métodos
     this.addMethods(methods || { ptbr: {}, en: {}, zhcn: {}, })
-
-    // Descrição do comando
-    this.resume = resume || 'Descrição não definida'
   }
 
   /**
@@ -30,17 +27,7 @@ class DefaultCommand {
    * @param {Object} _config As configurações do servidor
    */
   main (_args, _message, _config) {
-    _message.reply(
-      resolveLangMessage(_config.lang, {
-        ptbr: 'É necessário passar um método para o comando. Entre com o comando de ajuda para ' +
-          'maiores detalhes',
-        en: 'It is necessary to pass a method to the command. Enter the help command for ' +
-          'more details',
-        es: 'Es necesario pasar un método al comando. Ingrese el comando de ayuda para ' +
-          'más detalles',
-        zhcn: '有必要将一种方法传递给命令。 输入帮助命令以获取更多详细信息',
-      })
-    )
+    _message.reply(Dictionary.getMessage(_config.lang, 'general', 'COMMAND_METHOD_REQUIRED'))
   }
 
   /**

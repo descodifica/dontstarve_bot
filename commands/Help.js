@@ -10,18 +10,6 @@ const { resolveLangMessage, } = require('../lang')
 
 // O comando de ajuda
 class Help extends DefaultCommand {
-  constructor () {
-    // Seta os nomes dos métodos de acordo com o idioma do servidor
-    super({
-      resume: {
-        ptbr: 'Busca ajuda do bot e de seus comandos',
-        en: 'Seek help from the bot and its commands',
-        es: 'Busque ayuda del bot y sus comandos',
-        zhcn: '向机器人及其命令寻求帮助',
-      },
-    })
-  }
-
   /**
    * @description Método padrão quando nada for chamado
    * @param {Array} _args Os argumentos passados
@@ -30,25 +18,17 @@ class Help extends DefaultCommand {
    */
   main (_args, _message, _config) {
     // Recebe todos os módulos (respeitando o idioma)
-    const modules = require('./')[_config.lang]
+    const modules = require('./')
 
     // Recebe o comando e retira dos argumentos
-    const module = _args.shift()
-
-    // Se tem comando
-    if (module && module.help) {
-      // Chama método de ajuda do módulo, passando os argumentos
-      modules[module].help(_args, _message, _config)
-
-      return
-    }
+    // const module = _args.shift()
 
     // Mensagem a ser exibida
     const msg = [ this._initialMessage(_config, 'command'), ]
 
     // Percorre todos os módulos e adiciona sua descrição à mensagem
-    objectMap(modules, (m, k) => {
-      msg.push(`> ${prefix}${k} - ${resolveLangMessage(_config.lang, m.resume)}`)
+    objectMap(modules, (modleData, moduleName) => {
+      msg.push(`> ${prefix}${moduleName} - ${Dictionary.getResume(_config.lang, moduleName)}`)
     })
 
     // Entra com mensagem de detalhamento
@@ -87,24 +67,19 @@ class Help extends DefaultCommand {
     if (_args[0] === lang) return
 
     // Importa todos os comandos
-    const commands = require('./')[_config.lang]
+    const commands = require('./')
+
+    // Nome do comando escolhido
+    const commandName = Dictionary.getModule(_config.lang, _args[0])
 
     // Importa o comando escolhido
-    const command = commands[_args[0]]
+    const command = commands[commandName]
 
     // Se o comando não existe, informa e finaliza
     if (!command) {
-      _message.reply(
-        resolveLangMessage(_config.lang, {
-          ptbr: `o comando "${_args[0]}" não existe, entre "${prefix}ajuda" para ver todos os ` +
-            'comandos',
-          es: `el comando "${_args[0]}" no existe, ingrese "${prefix}ayuda" para ver todos los ` +
-            'comandos',
-          en: `the command" ${_args[0]} "does not exist, between "${prefix}help" to see all ` +
-            'commands',
-          zhcn: `命令 "${_args[0]}" 不存在，输入 "${prefix}救命" 以查看所有命令`,
-        })
-      )
+      _message.reply(Dictionary.getMessage(
+        _config.lang, 'help', 'COMMAND_NOT_FOUND', { command: commandName, prefix, }
+      ))
 
       return
     }
@@ -119,25 +94,24 @@ class Help extends DefaultCommand {
 
       // Se não achou o método, informa e finaliza
       if (!method) {
-        _message.reply(
-          resolveLangMessage(_config.lang, {
-            en: `Method "${_args[1]}" not found`,
-            es: `Método "${_args[1]}" no encontrado`,
-            ptbr: `Método "${_args[1]}" não encontrado`,
-            zhcn: `找不到方法 "${_args[1]}"`,
-          }))
+        _message.reply(Dictionary.getMessage(
+          _config.lang, 'help', 'METHOD_NOT_FOUND', { method: _args[1], }
+        ))
 
         return
       }
 
       // Texto padrão
       msg.push(
-        resolveLangMessage(_config.lang, {
-          ptbr: `Veja maiores informações de ${prefix}${_args[0]} ${_args[1]}:\n`,
-          en: `See more information about ${prefix} ${_args[0]} ${_args[1]}: \n`,
-          es: `Ver más información sobre ${prefix} ${_args[0]} ${_args[1]}:\n`,
-          zhcn: `查看有关 ${prefix} ${_args[0]} ${_args[1]} 的更多信息：\n`,
-        }))
+        Dictionary.getMessage(
+          _config.lang, 'help', 'VIEW_MORE_INFO', {
+            prefix,
+            command: commandName,
+            method: _args[1],
+          }
+        ) + '\n'
+      )
+
       msg.push(`${method.resume}\n`)
 
       // Se tem doc, adiciona ela
@@ -149,13 +123,7 @@ class Help extends DefaultCommand {
         msg = msg.concat(method.doc)
       }
       else {
-        msg.push(
-          resolveLangMessage(_config.lang, {
-            ptbr: 'Nenhuma informação extra disponível',
-            en: 'No extra information available',
-            es: 'No hay información adicional disponible',
-            zhcn: '没有可用的额外信息',
-          }))
+        msg.push(Dictionary.getMessage(_config.lang, 'help', 'NO_INFO_AVAILABLE'))
       }
     }
     else {
@@ -216,12 +184,7 @@ class Help extends DefaultCommand {
       })
     }
 
-    return resolveLangMessage(_config.lang, {
-      ptbr: `veja aqui uma lista de todos os ${_argName} disponíveis`,
-      en: `see here a list of all available ${_argName}`,
-      es: `mira aquí una lista de todos los ${_argName} disponibles`,
-      zhcn: `在这里看到所有可用的 ${_argName} 的列表`,
-    }) + '\n'
+    return Dictionary.getMessage(_config.lang, 'help', 'VIEW_ALL', { word: _argName, }) + '\n'
   }
 
   /**
@@ -241,12 +204,9 @@ class Help extends DefaultCommand {
       })
     }
 
-    return '\n' + resolveLangMessage(_config.lang, {
-      ptbr: `Entre "${_command}" seguido de um ${_argName} para ter maiores detalhes`,
-      en: `Enter" "${_command}" followed by a ${_argName} for more details`,
-      es: `Ingrese "${_command}" seguido de un ${_argName} para más detalles`,
-      zhcn: `输入 "${_command}" ，然后输入 ${_argName} 以获取更多详细信息`,
-    }) + '\n'
+    return '\n' + Dictionary.getMessage(
+      _config.lang, 'help', 'VIEW_MORE_DETAILS', { command: _command, word: _argName, }
+    ) + '\n'
   }
 }
 

@@ -9,12 +9,6 @@ class Config extends DefaultCommand {
   constructor () {
     // Seta os nomes dos métodos de acordo com o idioma do servidor
     super({
-      resume: {
-        ptbr: 'Configura o bot no servidor (somente dono do servidor)',
-        en: 'Configure the bot on the server (server owner only)',
-        es: 'Configura el bot en el servidor (solo el propietario del servidor)',
-        zhcn: '在服务器上配置机械手（仅服务器所有者）',
-      },
       methods: {
         ptbr: {
           lang: {
@@ -23,7 +17,7 @@ class Config extends DefaultCommand {
             doc: [
               'Aceita os valores:\n',
               '> en - Inglês',
-              '> en - Espanhol',
+              '> es - Espanhol',
               '> ptbr - Portugês do Brasil',
               '> zhcn - Chinês Simplificado',
             ],
@@ -36,7 +30,7 @@ class Config extends DefaultCommand {
             doc: [
               'Accepts the values:\n',
               '> en - English',
-              '> en - Spanish',
+              '> es - Spanish',
               '> ptbr - Brazilian Portuguese',
               '> zhcn - Simplified Chinese',
             ],
@@ -87,18 +81,9 @@ class Config extends DefaultCommand {
 
     // Se idioma passado for inválido, informa e finalzia
     if (langs.indexOf(lang) === -1) {
-      _message.reply(
-        resolveLangMessage(_config.lang, {
-          ptbr: `o idioma "${lang}" é inválido. Valores aceitos são: ` +
-            `${langs.slice(0, -1).join(', ')} e ${langs.reverse()[0]}`,
-          en: `the language" ${lang}" is invalid. Accepted values are: ` +
-            `${langs.slice(0, -1).join(',')} and ${langs.reverse()[0]}`,
-          es: `el idioma "${lang}" no es válido. Los valores aceptados son: ` +
-            `${langs.slice(0, -1).join(',')} y ${langs.reverse()[0]}`,
-          zhcn: `语言 "${lang}" 无效。 可接受的值是：` +
-          `${langs.slice(0, -1).join(', ')}  ${langs.reverse()[0]}`,
-        })
-      )
+      _message.reply(Dictionary.getMessage(_config.lang, 'config', 'INVALID_LANGUAGE', {
+        lang, firstLangs: langs.slice(0, -1).join(', '), lastLang: langs.reverse()[0],
+      }))
 
       return
     }
@@ -106,53 +91,13 @@ class Config extends DefaultCommand {
     // Configura
     this._config('lang', _args[0], _message, _config)
       .then(() => {
-        _message.reply(
-          resolveLangMessage(_args[0], {
-            ptbr: 'idioma atualizado com sucesso',
-            en: 'language updated successfully',
-            es: 'idioma actualizado con éxito',
-            zhcn: '语言更新成功',
-          })
-        )
+        _message.reply(Dictionary.getMessage(_args[0], 'config', 'UPDATED_LANGUAGE'))
       })
       .catch(() => {
         _message.reply(
-          resolveLangMessage(_config.lang, {
-            ptbr: 'ocorreu um problema ao mudar o idioma',
-            en: 'there was a problem changing the language',
-            es: 'hubo un problema al cambiar el idioma',
-            zhcn: '更改语言时出现问题',
-          })
+          _message.reply(Dictionary.getMessage(_config.lang, 'config', 'UPDATE_LANGUAGE_ERROR'))
         )
       })
-  }
-
-  /**
-   * @description Método de ajuda do comando
-   * @param {Array} _args Os argumentos passados
-   * @param {Object} _message O objeto da mensagem
-   * @param {Object} _config As configurações do servidor
-   */
-  help (_args, _message, _config) {
-    // Mensagem a ser exibida
-    const msg = []
-
-    // Seleciona pedido de ajuda
-    switch (_args.join(' ')) {
-      case '': {
-        msg.push(
-          resolveLangMessage(_config.lang, {
-            ptbr: 'veja aqui uma lista de todos os comandos disponíveis',
-            en: 'see here a list of all available commands',
-            es: 'mira aquí una lista de todos los comandos disponibles',
-            zhcn: '在这里查看所有可用命令的列表',
-          }) + '\n'
-        )
-      }
-    }
-
-    // Responde
-    _message.reply(msg.join('\n'))
   }
 
   /**
@@ -165,14 +110,7 @@ class Config extends DefaultCommand {
   _config (_k, _v, _message, _config) {
     // Impede uso se não for por usuário do servidor
     if (!this.authorOwnerServerID(_message)) {
-      _message.reply(
-        resolveLangMessage(_config.lang, {
-          ptbr: 'esse comando só pode ser usado pelo dono do servidor!',
-          en: 'this command can only be used by the server owner!',
-          es: '¡este comando solo puede ser utilizado por el propietario del servidor!',
-          zhcn: '该命令只能由服务器所有者使用！',
-        })
-      )
+      _message.reply(Dictionary.getMessage(_config.lang, 'general', 'OWNER_CONTROL_ONLY'))
 
       return false
     }

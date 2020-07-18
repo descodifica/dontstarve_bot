@@ -37,16 +37,10 @@ const channels = [
 ]
 
 // O comando de canais
-class Canais extends DefaultCommand {
+class Channels extends DefaultCommand {
   constructor () {
     // Seta os nomes dos métodos de acordo com o idioma do servidor
     super({
-      resume: {
-        ptbr: 'Lista canais do YouTube com foco em Don\'t Starve',
-        en: 'Lists YouTube channels focused on Don\'t Starve',
-        es: 'Enumera los canales de YouTube centrados en Don\'t Starve',
-        zhcn: '列出以“不要饿死”为中心的 YouTube 频道',
-      },
       methods: {
         ptbr: {
           listar: {
@@ -99,4 +93,4 @@ class Canais extends DefaultCommand {
   }
 }
 
-module.exports = new Canais()
+module.exports = new Channels()
