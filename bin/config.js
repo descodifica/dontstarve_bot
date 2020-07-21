@@ -1,5 +1,5 @@
 // Importa o token
-const token = require('./token')
+const token = require('../token')
 
 // Configurações dobot
 const config = {

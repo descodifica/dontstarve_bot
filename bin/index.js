@@ -14,7 +14,7 @@ const Commands = require('./Commands')
 const { token, prefix, } = require('./config')
 
 // Adiciona nas globais a função de envio de mensagem
-global.resolveLangMessage = require('./lang').resolveLangMessage
+global.resolveLangMessage = require('../lang').resolveLangMessage
 
 // Classe principal do bot
 class DontStarve {
