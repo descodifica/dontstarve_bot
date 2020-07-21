@@ -1,12 +1,21 @@
 // Adiciona sessão para chinês simplificado ao dicionário
 global.Dictionary.add('zhcn', {
-  channels: {
-    name: '频道',
-    resume: '列出以“不要饿死”为中心的 YouTube 频道',
-  },
   config: {
     name: '建立',
     resume: '在服务器上配置机械手（仅服务器所有者）',
+    methods: {
+      语言: {
+        name: 'lang',
+        resume: '更改机器人语言',
+        doc: [
+          '接受值:\n',
+          '> en - 英语',
+          '> es - 西班牙文',
+          '> ptbr - 巴西葡萄牙语',
+          '> zhcn - 简体中文',
+        ],
+      },
+    },
     messages: {
       INVALID_LANGUAGE: ({ lang, firstLangs, lastLang, }) => `语言 "${lang}" 无效。 可接受的值是：` +
         `${firstLangs}  ${lastLang}`,

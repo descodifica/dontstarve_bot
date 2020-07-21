@@ -90,7 +90,7 @@ class Help extends DefaultCommand {
     // Se passou método
     if (_args[1]) {
       // Importa o método escolhido
-      const method = command.methods[_config.lang][_args[1]]
+      const method = Dictionary.getMethod(_config.lang, commandName, _args[1])
 
       // Se não achou o método, informa e finaliza
       if (!method) {

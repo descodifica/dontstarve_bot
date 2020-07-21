@@ -1,12 +1,21 @@
 // Adiciona sessão para espanhol ao dicionário
 global.Dictionary.add('es', {
-  channels: {
-    name: 'canales',
-    resume: 'Enumera los canales de YouTube centrados en Don\'t Starve',
-  },
   config: {
     name: 'config',
     resume: 'Configura el bot en el servidor (solo el propietario del servidor)',
+    methods: {
+      idioma: {
+        name: 'lang',
+        resume: 'Cambiar el idioma del bot',
+        doc: [
+          'Acepta los valores:\n',
+          '> en - Inglés',
+          '> es - Español',
+          '> ptbr - Portugués de Brasil',
+          '> zhcn - Chino simplificado',
+        ],
+      },
+    },
     messages: {
       INVALID_LANGUAGE: ({ lang, firstLangs, lastLang, }) => `el idioma "${lang}" no es válido. ` +
         `Los valores aceptados son: ${firstLangs} y ${lastLang}`,

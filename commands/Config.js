@@ -9,60 +9,56 @@ class Config extends DefaultCommand {
   constructor () {
     // Seta os nomes dos métodos de acordo com o idioma do servidor
     super({
-      methods: {
-        ptbr: {
-          lang: {
-            name: 'lang',
-            resume: 'Altera o idioma do Bot',
-            doc: [
-              'Aceita os valores:\n',
-              '> en - Inglês',
-              '> es - Espanhol',
-              '> ptbr - Portugês do Brasil',
-              '> zhcn - Chinês Simplificado',
-            ],
-          },
-        },
-        en: {
-          lang: {
-            name: 'lang',
-            resume: 'Change the Bot language',
-            doc: [
-              'Accepts the values:\n',
-              '> en - English',
-              '> es - Spanish',
-              '> ptbr - Brazilian Portuguese',
-              '> zhcn - Simplified Chinese',
-            ],
-          },
-        },
-        es: {
-          idioma: {
-            name: 'lang',
-            resume: 'Cambiar el idioma del bot',
-            doc: [
-              'Acepta los valores:\n',
-              '> en - Inglés',
-              '> es - Español',
-              '> ptbr - Portugués de Brasil',
-              '> zhcn - Chino simplificado',
-            ],
-          },
-        },
-        zhcn: {
-          语言: {
-            name: 'lang',
-            resume: '更改机器人语言',
-            doc: [
-              '接受值:\n',
-              '> en - 英语',
-              '> es - 西班牙文',
-              '> ptbr - 巴西葡萄牙语',
-              '> zhcn - 简体中文',
-            ],
-          },
-        },
-      },
+      // methods: {
+      //   ptbr: {
+      //     lang: {
+      //       resume: 'Altera o idioma do Bot',
+      //       doc: [
+      //         'Aceita os valores:\n',
+      //         '> en - Inglês',
+      //         '> es - Espanhol',
+      //         '> ptbr - Portugês do Brasil',
+      //         '> zhcn - Chinês Simplificado',
+      //       ],
+      //     },
+      //   },
+      //   en: {
+      //     lang: {
+      //       resume: 'Change the Bot language',
+      //       doc: [
+      //         'Accepts the values:\n',
+      //         '> en - English',
+      //         '> es - Spanish',
+      //         '> ptbr - Brazilian Portuguese',
+      //         '> zhcn - Simplified Chinese',
+      //       ],
+      //     },
+      //   },
+      //   es: {
+      //     idioma: {
+      //       resume: 'Cambiar el idioma del bot',
+      //       doc: [
+      //         'Acepta los valores:\n',
+      //         '> en - Inglés',
+      //         '> es - Español',
+      //         '> ptbr - Portugués de Brasil',
+      //         '> zhcn - Chino simplificado',
+      //       ],
+      //     },
+      //   },
+      //   zhcn: {
+      //     语言: {
+      //       resume: '更改机器人语言',
+      //       doc: [
+      //         '接受值:\n',
+      //         '> en - 英语',
+      //         '> es - 西班牙文',
+      //         '> ptbr - 巴西葡萄牙语',
+      //         '> zhcn - 简体中文',
+      //       ],
+      //     },
+      //   },
+      // },
     })
   }
 

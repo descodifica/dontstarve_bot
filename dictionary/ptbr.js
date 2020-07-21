@@ -1,12 +1,21 @@
 // Adiciona sessão para portugês do brasil ao dicionário
 global.Dictionary.add('ptbr', {
-  channels: {
-    name: 'canais',
-    resume: 'Lista canais do YouTube com foco em Don\'t Starve',
-  },
   config: {
     name: 'config',
     resume: 'Configura o bot no servidor (somente dono do servidor)',
+    methods: {
+      lang: {
+        name: 'lang',
+        resume: 'Altera o idioma do Bot',
+        doc: [
+          'Aceita os valores:\n',
+          '> en - Inglês',
+          '> es - Espanhol',
+          '> ptbr - Portugês do Brasil',
+          '> zhcn - Chinês Simplificado',
+        ],
+      },
+    },
     messages: {
       INVALID_LANGUAGE: ({ lang, firstLangs, lastLang, }) => `o idioma "${lang}" é inválido. ` +
         `Valores aceitos são: ${firstLangs} e ${lastLang}`,
