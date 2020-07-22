@@ -1,8 +1,7 @@
 const objectMap = require('object.map')
 
 // Importa todos os comandos
-const commands = require('./')
-const { lang, } = require('../commands/Config')
+const commands = require('../commands')
 
 // Classe de dicionário
 class Dictionary {
@@ -64,13 +63,21 @@ class Dictionary {
 
     objectMap(this.sessions[_lang], (v, k) => {
       if (v.name === _module) {
-        module = commands[k]
-
-        module.methods = module[_lang]
+        module = k
       }
     })
 
     return module
+  }
+
+  /**
+   * @description Recupera nome de um módulo
+   * @param {String} _lang O idioma
+   * @param {String} _module O módulo desejado
+   * @returns {String} O nome do módulo
+   */
+  getReverseModule (_lang, _module) {
+    console.log(_lang, _module, this.sessions)
   }
 
   /**

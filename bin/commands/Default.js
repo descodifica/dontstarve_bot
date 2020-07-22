@@ -97,7 +97,7 @@ class DefaultCommand {
     */
   addMethods (_methods = {}) {
     // Importa verificação de idiomas
-    const { checkLangs, } = require('../../lang')
+    const { checkLangs, } = require('../lang')
 
     // Verifica idiomas
     checkLangs(_methods)

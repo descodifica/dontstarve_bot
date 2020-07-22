@@ -57,13 +57,11 @@ class Help extends DefaultCommand {
    */
   commandHelp (_args, _message, _config) {
     // Ignora se pediu ajuda da ajuda
-    const lang = resolveLangMessage(_config.lang, {
-      en: 'help',
-      es: 'ayuda',
-      ptbr: 'ajuda',
-      zhcn: '救命',
-    })
+    const lang = Dictionary.getReverseModule(_config.lang, 'help')
 
+    console.log(lang)
+
+    return
     if (_args[0] === lang) return
 
     // Importa todos os comandos

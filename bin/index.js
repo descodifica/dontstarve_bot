@@ -14,7 +14,7 @@ const Commands = require('./Commands')
 const { token, prefix, } = require('./config')
 
 // Adiciona nas globais a função de envio de mensagem
-global.resolveLangMessage = require('../lang').resolveLangMessage
+global.resolveLangMessage = require('./lang').resolveLangMessage
 
 // Classe principal do bot
 class DontStarve {
@@ -88,7 +88,7 @@ class DontStarve {
   onMessage () {
     // Quando receber uma mensagem
     this.client.on('message', async message => {
-      // Se a mensagem não começar com o prefixo ou for debot, finaliza
+      // Se a mensagem não começar com o prefixo ou for de bot, finaliza
       if (!message.content.startsWith(prefix) || message.author.bot) return {}
 
       // Recebe todos os argumentos do comando, garantindo que não haja nada em branco
