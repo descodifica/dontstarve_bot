@@ -13,9 +13,6 @@ const Commands = require('./Commands')
 // Importa configurações
 const { token, prefix, } = require('./config')
 
-// Adiciona nas globais a função de envio de mensagem
-global.resolveLangMessage = require('./lang').resolveLangMessage
-
 // Classe principal do bot
 class DontStarve {
   // Ao criar o objeto
@@ -101,7 +98,7 @@ class DontStarve {
       const originalCommand = args.shift()
 
       // Traduz o comando
-      const command = Dictionary.getModule(serverConfig.lang, originalCommand)
+      const command = Dictionary.getModuleName(serverConfig.lang, originalCommand)
 
       // Se não possui o comando, informa e finaliza
       if (!Commands[command]) {
@@ -123,7 +120,7 @@ class DontStarve {
       const originalMethod = args.shift()
 
       // Traduz método
-      let method = Dictionary.getMethod(serverConfig.lang, command, originalMethod)
+      let method = Dictionary.getMethodName(serverConfig.lang, command, originalMethod)
 
       // Se método não existe
       if (!method) {

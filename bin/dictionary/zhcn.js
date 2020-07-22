@@ -29,6 +29,10 @@ global.Dictionary.add('zhcn', {
       METHOD_NOT_EXISTS: ({ method, }) => `"${method}" 方法不存在`,
       OWNER_CONTROL_ONLY: '该命令只能由服务器所有者使用',
       COMMAND_METHOD_REQUIRED: '有必要将一种方法传递给命令。 输入帮助命令以获取更多详细信息',
+      METHODS: '方法',
+      METHOD: '方法',
+      COMMANDS: '命令',
+      COMMAND: '命令'
     },
   },
   help: {

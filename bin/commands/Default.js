@@ -15,9 +15,6 @@ class DefaultCommand {
 
       langs.map(i => methods[i] = {})
     }
-
-    // Mapa de métodos
-    this.addMethods(methods || { ptbr: {}, en: {}, zhcn: {}, })
   }
 
   /**
@@ -89,28 +86,6 @@ class DefaultCommand {
     */
   methodExists (_method, _lang) {
     return _method === 'main' || !!this.methods[_lang][_method]
-  }
-
-  /**
-    * @description Adiciona métodos ao mapa  de métodos
-    * @param {Object} _methods Mapa de métodos
-    */
-  addMethods (_methods = {}) {
-    // Importa verificação de idiomas
-    const { checkLangs, } = require('../lang')
-
-    // Verifica idiomas
-    checkLangs(_methods)
-
-    // Se não tem ainda um dicionário, apenas adiciona
-    if (!this.methods) {
-      this.methods = _methods
-    }
-
-    // Percorre todos os idiomas e adiciona ao dicionário
-    objectMap(_methods, (methods, lang) => {
-      this.methods[lang] = { ...(this.methods[lang] || {}), ...methods, }
-    })
   }
 }
 

@@ -6,7 +6,6 @@ const DefaultCommand = require('./Default')
 
 // Prefixo
 const { prefix, } = require('../config')
-const { resolveLangMessage, } = require('../lang')
 
 // O comando de ajuda
 class Help extends DefaultCommand {
@@ -24,7 +23,7 @@ class Help extends DefaultCommand {
     // const module = _args.shift()
 
     // Mensagem a ser exibida
-    const msg = [ this._initialMessage(_config, 'command'), ]
+    const msg = [ this._initialMessage(_config, 'COMMANDS'), ]
 
     // Percorre todos os módulos e adiciona sua descrição à mensagem
     objectMap(modules, (modleData, moduleName) => {
@@ -35,13 +34,8 @@ class Help extends DefaultCommand {
     msg.push(
       this._finalMessage(
         _config,
-        'command',
-        prefix + resolveLangMessage(_config.lang, {
-          en: 'help',
-          es: 'ayuda',
-          ptbr: 'ajuda',
-          zhcn: '救命',
-        })
+        'COMMAND',
+        prefix + Dictionary.getTranslateModule(_config.lang, 'help')
       )
     )
 
@@ -56,27 +50,25 @@ class Help extends DefaultCommand {
    * @param {Object} _config As configurações do servidor
    */
   commandHelp (_args, _message, _config) {
+    // Nome do módulo de ajuda traduzido no idioma do servidor
+    const translateHelp = Dictionary.getTranslateModule(_config.lang, 'help')
+
     // Ignora se pediu ajuda da ajuda
-    const lang = Dictionary.getReverseModule(_config.lang, 'help')
+    if (_args[0] === translateHelp) return
 
-    console.log(lang)
-
-    return
-    if (_args[0] === lang) return
-
-    // Importa todos os comandos
-    const commands = require('./')
+    // Comando escolhido original
+    const originalCommand = _args.shift()
 
     // Nome do comando escolhido
-    const commandName = Dictionary.getModule(_config.lang, _args[0])
+    const commandName = Dictionary.getModuleName(_config.lang, originalCommand)
 
-    // Importa o comando escolhido
-    const command = commands[commandName]
+    // Recebe informações do comando escolhido
+    const commandInfo = Dictionary.getModuleInfo(_config.lang, originalCommand)
 
     // Se o comando não existe, informa e finaliza
-    if (!command) {
+    if (!commandInfo) {
       _message.reply(Dictionary.getMessage(
-        _config.lang, 'help', 'COMMAND_NOT_FOUND', { command: commandName, prefix, }
+        _config.lang, 'help', 'COMMAND_NOT_FOUND', { command: originalCommand, prefix, }
       ))
 
       return
@@ -85,15 +77,21 @@ class Help extends DefaultCommand {
     // Mensagem a ser exibida
     let msg = []
 
+    // Método original
+    const originalMethod = _args.shift()
+
     // Se passou método
-    if (_args[1]) {
-      // Importa o método escolhido
-      const method = Dictionary.getMethod(_config.lang, commandName, _args[1])
+    if (originalMethod) {
+      // Nome do método escolhido
+      const methodName = Dictionary.getMethodName(_config.lang, commandName, originalMethod)
+
+      // Recebe informações do métdo escolhido
+      const method = commandInfo.methods[methodName]
 
       // Se não achou o método, informa e finaliza
       if (!method) {
         _message.reply(Dictionary.getMessage(
-          _config.lang, 'help', 'METHOD_NOT_FOUND', { method: _args[1], }
+          _config.lang, 'help', 'METHOD_NOT_FOUND', { method: originalMethod, }
         ))
 
         return
@@ -104,8 +102,8 @@ class Help extends DefaultCommand {
         Dictionary.getMessage(
           _config.lang, 'help', 'VIEW_MORE_INFO', {
             prefix,
-            command: commandName,
-            method: _args[1],
+            command: originalCommand,
+            method: originalMethod,
           }
         ) + '\n'
       )
@@ -126,29 +124,15 @@ class Help extends DefaultCommand {
     }
     else {
       // Mensagem inicial
-      msg.push(this._initialMessage(_config, 'method'))
+      msg.push(this._initialMessage(_config, 'METHODS'))
 
-      objectMap(command.methods[_config.lang], (data, method) => {
-        msg.push(`> ${prefix}${_args[0]} ${method} - ${data.resume}`)
+      objectMap(commandInfo.methods, (data, method) => {
+        msg.push(`> ${prefix}${originalCommand} ${method} - ${data.resume}`)
       })
 
       // Entra com mensagem de detalhamento
       msg.push(
-        this._finalMessage(
-          _config,
-          'method',
-          (
-            prefix +
-            resolveLangMessage(_config.lang, {
-              en: 'help',
-              es: 'ayuda',
-              ptbr: 'ajuda',
-              zhcn: '救命',
-            }) +
-            ' ' +
-            _args[0]
-          )
-        )
+        this._finalMessage(_config, 'METHOD', prefix + translateHelp + ' ' + originalCommand)
       )
     }
 
@@ -172,17 +156,9 @@ class Help extends DefaultCommand {
    * @param {String} _argName O nome do argumento a ser usado no texto
    */
   _initialMessage (_config, _argName) {
-    switch (_argName) {
-      case 'method': _argName = resolveLangMessage(_config.lang, {
-        ptbr: 'métodos', en: 'methods', es: 'métodos', zhcn: '方法',
-      })
-        break
-      case 'command': _argName = resolveLangMessage(_config.lang, {
-        ptbr: 'comandos', en: 'commands', es: 'comandos', zhcn: '命令s',
-      })
-    }
+    const argName = Dictionary.getMessage(_config.lang, 'general', _argName)
 
-    return Dictionary.getMessage(_config.lang, 'help', 'VIEW_ALL', { word: _argName, }) + '\n'
+    return Dictionary.getMessage(_config.lang, 'help', 'VIEW_ALL', { word: argName, }) + '\n'
   }
 
   /**
@@ -192,18 +168,10 @@ class Help extends DefaultCommand {
    * @param {String} _command O comando a ser exibido
    */
   _finalMessage (_config, _argName, _command) {
-    switch (_argName) {
-      case 'method': _argName = resolveLangMessage(_config.lang, {
-        ptbr: 'método', en: 'method', zhcn: '方法',
-      })
-        break
-      case 'command': _argName = resolveLangMessage(_config.lang, {
-        ptbr: 'comando', en: 'command', es: 'método', zhcn: '命令',
-      })
-    }
+    const argName = Dictionary.getMessage(_config.lang, 'general', _argName)
 
     return '\n' + Dictionary.getMessage(
-      _config.lang, 'help', 'VIEW_MORE_DETAILS', { command: _command, word: _argName, }
+      _config.lang, 'help', 'VIEW_MORE_DETAILS', { command: _command, word: argName, }
     ) + '\n'
   }
 }

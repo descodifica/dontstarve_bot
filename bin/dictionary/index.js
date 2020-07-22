@@ -43,7 +43,7 @@ class Dictionary {
   }
 
   /**
-   * @description Recupera um resumo de módulo
+   * @description Recupera um resumo do ódulo
    * @param {String} _lang O idioma
    * @param {String} _module O módulo
    * @returns {String} O resumo
@@ -56,9 +56,9 @@ class Dictionary {
    * @description Recupera nome real de um módulo
    * @param {String} _lang O idioma
    * @param {String} _module O módulo passado pelo usuário
-   * @returns {String} O nome do módulo traduzido
+   * @returns {String} O nome do módulo
    */
-  getModule (_lang, _module) {
+  getModuleName (_lang, _module) {
     let module
 
     objectMap(this.sessions[_lang], (v, k) => {
@@ -71,13 +71,23 @@ class Dictionary {
   }
 
   /**
-   * @description Recupera nome de um módulo
+   * @description Recupera nome de um módulo no idioma do servidor
    * @param {String} _lang O idioma
    * @param {String} _module O módulo desejado
    * @returns {String} O nome do módulo
    */
-  getReverseModule (_lang, _module) {
-    console.log(_lang, _module, this.sessions)
+  getTranslateModule (_lang, _module) {
+    return this.sessions[_lang][_module].name
+  }
+
+  /**
+   * @description Recupera informações um módulo de acordo com o idioma do servidor
+   * @param {String} _lang O idioma
+   * @param {String} _module O módulo desejado
+   * @returns {Object} O módulo
+   */
+  getModuleInfo (_lang, _module) {
+    return this.sessions[_lang][this.getModuleName(_lang, _module)]
   }
 
   /**
@@ -85,9 +95,9 @@ class Dictionary {
    * @param {String} _lang O idioma
    * @param {String} _module O módulo do método
    * @param {String} _method O método passado pelo usuário
-   * @returns {String} O nome do método traduzido
+   * @returns {String} O nome do método
    */
-  getMethod (_lang, _module, _method) {
+  getMethodName (_lang, _module, _method) {
     if (_method === 'main') return _method
 
     return ((this.sessions[_lang][_module].methods || {})[_method] || {}).name

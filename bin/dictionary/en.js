@@ -30,6 +30,10 @@ global.Dictionary.add('en', {
       OWNER_CONTROL_ONLY: 'this command can only be used by the server owner!',
       COMMAND_METHOD_REQUIRED: 'It is necessary to pass a method to the command. Enter the ' +
         'help command for more details',
+      METHODS: 'methods',
+      METHOD: 'method',
+      COMMANDS: 'commands',
+      COMMAND: 'command',
     },
   },
   help: {

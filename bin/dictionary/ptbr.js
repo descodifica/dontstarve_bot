@@ -30,6 +30,10 @@ global.Dictionary.add('ptbr', {
       OWNER_CONTROL_ONLY: 'esse comando só pode ser usado pelo dono do servidor!',
       COMMAND_METHOD_REQUIRED: 'É necessário passar um método para o comando. Entre com o ' +
         'comando de ajuda para maiores detalhes',
+      METHODS: 'métodos',
+      METHOD: 'método',
+      COMMANDS: 'comandos',
+      COMMAND: 'comando',
     },
   },
   help: {
