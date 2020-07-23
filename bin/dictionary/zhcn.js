@@ -9,6 +9,7 @@ global.Dictionary.add('zhcn', {
         resume: '更改机器人语言',
         doc: [
           '接受值:\n',
+          '> de - 德语',
           '> en - 英语',
           '> es - 西班牙文',
           '> ptbr - 巴西葡萄牙语',

@@ -5,10 +5,11 @@ global.Dictionary.add('ptbr', {
     resume: 'Configura o bot no servidor (somente dono do servidor)',
     methods: {
       lang: {
-        name: 'lang',
+        name: 'ling',
         resume: 'Altera o idioma do Bot',
         doc: [
           'Aceita os valores:\n',
+          '> de - Alemão',
           '> en - Inglês',
           '> es - Espanhol',
           '> ptbr - Portugês do Brasil',

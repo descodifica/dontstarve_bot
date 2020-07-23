@@ -9,6 +9,7 @@ global.Dictionary.add('en', {
         resume: 'Change the Bot language',
         doc: [
           'Accepts the values:\n',
+          '> de - German',
           '> en - English',
           '> es - Spanish',
           '> ptbr - Brazilian Portuguese',

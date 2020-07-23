@@ -10,6 +10,7 @@ class Dictionary {
     this.sessions = {}
 
     // Importa sessões
+    require('./de')
     require('./en')
     require('./es')
     require('./ptbr')
