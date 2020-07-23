@@ -32,7 +32,7 @@ global.Dictionary.add('zhcn', {
       METHODS: '方法',
       METHOD: '方法',
       COMMANDS: '命令',
-      COMMAND: '命令'
+      COMMAND: '命令',
     },
   },
   help: {

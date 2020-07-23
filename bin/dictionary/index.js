@@ -1,8 +1,5 @@
 const objectMap = require('object.map')
 
-// Importa todos os comandos
-const commands = require('../commands')
-
 // Classe de dicionário
 class Dictionary {
   constructor () {

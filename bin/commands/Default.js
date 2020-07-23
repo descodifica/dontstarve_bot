@@ -1,5 +1,3 @@
-const objectMap = require('object.map')
-
 // Idiomas
 const langs = require('../config').langs
 
@@ -7,7 +5,7 @@ const langs = require('../config').langs
 class DefaultCommand {
   constructor ({ methods, resume, } = {}) {
     // Recebe o nome do comando
-    this.command = this.constructor.name
+    this.command = this.constructor.name.toLowerCase()
 
     // Se não passou métodos, adiciona padrão com todos os idiomas
     if (!methods) {
@@ -35,11 +33,8 @@ class DefaultCommand {
     * @param {Object} _config Configurações dobot no servidor
     */
   exec (_method, _args, _message, _config) {
-    // Traduz o nome do método de acordo com o idioma dobot
-    const method = (this.methods[_config.lang][_method] || {}).name || _method
-
-    // // Chama o método passando os parâmetros
-    this[method](_args, _message, _config)
+    // Chama o método passando os parâmetros
+    this[_method](_args, _message, _config)
   }
 
   /**

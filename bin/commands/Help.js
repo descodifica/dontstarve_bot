@@ -17,17 +17,16 @@ class Help extends DefaultCommand {
    */
   main (_args, _message, _config) {
     // Recebe todos os módulos (respeitando o idioma)
-    const modules = require('./')
-
-    // Recebe o comando e retira dos argumentos
-    // const module = _args.shift()
+    const modules = Dictionary.sessions[_config.lang]
 
     // Mensagem a ser exibida
     const msg = [ this._initialMessage(_config, 'COMMANDS'), ]
 
     // Percorre todos os módulos e adiciona sua descrição à mensagem
-    objectMap(modules, (modleData, moduleName) => {
-      msg.push(`> ${prefix}${moduleName} - ${Dictionary.getResume(_config.lang, moduleName)}`)
+    objectMap(modules, moduleData => {
+      if (!moduleData.name) return
+
+      msg.push(`> ${prefix}${moduleData.name} - ${moduleData.resume}`)
     })
 
     // Entra com mensagem de detalhamento
@@ -83,10 +82,10 @@ class Help extends DefaultCommand {
     // Se passou método
     if (originalMethod) {
       // Nome do método escolhido
-      const methodName = Dictionary.getMethodName(_config.lang, commandName, originalMethod)
+      // const methodName = Dictionary.getMethodName(_config.lang, commandName, originalMethod)
 
       // Recebe informações do métdo escolhido
-      const method = commandInfo.methods[methodName]
+      const method = commandInfo.methods[originalMethod]
 
       // Se não achou o método, informa e finaliza
       if (!method) {
