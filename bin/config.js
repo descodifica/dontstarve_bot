@@ -17,7 +17,7 @@ const config = {
     'en', // Inglês
     'es', // Espanhol
     // 'fa', // Persa, Parsi, Farsi
-    // 'fr', // Francês
+    'fr', // Francês
     // 'hu', // 'Húngaro'
     // 'id', // Indonésio
     // 'it', // Italiano
@@ -33,5 +33,7 @@ const config = {
     'zhcn', // Chinês Simplificado
   ],
 }
+
+// frances, italiano
 
 module.exports = config

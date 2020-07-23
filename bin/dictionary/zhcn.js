@@ -12,6 +12,7 @@ global.Dictionary.add('zhcn', {
           '> de - 德语',
           '> en - 英语',
           '> es - 西班牙文',
+          '> fr - 法文',
           '> ptbr - 巴西葡萄牙语',
           '> zhcn - 简体中文',
         ],

@@ -12,6 +12,7 @@ global.Dictionary.add('ptbr', {
           '> de - Alemão',
           '> en - Inglês',
           '> es - Espanhol',
+          '> fr - Francês',
           '> ptbr - Portugês do Brasil',
           '> zhcn - Chinês Simplificado',
         ],
