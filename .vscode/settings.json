@@ -18,6 +18,10 @@
         {
             "name": "feature/help",
             "base": "develop"
+        },
+        {
+            "name": "feature/new_translate",
+            "base": "develop"
         }
     ]
 }

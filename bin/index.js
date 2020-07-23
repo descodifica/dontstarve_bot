@@ -1,3 +1,6 @@
+// Importa dicionário
+require('./Dictionary')
+
 // Importa API do discord
 const Discord = require('discord.js')
 
@@ -5,13 +8,10 @@ const Discord = require('discord.js')
 const Db = require('./Db')
 
 // Importa todos os módulos
-const commands = require('./commands')
+const Commands = require('./Commands')
 
 // Importa configurações
 const { token, prefix, } = require('./config')
-
-// Adiciona nas globais a função de envio de mensagem
-global.resolveLangMessage = require('./lang').resolveLangMessage
 
 // Classe principal do bot
 class DontStarve {
@@ -85,7 +85,7 @@ class DontStarve {
   onMessage () {
     // Quando receber uma mensagem
     this.client.on('message', async message => {
-      // Se a mensagem não começar com o prefixo ou for debot, finaliza
+      // Se a mensagem não começar com o prefixo ou for de bot, finaliza
       if (!message.content.startsWith(prefix) || message.author.bot) return {}
 
       // Recebe todos os argumentos do comando, garantindo que não haja nada em branco
@@ -94,21 +94,18 @@ class DontStarve {
       // Configurações do servidor
       const serverConfig = await this.getServerConfig(message)
 
-      // Comandos no idioma do servidor
-      const translateCommands = commands[serverConfig.lang]
+      // Recebe o comando original (remove do primeiro argumento)
+      const originalCommand = args.shift()
 
-      // Recebe o comando (remove do primeiro argumento)
-      const command = args.shift()
+      // Traduz o comando
+      const command = Dictionary.getModuleName(serverConfig.lang, originalCommand)
 
       // Se não possui o comando, informa e finaliza
-      if (!translateCommands[command]) {
+      if (!Commands[command]) {
         message.reply(
-          resolveLangMessage(serverConfig.lang, {
-            ptbr: `comando "${command}" não existe`,
-            en: `command "${command}" does not exist`,
-            es: `comando "${command}" no existe`,
-            zhcn: `命令 "${command}" 不存在`,
-          })
+          Dictionary.getMessage(
+            serverConfig.lang, 'general', 'COMMAND_NOT_FOUND', { command: originalCommand, }
+          )
         )
 
         return
@@ -119,32 +116,33 @@ class DontStarve {
         args[0] = 'main'
       }
 
+      // Método original
+      const originalMethod = args.shift()
+
+      // Traduz método
+      let method = Dictionary.getMethodName(serverConfig.lang, command, originalMethod)
+
       // Se método não existe
-      if (!translateCommands[command].methodExists(args[0], serverConfig.lang)) {
+      if (!method) {
         // Se não tem método de redirecionar inválido, informa e finaliza
-        if (!translateCommands[command].invalidRedir) {
+        if (!Commands[command].invalidRedir) {
           message.reply(
-            resolveLangMessage(serverConfig.lang, {
-              ptbr: `método "${args[0]}" não existe`,
-              en: `method "${args[0]}" does not exist`,
-              es: `el método "${args[0]}" no existe`,
-              zhcn: `"${args[0]}" 方法不存在`,
-            })
+            Dictionary.getMessage(
+              serverConfig.lang, 'general', 'METHOD_NOT_EXISTS', { method: originalMethod, }
+            )
           )
 
           return
         }
-        // Se tem o método, vira método a ser usado
         else {
-          args.unshift('invalidRedir')
+          args.unshift(originalMethod)
+
+          method = 'invalidRedir'
         }
       }
 
-      // Detecta nome do método (se não existir, vira main)
-      const method = args.shift()
-
       // Executa comando
-      translateCommands[command].exec(method, args, message, serverConfig)
+      Commands[command].exec(method || 'main', args, message, serverConfig)
     })
   }
 }
