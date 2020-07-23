@@ -4,8 +4,8 @@ global.Dictionary.add('zhcn', {
     name: '建立',
     resume: '在服务器上配置机械手（仅服务器所有者）',
     methods: {
-      语言: {
-        name: 'lang',
+      lang: {
+        name: '语言',
         resume: '更改机器人语言',
         doc: [
           '接受值:\n',

@@ -4,8 +4,8 @@ global.Dictionary.add('es', {
     name: 'config',
     resume: 'Configura el bot en el servidor (solo el propietario del servidor)',
     methods: {
-      idioma: {
-        name: 'lang',
+      lang: {
+        name: 'idioma',
         resume: 'Cambiar el idioma del bot',
         doc: [
           'Acepta los valores:\n',
@@ -33,7 +33,7 @@ global.Dictionary.add('es', {
       METHODS: 'métodos',
       METHOD: 'método',
       COMMANDS: 'comandos',
-      COMMAND: 'comando'
+      COMMAND: 'comando',
     },
   },
   help: {

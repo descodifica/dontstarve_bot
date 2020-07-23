@@ -82,10 +82,10 @@ class Help extends DefaultCommand {
     // Se passou método
     if (originalMethod) {
       // Nome do método escolhido
-      // const methodName = Dictionary.getMethodName(_config.lang, commandName, originalMethod)
+      const methodName = Dictionary.getMethodName(_config.lang, commandName, originalMethod)
 
       // Recebe informações do métdo escolhido
-      const method = commandInfo.methods[originalMethod]
+      const method = commandInfo.methods[methodName]
 
       // Se não achou o método, informa e finaliza
       if (!method) {
@@ -126,7 +126,7 @@ class Help extends DefaultCommand {
       msg.push(this._initialMessage(_config, 'METHODS'))
 
       objectMap(commandInfo.methods, (data, method) => {
-        msg.push(`> ${prefix}${originalCommand} ${method} - ${data.resume}`)
+        msg.push(`> ${prefix}${originalCommand} ${data.name} - ${data.resume}`)
       })
 
       // Entra com mensagem de detalhamento

@@ -95,9 +95,18 @@ class Dictionary {
    * @returns {String} O nome do método
    */
   getMethodName (_lang, _module, _method) {
-    if (_method === 'main') return _method
+    if ([ 'main', 'invalidRedir', ].indexOf(_method) > -1) return _method
 
-    return ((this.sessions[_lang][_module].methods || {})[_method] || {}).name
+    const module = this.sessions[_lang][_module] || {}
+    let method
+
+    objectMap(module.methods || {}, (methodData, methodName) => {
+      if (_method !== methodData.name) return
+
+      method = methodName
+    })
+
+    return method
   }
 }
 
