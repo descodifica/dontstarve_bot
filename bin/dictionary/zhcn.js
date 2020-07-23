@@ -13,6 +13,7 @@ global.Dictionary.add('zhcn', {
           '> en - 英语',
           '> es - 西班牙文',
           '> fr - 法文',
+          '> it > 义大利文',
           '> ptbr - 巴西葡萄牙语',
           '> zhcn - 简体中文',
         ],

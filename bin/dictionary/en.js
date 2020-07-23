@@ -13,6 +13,7 @@ global.Dictionary.add('en', {
           '> en - English',
           '> es - Spanish',
           '> fr = French',
+          '> it - Italian',
           '> ptbr - Brazilian Portuguese',
           '> zhcn - Simplified Chinese',
         ],

@@ -13,14 +13,14 @@ const config = {
   },
   langs: [ // Idiomas contemplados pelo bot
     // 'bg', // Búlgaro
-    // 'de', // Alemão
+    'de', // Alemão
     'en', // Inglês
     'es', // Espanhol
     // 'fa', // Persa, Parsi, Farsi
     'fr', // Francês
     // 'hu', // 'Húngaro'
     // 'id', // Indonésio
-    // 'it', // Italiano
+    'it', // Italiano
     'ptbr', // Portgugês Brasil
     // 'ptpt', // Portgugês Portugal
     // 'nl', // Holandês
@@ -33,7 +33,5 @@ const config = {
     'zhcn', // Chinês Simplificado
   ],
 }
-
-// frances, italiano
 
 module.exports = config

@@ -14,6 +14,7 @@ class Dictionary {
     require('./en')
     require('./es')
     require('./fr')
+    require('./it')
     require('./ptbr')
     require('./zhcn')
   }

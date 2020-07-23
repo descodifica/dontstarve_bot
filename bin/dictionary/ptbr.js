@@ -13,6 +13,7 @@ global.Dictionary.add('ptbr', {
           '> en - Inglês',
           '> es - Espanhol',
           '> fr - Francês',
+          '> it - Italiano',
           '> ptbr - Portugês do Brasil',
           '> zhcn - Chinês Simplificado',
         ],
