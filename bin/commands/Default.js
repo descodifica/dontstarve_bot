@@ -1,6 +1,9 @@
 // Idiomas
 const langs = require('../config').langs
 
+// Mensagem embutida
+const { MessageEmbed, } = require('discord.js')
+
 // Classe padrão dos comandos
 class DefaultCommand {
   constructor ({ methods, resume, } = {}) {
@@ -47,6 +50,15 @@ class DefaultCommand {
   }
 
   /**
+    * @description Retorna o nome do autor da mensagem
+    * @param {Object} _message Objeto da mensagem
+    * @returns {String} O nick
+    */
+  authorUserName (_message) {
+    return _message.author.username
+  }
+
+  /**
     * @description Retorna o ID do servidor
     * @param {Object} _message Objeto da mensagem
     * @returns {String} O ID
@@ -67,10 +79,19 @@ class DefaultCommand {
   /**
     * @description Retorna se o autor da mensagem é dono do servidor
     * @param {Object} _message Objeto da mensagem
-    * @returns {Boolean}} Se é dono
+    * @returns {Boolean} Se é dono
     */
-  authorOwnerServerID (_message) {
+  authorOwnerServer (_message) {
     return this.authorId(_message) === this.serverOwnerID(_message)
+  }
+
+  /**
+    * @description Retorna o avatar do autor da mensagem da mensagem
+    * @param {Object} _message Objeto da mensagem
+    * @returns {String} A imagem
+    */
+  authorAvatar (_message) {
+    return _message.author.displayAvatarURL()
   }
 
   /**
@@ -81,6 +102,30 @@ class DefaultCommand {
     */
   methodExists (_method, _lang) {
     return _method === 'main' || !!this.methods[_lang][_method]
+  }
+
+  /**
+   * @description Retorna uma mensagem embutida
+   * @param {Object} _embedData Dados da mensagem embtida
+   * @param {Object} _message Objeto da mensagem
+   * @returns {Object} A mensagem embutida
+   */
+  embedMessage (_embedData, _message) {
+    const embed = new MessageEmbed()
+
+    if (_embedData.title) {
+      embed.setTitle(_embedData.title)
+    }
+
+    if (_embedData.description) {
+      embed.setDescription(_embedData.description)
+    }
+
+    if (_embedData.thumbnail) {
+      embed.setThumbnail(_embedData.thumbnail)
+    }
+
+    return embed
   }
 }
 

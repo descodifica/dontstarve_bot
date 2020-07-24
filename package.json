@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@desco/json-to-sql-where": "^2.0.4",
+    "age-calculator": "^1.0.0",
     "discord.js": "^12.2.0",
     "eslint": "^7.4.0",
     "eslint-config-standard": "^14.1.1",

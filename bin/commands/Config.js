@@ -49,7 +49,7 @@ class Config extends DefaultCommand {
    */
   _config (_k, _v, _message, _config) {
     // Impede uso se não for por usuário do servidor
-    if (!this.authorOwnerServerID(_message)) {
+    if (!this.authorOwnerServer(_message)) {
       _message.reply(Dictionary.getMessage(_config.lang, 'general', 'OWNER_CONTROL_ONLY'))
 
       return false

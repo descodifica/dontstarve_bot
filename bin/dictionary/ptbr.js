@@ -54,4 +54,17 @@ global.Dictionary.add('ptbr', {
         'ter maiores detalhes',
     },
   },
+  profile: {
+    name: 'perfil',
+    resume: 'Perfil dos usuários',
+    methods: {
+      view: {
+        name: 'ver',
+        resume: 'Vizualiza um perfil',
+      },
+    },
+    messages: {
+      CREATE_ERROR: 'ocorreu um erro ao criar o seu perfil',
+    },
+  },
 })
