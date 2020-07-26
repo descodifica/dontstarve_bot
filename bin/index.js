@@ -1,3 +1,6 @@
+// Importa pacote de limpesa do terminal
+const clear = require('clear')
+
 // Importa dicionário
 require('./Dictionary')
 
@@ -17,6 +20,12 @@ const { token, prefix, } = require('./config')
 class DontStarve {
   // Ao criar o objeto
   constructor () {
+    // Limpa terminal
+    clear()
+
+    // Informa inicio
+    console.log('Starting...')
+
     // Declara conexão com o cliente
     this.client = new Discord.Client()
 
@@ -126,11 +135,7 @@ class DontStarve {
       if (!method) {
         // Se não tem método de redirecionar inválido, informa e finaliza
         if (!Commands[command].invalidRedir) {
-          message.reply(
-            Dictionary.getMessage(
-              serverConfig.lang, 'general', 'METHOD_NOT_EXISTS', { method: originalMethod, }
-            )
-          )
+          this.methodNotExists(message, originalMethod, serverConfig)
 
           return
         }
@@ -145,7 +150,15 @@ class DontStarve {
       Commands[command].exec(method || 'main', args, message, serverConfig)
     })
   }
+
+  methodNotExists (_message, _originalMethod, _serverConfig) {
+    _message.reply(
+      Dictionary.getMessage(
+        _serverConfig.lang, 'general', 'METHOD_NOT_EXISTS', { method: _originalMethod, }
+      )
+    )
+  }
 }
 
 // Cria o objeto do bot
-new DontStarve()
+global.Bot = new DontStarve()

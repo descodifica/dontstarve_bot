@@ -37,6 +37,9 @@ global.Dictionary.add('ptbr', {
       METHOD: 'método',
       COMMANDS: 'comandos',
       COMMAND: 'comando',
+      YEARS: 'anos',
+      YES: 'Sim',
+      NO: 'Não',
     },
   },
   help: {
@@ -64,7 +67,37 @@ global.Dictionary.add('ptbr', {
       },
     },
     messages: {
+      CREATE: ({ prefix, }) => `seu perfil acabou de ser criado! Entre ${prefix}ajuda perfil  ` +
+      'editar para saber editar ele!',
       CREATE_ERROR: 'ocorreu um erro ao criar o seu perfil',
+      PROFILE_NAME: 'Nome',
+      PROFILE_NICK: 'Nick',
+      PROFILE_AGE: 'Idade',
+      PROFILE_LOCATE: 'Localização',
+      PROFILE_HAVE: 'Possui',
+      PROFILE_PLATFORM: 'Plataforma',
+      PROFILE_HOURS_PLAYED: 'Horas Jogadas',
+      PROFILE_SURVIVED: 'Sobreviveu por',
+      PROFILE_LEVEL: 'Nível',
+      PROFILE_PROFILE: ({ name, }) => 'Perfil de ' + name,
+      DAYS: 'dias',
+      ABDUCTED_TEXT: 'Abduzido - Acabou de começar',
+      HUNGRY_TEXT: 'Faminto - Sobreviveu por menos de 1 ano e/ou a inda sabe pouco',
+      EXPLORER_TEXT: 'Explorador - Já sobreviveu por pelo menos 1 ano... mas não conhece muito ' +
+        'do jogo',
+      SURVIVOR_TEXT: 'Sobrevivente - Já sobreviveu por pelo menos 1 ano e tem um conhecimento ' +
+        'básico do jogo',
+      BACKPACKER_TEXT: 'Mochileiro - Já sobreviveu por pelo menos 1 ano e tem um conhecimento ' +
+        'razoável do jogo',
+      CONSTANTIAN_TEXT: 'Constantiano - Já sobreviveu por pelo menos 5 anos e tem um ' +
+        'conhecimento mediano do jogo',
+      CHARLIES_FRIEND_TEXT: 'Amigo da Charlie - Já sobreviveu por pelo menos 7 anos e tem um ' +
+        'conhecimento mediano do jogo',
+      KING_OF_CONSTANT_TEXT: 'Rei do Constant- Já sobreviveu por pelo menos 7 anos e tem um ' +
+        'conhecimento avançado do jogo',
+      ALLY_OF_THEY_TEXT: 'Aliado de "Eles" - Já sobreviveu por pelo menos 10 anos e tem um ' +
+        'conhecimento total ou quase total do jogo',
+
     },
   },
 })
