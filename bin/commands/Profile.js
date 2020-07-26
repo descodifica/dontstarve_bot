@@ -33,28 +33,40 @@ class Profile extends DefaultCommand {
    * @param {Object} _config As configurações do servidor
    */
   async view (_args, _message, _config) {
+    // Se pediu perfil de alguém
+    const ifMention = _args.length > 0
+
     // Id do perfil
-    const profileId = _args.length === 0 ? this.authorId(_message) : _args[0].id
+    const profileId = !ifMention ? this.authorId(_message) : _args[0].id
 
     // Nome do perfil
-    const profileName = _args.length === 0 ? this.authorUserName(_message) : _args[0].username
+    const profileName = !ifMention ? this.authorUserName(_message) : _args[0].username
 
-    const profileAvatar = (
-      _args.length === 0 ? this.authorAvatar(_message) : _args[0].displayAvatarURL()
-    )
+    // Avatar do perfil
+    const profileAvatar = !ifMention ? this.authorAvatar(_message) : _args[0].displayAvatarURL()
 
     // Busca o perfil
     let profile = await ProfileService.get(profileId)
 
-    // Se não achou, cria, informa e busca novamente
+    // Se não achou e não tem menção, cria, informa e busca novamente
+    // Se tem mensão, informa apenas
     if (!profile) {
-      await ProfileService.create({ id: profileId, })
+      if (!ifMention) {
+        await ProfileService.create({ id: profileId, })
 
-      _message.reply(
-        Dictionary.getMessage(_config.lang, 'profile', 'CREATE', { prefix: _config.prefix, })
-      )
+        _message.reply(
+          Dictionary.getMessage(_config.lang, 'profile', 'CREATE', { prefix: _config.prefix, })
+        )
 
-      profile = await ProfileService.get(profileId)
+        profile = await ProfileService.get(profileId)
+      }
+      else {
+        _message.reply(
+          Dictionary.getMessage(_config.lang, 'profile', 'NO_PROFILE', { user: profileName, })
+        )
+
+        return
+      }
     }
 
     // Adiciona posição de experiências

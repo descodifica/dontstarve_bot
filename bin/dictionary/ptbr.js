@@ -70,6 +70,7 @@ global.Dictionary.add('ptbr', {
       CREATE: ({ prefix, }) => `seu perfil acabou de ser criado! Entre ${prefix}ajuda perfil  ` +
       'editar para saber editar ele!',
       CREATE_ERROR: 'ocorreu um erro ao criar o seu perfil',
+      NO_PROFILE: ({ user, }) => `***${user}*** não possui um perfil ainda!`,
       PROFILE_NAME: 'Nome',
       PROFILE_NICK: 'Nick',
       PROFILE_AGE: 'Idade',
