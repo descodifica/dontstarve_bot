@@ -196,6 +196,26 @@ class Profile extends DefaultCommand {
   }
 
   /**
+   * @description Edita uma informação de um perfil
+   * @param {Array} _args Os argumentos passados
+   * @param {Object} _message O objeto da mensagem
+   * @param {Object} _config As configurações do servidor
+   */
+  edit (_args, _message, _config) {
+    // Recebe parâmetros tratados
+    const params = this.params(_config.lang, 'profile', 'edit', _args)
+
+    // Salva
+    ProfileService.update(params.set, { id: this.authorId(_message), }, true)
+      .then(() => {
+        _message.reply(Dictionary.getMessage(_config.lang, 'profile', 'UPDATE'))
+      })
+      .catch(() => {
+        _message.reply(Dictionary.getMessage(_config.lang, 'profile', 'UPDATE_ERROR'))
+      })
+  }
+
+  /**
    * @description Chamado quando chamar um método não existente
    * @param {Array} _args Os argumentos passados
    * @param {Object} _message O objeto da mensagem

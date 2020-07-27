@@ -127,6 +127,38 @@ class DefaultCommand {
 
     return embed
   }
+
+  /**
+   * @description Retorna os parâmetros formatados
+   * @param {String} _lang Idioma em que os parâmetros foram passados
+   * @param {String} _module Nome do módulo dos parâmetros
+   * @param {String} _method Nome do método dos parâmetros
+   * @param {Array} _params Os parâmetros recebidos
+   * @param {Array} _numbers Os parâmetros que devem ser numéricos
+   * @returns {Object} Os parâmetros formatados
+   */
+  params (_lang, _module, _method, _params, _numbers = []) {
+    // Traduz os parâmetros da lista
+    const paramsList = Dictionary.getMethodParams(_lang, _module, _method, _params)
+
+    // Onde ficarão os parâmetros formatados
+    const params = { set: {}, }
+
+    // Une primeira (propriedade) e segunda (valor) posições
+    for (let c = 0, max = paramsList.length; c < max; c += 2) {
+      const prop = paramsList[c]
+      const val = paramsList[c + 1]
+
+      params.set[prop] = val
+
+      // Se valor deve ser número, converte
+      if (_numbers.indexOf(prop) > -1) {
+        params.set[prop] = parseFloat(params.set[prop])
+      }
+    }
+
+    return params
+  }
 }
 
 module.exports = DefaultCommand

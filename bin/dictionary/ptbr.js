@@ -65,11 +65,20 @@ global.Dictionary.add('ptbr', {
         name: 'ver',
         resume: 'Vizualiza um perfil',
       },
+      edit: {
+        name: 'editar',
+        resume: 'Edita uma informação do perfil',
+        params: {
+          name: 'nome',
+        },
+      },
     },
     messages: {
       CREATE: ({ prefix, }) => `seu perfil acabou de ser criado! Entre ${prefix}ajuda perfil  ` +
       'editar para saber editar ele!',
       CREATE_ERROR: 'ocorreu um erro ao criar o seu perfil',
+      UPDATE: 'perfil atualizado',
+      UPDATE_ERROR: 'ocorreu um erro ao atualizar o perfil',
       NO_PROFILE: ({ user, }) => `***${user}*** não possui um perfil ainda!`,
       PROFILE_NAME: 'Nome',
       PROFILE_NICK: 'Nick',

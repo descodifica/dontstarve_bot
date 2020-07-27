@@ -71,11 +71,43 @@ class DontStarve {
    * @returns {Array} Array contendo todos os argumentos
    */
   getArgs (_message) {
-    return _message.content
+    // Recebe argumentos
+    let args = _message.content
+
+    // Pelo que trocar espaço dentro das aspas duplas
+    const signal = '|_|'
+
+    // Troca espaços entre aspas simples e duplas por |_|
+    args = this.parserQuoteArgs(args, '\'', signal)
+    args = this.parserQuoteArgs(args, '"', signal)
+
+    return args
       .slice(prefix.length) // Remove o prefixo
       .split(' ') // Separa pelo espaço
       .filter(i => i.trim() !== '') // Remove argumento em branco (espaço extra no comando)
-      .map(i => i.toLowerCase()) // Converte para minusculo
+      .map(i => i.replace(signal, ' ')) // Volta espaço das aspas
+  }
+
+  /**
+   * @description Retorna os argumentos com os espaços das aspas trocados
+   * @param {Array} _args Os argumentos
+   * @param {String} _quote As aspas usadas
+   * @param {String} _signal O que por no lugar do espaço
+   * @returns {Array} os argumentos com os espaços das aspas trocados
+   */
+  parserQuoteArgs (_args, _quote, _signal) {
+    // Separa pelas aspas
+    const args = _args.split(_quote)
+
+    // Percorre todas as posições, começando pela primeira e pulando de 2 em em dois
+    // Posição par é sempre com aspas
+    for (let c = 1, max = args.length; c < max; c += 2) {
+      // Troca espaço
+      args[c] = args[c].replace(' ', _signal)
+    }
+
+    // Une em string pelas aspas e retorna
+    return args.join('')
   }
 
   /**
