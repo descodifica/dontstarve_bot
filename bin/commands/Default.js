@@ -1,21 +1,21 @@
-// Idiomas
-const langs = require('../config').langs
-
 // Mensagem embutida
 const { MessageEmbed, } = require('discord.js')
 
+// Percorre objetos
+const objectMap = require('object.map')
+
 // Classe padrão dos comandos
 class DefaultCommand {
-  constructor ({ methods, resume, } = {}) {
+  constructor ({ props, } = {}) {
     // Recebe o nome do comando
     this.command = this.constructor.name.toLowerCase()
 
-    // Se não passou métodos, adiciona padrão com todos os idiomas
-    if (!methods) {
-      methods = {}
+    // Recebe propriedades
+    this.props = objectMap((props || {}), (i, k) => {
+      if (typeof i === 'object') return i
 
-      langs.map(i => methods[i] = {})
-    }
+      return { type: i, }
+    })
   }
 
   /**
@@ -134,10 +134,9 @@ class DefaultCommand {
    * @param {String} _module Nome do módulo dos parâmetros
    * @param {String} _method Nome do método dos parâmetros
    * @param {Array} _params Os parâmetros recebidos
-   * @param {Array} _numbers Os parâmetros que devem ser numéricos
    * @returns {Object} Os parâmetros formatados
    */
-  params (_lang, _module, _method, _params, _numbers = []) {
+  params (_lang, _module, _method, _params) {
     // Traduz os parâmetros da lista
     const paramsList = Dictionary.getMethodParams(_lang, _module, _method, _params)
 
@@ -149,15 +148,28 @@ class DefaultCommand {
       const prop = paramsList[c]
       const val = paramsList[c + 1]
 
-      params.set[prop] = val
-
-      // Se valor deve ser número, converte
-      if (_numbers.indexOf(prop) > -1) {
-        params.set[prop] = parseFloat(params.set[prop])
-      }
+      params.set[prop] = this.formatParam(prop, val, { lang: _lang, })
     }
 
     return params
+  }
+
+  /**
+   * @description Formata um parâmetro
+   * @param {String} _prop Nome da proriedade
+   * @param {String} _val Valor da prorpiedade
+   * @param {Object} _params Parâmetros extras
+   * @returns {*} Valor formatado
+   */
+  formatParam (_prop, _val, _params = {}) {
+    // Se não consta na lista de propriedades, retorna original
+    if (!this.props[_prop]) return _val
+
+    // Formata de acordo com o tipo
+    switch (this.props[_prop].type) {
+      case 'Date': return Dictionary.dateToEn(_params.lang, _val)
+      default: return _val
+    }
   }
 }
 

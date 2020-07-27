@@ -1,3 +1,6 @@
+// Adiciona formato de data para brasil ao dicionário
+global.Dictionary.dateFormat('ptbr', { day: 0, month: 1, year: 2, sep: '/', })
+
 // Adiciona sessão para portugês do brasil ao dicionário
 global.Dictionary.add('ptbr', {
   config: {
@@ -70,6 +73,10 @@ global.Dictionary.add('ptbr', {
         resume: 'Edita uma informação do perfil',
         params: {
           name: 'nome',
+          birth: 'nascimento',
+          city: 'cidade',
+          state: 'estado',
+          country: 'pais',
         },
       },
     },

@@ -85,7 +85,7 @@ class DontStarve {
       .slice(prefix.length) // Remove o prefixo
       .split(' ') // Separa pelo espaço
       .filter(i => i.trim() !== '') // Remove argumento em branco (espaço extra no comando)
-      .map(i => i.replace(signal, ' ')) // Volta espaço das aspas
+      .map(i => i.split(signal).join(' ')) // Volta espaço das aspas
   }
 
   /**
@@ -103,7 +103,7 @@ class DontStarve {
     // Posição par é sempre com aspas
     for (let c = 1, max = args.length; c < max; c += 2) {
       // Troca espaço
-      args[c] = args[c].replace(' ', _signal)
+      args[c] = args[c].split(' ').join(_signal)
     }
 
     // Une em string pelas aspas e retorna

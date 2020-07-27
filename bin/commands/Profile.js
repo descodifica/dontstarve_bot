@@ -16,6 +16,15 @@ const DefaultCommand = require('./Default')
 
 // O comando de Perfil
 class Profile extends DefaultCommand {
+  constructor () {
+    // Passa tipos das propriedades
+    super({
+      props: {
+        birth: 'Date',
+      },
+    })
+  }
+
   /**
    * @description Visualiza um perfil
    * @param {Array} _args Os argumentos passados
@@ -152,12 +161,12 @@ class Profile extends DefaultCommand {
       `***${Dictionary.getMessage(_config.lang, 'profile', 'PROFILE_AGE')}:*** ` +
         getValOrNotDefined(profile.birth, v => {
           return (
-            new AgeFromDate(v).age +
+            new AgeFromDate(v).age + ' ' +
             Dictionary.getMessage(_config.lang, 'general', 'YEARS')
           )
         }),
       `***${Dictionary.getMessage(_config.lang, 'profile', 'PROFILE_LOCATE')}:*** ` +
-        `${getValOrNotDefined(profile.city)}/${getValOrNotDefined(profile.state)}` +
+        `${getValOrNotDefined(profile.city)}/${getValOrNotDefined(profile.state)} - ` +
         getValOrNotDefined(profile.country),
     ]
 
@@ -202,8 +211,11 @@ class Profile extends DefaultCommand {
    * @param {Object} _config As configurações do servidor
    */
   edit (_args, _message, _config) {
+    // Tipo dos campos
+    const types = { date: [ 'birth', ], }
+
     // Recebe parâmetros tratados
-    const params = this.params(_config.lang, 'profile', 'edit', _args)
+    const params = this.params(_config.lang, 'profile', 'edit', _args, types)
 
     // Salva
     ProfileService.update(params.set, { id: this.authorId(_message), }, true)

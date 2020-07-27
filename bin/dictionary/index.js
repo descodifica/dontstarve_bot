@@ -9,6 +9,9 @@ class Dictionary {
     // As sessões do dicionário
     this.sessions = {}
 
+    // Os formatos de datas/horas
+    this.formatDates = {}
+
     // Importa sessões
     require('./de')
     require('./en')
@@ -26,6 +29,15 @@ class Dictionary {
    */
   add (_lang, _session) {
     this.sessions[_lang] = _session
+  }
+
+  /**
+   * @description Adiciona formato de data para um idioma
+   * @param {String} _lang O idioma
+   * @param {Object} _format O formato
+   */
+  dateFormat (_lang, _locale) {
+    this.formatDates[_lang] = _locale
   }
 
   /**
@@ -136,6 +148,25 @@ class Dictionary {
 
       return param
     })
+  }
+
+  /**
+   * @description Formata uma data para o inglês
+   * @param {String} _lang O idioma
+   * @param {String} _date A data em padrão do uduina
+   * @returns {String} A no formato do idioma
+   */
+  dateToEn (_lang, _date) {
+    // Formato da data no idioma
+    const format = this.formatDates[_lang]
+
+    // Separa a data pelo separador
+    const translateDate = _date.split(format.sep)
+
+    // Une no formato americano
+    return [
+      translateDate[format.year], translateDate[format.month], translateDate[format.day],
+    ].join('-')
   }
 }
 
