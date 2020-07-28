@@ -1,21 +1,11 @@
 // Mensagem embutida
 const { MessageEmbed, } = require('discord.js')
 
-// Percorre objetos
-const objectMap = require('object.map')
-
 // Classe padrão dos comandos
 class DefaultCommand {
-  constructor ({ props, } = {}) {
+  constructor () {
     // Recebe o nome do comando
     this.command = this.constructor.name.toLowerCase()
-
-    // Recebe propriedades
-    this.props = objectMap((props || {}), (i, k) => {
-      if (typeof i === 'object') return i
-
-      return { type: i, }
-    })
   }
 
   /**
@@ -130,16 +120,10 @@ class DefaultCommand {
 
   /**
    * @description Retorna os parâmetros formatados
-   * @param {String} _lang Idioma em que os parâmetros foram passados
-   * @param {String} _module Nome do módulo dos parâmetros
-   * @param {String} _method Nome do método dos parâmetros
    * @param {Array} _params Os parâmetros recebidos
    * @returns {Object} Os parâmetros formatados
    */
-  params (_lang, _module, _method, _params) {
-    // Traduz os parâmetros da lista
-    const paramsList = Dictionary.getMethodParams(_lang, _module, _method, _params)
-
+  params (_params) {
     // Onde ficarão os parâmetros formatados
     const params = { set: {}, }
 
@@ -155,36 +139,18 @@ class DefaultCommand {
     }
 
     // Une primeira (propriedade) e segunda (valor) posições
-    for (let c = 0, max = paramsList.length; c < max; c += 2) {
+    for (let c = 0, max = _params.length; c < max; c += 2) {
       // Nome da propriedade separada por ponto
-      const prop = paramsList[c].split('.')
+      const prop = _params[c].split('.')
 
       // Valor formatado da prorpiedade
-      const val = this.formatParam(prop[0], paramsList[c + 1], { lang: _lang, })
+      const val = _params[c + 1]
 
       // Adiciona valor
       params.set = { ...params.set, ...map(prop, val), }
     }
 
     return params
-  }
-
-  /**
-   * @description Formata um parâmetro
-   * @param {String} _prop Nome da proriedade
-   * @param {String} _val Valor da prorpiedade
-   * @param {Object} _params Parâmetros extras
-   * @returns {*} Valor formatado
-   */
-  formatParam (_prop, _val, _params = {}) {
-    // Se não consta na lista de propriedades, retorna original
-    if (!this.props[_prop]) return _val
-
-    // Formata de acordo com o tipo
-    switch (this.props[_prop].type) {
-      case 'Date': return Dictionary.dateToEn(_params.lang, _val)
-      default: return _val
-    }
   }
 }
 

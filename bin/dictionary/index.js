@@ -125,29 +125,28 @@ class Dictionary {
   }
 
   /**
-   * @description Recupera nome dos parâmetros de um método
+   * @description Recupera nome de um parâmetro de um método
    * @param {String} _lang O idioma
    * @param {String} _module O módulo do método
    * @param {String} _method O método passado pelo usuário
-   * @param {Array} _params Lista com todos os parâmetros
-   * @returns {Array} A lista de parâmetros com nome real
+   * @param {String} _params O parâmetro
+   * @returns {String} O parâmetro com nome real
    */
-  getMethodParams (_lang, _module, _method, _params) {
+  getMethodParam (_lang, _module, _method, _param) {
     // Recebe parâmetros da sessão do dicionário
     const dictionaryParams = this.sessions[_lang][_module].methods[_method].params
 
-    // Compara parâmetros informados com os traduzidos do dicioário
-    // Se forem iguais, retorna igual do dicionário
-    // Se não, retorna o informado
-    return _params.map(param => {
-      objectMap(dictionaryParams, (translate, real) => {
-        if (translate === param) {
-          param = real
-        }
-      })
+    let param
 
-      return param
+    // Compara parâmetro informado com os traduzidos do dicioário
+    // Se forem iguais, retorna igual do dicionário
+    objectMap(dictionaryParams, (translate, real) => {
+      if (translate !== _param) return
+
+      param = real
     })
+
+    return param
   }
 
   /**

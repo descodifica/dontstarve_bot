@@ -9,9 +9,19 @@ const Db = require('../Db')
 
 // Classe de entidade padrão
 class Default {
-  constructor () {
+  constructor ({ table, props, }) {
     // Recebe o nome da entidade
-    this.entity = this.constructor.name
+    this.entity = this.constructor.name.toLowerCase()
+
+    // Recebe nome da tabela
+    this.table = table
+
+    // Recebe propriedades
+    this.props = objectMap((props || {}), (i, k) => {
+      if (typeof i === 'object') return i
+
+      return { type: i, }
+    })
   }
 
   /**
@@ -43,10 +53,11 @@ class Default {
   /**
     * @description Cria um novo registro
     * @param {Object} _data Dados a serem gravados
+    * @param {Object} _serverConfig Configurações do servidor
     * @param {Boolean} _log Se deve imprimir o log
     * @returns {Object} O resultado
     */
-  create (_data, _log) {
+  create (_data, _serverConfig = {}, _log) {
     const columns = Object.keys(_data).join(', ')
     const values = Object.values(_data).map(i => typeof i === 'string' ? `"${i}"` : i).join(', ')
 
@@ -58,17 +69,19 @@ class Default {
     * @description Atualiza um registro
     * @param {Object} _data Dados a serem gravados
     * @param {Object} _where Condições para gravar
+    * @param {String} _method Nome do método que possui os registros
+    * @param {Object} _serverConfig Configurações do servidor
     * @param {Boolean} _log Se deve imprimir o log
     * @returns {Promise} Promessa resolvida
     */
-  update (_data, _where, _log) {
+  update (_data, _where, _method, _serverConfig = {}, _log) {
     // Se não tem dados, finaliza
     if (Object.keys(_data).length === 0) return Promise.resolve()
 
     const data = []
 
     // Monta treixo de atualização da SQL
-    objectMap(_data, (v, k) => {
+    objectMap(this.formatData(_data, _method, _serverConfig), (v, k) => {
       // Se valor for string, adiciona aspas
       if (typeof v === 'string') {
         v = `"${v}"`
@@ -82,6 +95,39 @@ class Default {
     return Db.query(
       `UPDATE ${this.table} SET ${data.join(', ')} WHERE ${jsonToSqlWhere(_where)}`, _log
     )
+  }
+
+  /**
+   * @description Formata os registros
+   * @param {String} _record Os registros a serem formatados
+   * @param {String} _method Nome do método que possui os registros
+   * @param {Object} _serverConfig Configurações do servidor
+   * @returns {Object} Registros formatados
+   */
+  formatData (_record, _method, _serverConfig = {}) {
+    const record = {}
+
+    // Percorre todos os registros
+    objectMap({ ..._record, }, (val, prop) => {
+      // Traduz nome da propriedade para o real
+      prop = Dictionary.getMethodParam(_serverConfig.lang, this.entity, _method, prop)
+
+      // Se não consta na lista de propriedades, seta original
+      if (!this.props[prop]) {
+        record[prop] = val
+
+        return
+      }
+
+      // Formata de acordo com o tipo
+      switch (this.props[prop].type) {
+        case 'Date': record[prop] = Dictionary.dateToEn(_serverConfig.lang, val)
+          break
+        default: record[prop] = val
+      }
+    })
+
+    return record
   }
 }
 

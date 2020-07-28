@@ -19,15 +19,6 @@ const DefaultCommand = require('./Default')
 
 // O comando de Perfil
 class Profile extends DefaultCommand {
-  constructor () {
-    // Passa tipos das propriedades
-    super({
-      props: {
-        birth: 'Date',
-      },
-    })
-  }
-
   /**
    * @description Visualiza um perfil
    * @param {Array} _args Os argumentos passados
@@ -214,14 +205,11 @@ class Profile extends DefaultCommand {
    * @param {Object} _config As configurações do servidor
    */
   async edit (_args, _message, _config) {
-    // Tipo dos campos
-    const types = { date: [ 'birth', ], }
-
     // Versões do jogo
     const versions = require('../versions')
 
     // Recebe parâmetros tratados
-    const params = this.params(_config.lang, 'profile', 'edit', _args, types)
+    const params = this.params(_args)
 
     // Parâmetros do perfil principal
     const mainParams = objectFilter(params.set, i => typeof i !== 'object')
@@ -238,14 +226,21 @@ class Profile extends DefaultCommand {
 
     const promises = []
 
+    // Condições a serem usadas
+    const where = { id: this.authorId(_message), }
+
     // Salva perfil principal e adiciona promessa em array
-    promises.push(ProfileService.update(mainParams, { id: this.authorId(_message), }))
+    promises.push(ProfileService.update(mainParams, where, 'edit', _config, true))
 
     // Salva perfil das experiencias e adiciona promessas em array
     versions.map(v => {
       if (!versionParams[v]) return
 
-      promises.push(ExperienceService.update(versionParams[v], { user: this.authorId(_message), }))
+      // Condições a serem usadas
+      const where = { user: this.authorId(_message), }
+
+      promises.push(
+        ExperienceService.update(versionParams[v], where, 'edit', _config))
     })
 
     // Se todas as promessas foram resolvidas

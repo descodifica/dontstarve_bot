@@ -117,4 +117,19 @@ global.Dictionary.add('ptbr', {
 
     },
   },
+  experience: {
+    methods: {
+      edit: {
+        params: {
+          version: 'versao',
+          have: 'possui',
+          platform: 'plataforma',
+          hours: 'horas',
+          main: 'main',
+          survived: 'sobreviveu',
+          level: 'nivel',
+        },
+      },
+    },
+  },
 })
