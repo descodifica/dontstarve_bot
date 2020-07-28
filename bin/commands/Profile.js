@@ -224,13 +224,23 @@ class Profile extends DefaultCommand {
       versionParams[v] = params.set[v]
     })
 
+    // Promessas
     const promises = []
+
+    // Erros
+    const errors = []
 
     // Condições a serem usadas
     const where = { id: this.authorId(_message), }
 
     // Salva perfil principal e adiciona promessa em array
-    promises.push(ProfileService.update(mainParams, where, 'edit', _config, true))
+    promises.push(
+      ProfileService.update(mainParams, where, 'edit', _config).catch(e => {
+        if (e) errors.push(e)
+
+        return Promise.reject(e)
+      })
+    )
 
     // Salva perfil das experiencias e adiciona promessas em array
     versions.map(v => {
@@ -240,7 +250,11 @@ class Profile extends DefaultCommand {
       const where = { user: this.authorId(_message), }
 
       promises.push(
-        ExperienceService.update(versionParams[v], where, 'edit', _config))
+        ExperienceService.update(versionParams[v], where, 'edit', _config).catch(e => {
+          if (e) errors.push(e)
+
+          return Promise.reject(e)
+        }))
     })
 
     // Se todas as promessas foram resolvidas
@@ -249,6 +263,8 @@ class Profile extends DefaultCommand {
         _message.reply(Dictionary.getMessage(_config.lang, 'profile', 'UPDATE'))
       })
       .catch(() => {
+        errors.map(e => _message.reply(e))
+
         _message.reply(Dictionary.getMessage(_config.lang, 'profile', 'UPDATE_ERROR'))
       })
   }

@@ -86,15 +86,21 @@ class Default {
       if (typeof v === 'string') {
         v = `"${v}"`
       }
+      // Se valor for indefinido, vira NULL
+      else if (v === undefined) {
+        v = null
+      }
 
       // Adiciona bem formatado ao array de registros
       data.push(`${k} = ${v}`)
     })
 
-    // Executa SQL de atualização e retorna o resultado
-    return Db.query(
-      `UPDATE ${this.table} SET ${data.join(', ')} WHERE ${jsonToSqlWhere(_where)}`, _log
-    )
+    // SQL de atualização
+    const sql = `UPDATE ${this.table} SET ${data.join(', ')} WHERE ${jsonToSqlWhere(_where)}`
+
+    // Executa SQL e retorna o resultado
+    return Db.query(sql, _log)
+      .catch(e => Promise.reject(this.treatMySqlError(e, _method, _serverConfig)))
   }
 
   /**
@@ -119,6 +125,13 @@ class Default {
         return
       }
 
+      // Se for indefinido, seta string vazia
+      if (val === undefined) {
+        record[prop] = ''
+
+        return
+      }
+
       // Formata de acordo com o tipo
       switch (this.props[prop].type) {
         case 'Date': record[prop] = Dictionary.dateToEn(_serverConfig.lang, val)
@@ -128,6 +141,90 @@ class Default {
     })
 
     return record
+  }
+
+  /**
+   * @description Trata um erro do MySql e retorna em padrão humano
+   * @param {Error} _error O erro
+   * @param {String} _error O método que invocou o erro
+   * @param {Object} _serverConfig Configurações do servidor
+   */
+  treatMySqlError (_error, _method, _serverConfig) {
+    // Torna o erro um array
+    const error = _error.toString().split(' ')
+
+    // Nome da propriedade que deu erro
+    const prop = error[error.indexOf('column') + 1].slice(1, -1)
+
+    // Nome traduzido da propriedade que deu erro
+    const translateProp = Dictionary.getTranslateMethodParam(
+      _serverConfig.lang, this.entity, _method, prop
+    )
+
+    // Tipo da propriedade que deu erro
+    const type = (this.props[prop] || {}).type || this.props[prop] || 'String'
+
+    // Tipo do erro
+    const typeError = this.getMySqlErrorType(_error)
+
+    // Retorna o erro adequado
+
+    if (type === 'Option' && typeError === 'WARN_DATA_TRUNCATED') {
+      return Dictionary.getMessage(_serverConfig.lang, 'general', 'INVALID_OPTION', {
+        prop: translateProp,
+        options: this.props[prop].values.slice(0, -1).join(', '),
+        lastOption: this.props[prop].values.slice(-1).toString(),
+      })
+    }
+
+    if (typeError === 'INCORRECT_DATE') {
+      return Dictionary.getMessage(_serverConfig.lang, 'general', 'INVALID_DATE', {
+        prop: translateProp,
+      })
+    }
+
+    if (typeError === 'R_DATA_TOO_LONG') {
+      return Dictionary.getMessage(_serverConfig.lang, 'general', 'LONG_TEXT', {
+        prop: translateProp,
+      })
+    }
+
+    if (typeError === 'INVALID_INTEGER') {
+      return Dictionary.getMessage(_serverConfig.lang, 'general', 'INVALID_INTEGER', {
+        prop: translateProp,
+      })
+    }
+  }
+
+  /**
+   * @description Retorna o tipo de erro do MySql
+   * @param {Error} _error O erro
+   * @returns {String} O erro adequaddo
+   */
+  getMySqlErrorType (_error) {
+    const error = _error.sqlMessage
+    const errorCode = _error.code
+    console.log(error)
+
+    if (errorCode === 'WARN_DATA_TRUNCATED') {
+      return 'WARN_DATA_TRUNCATED'
+    }
+
+    if (error.indexOf('Incorrect date value:') > -1) {
+      return 'INCORRECT_DATE'
+    }
+
+    if (errorCode === 'R_DATA_TOO_LONG') {
+      return 'R_DATA_TOO_LONG'
+    }
+
+    if (errorCode === 'R_DATA_TOO_LONG:') {
+      return 'R_DATA_TOO_LONG'
+    }
+
+    if (error.indexOf('Incorrect integer value') > -1) {
+      return 'INVALID_INTEGER'
+    }
   }
 }
 

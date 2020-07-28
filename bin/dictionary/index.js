@@ -150,6 +150,19 @@ class Dictionary {
   }
 
   /**
+   * @description Recupera nome traduzido de um parâmetro de um método
+   * @param {String} _lang O idioma
+   * @param {String} _module O módulo do método
+   * @param {String} _method O método desejado
+   * @param {String} _params O parâmetro
+   * @returns {String} O parâmetro com nome traduzido
+   */
+  getTranslateMethodParam (_lang, _module, _method, _param) {
+    // Retorna
+    return this.sessions[_lang][_module].methods[_method].params[_param]
+  }
+
+  /**
    * @description Formata uma data para o inglês
    * @param {String} _lang O idioma
    * @param {String} _date A data em padrão do uduina

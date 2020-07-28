@@ -43,6 +43,11 @@ global.Dictionary.add('ptbr', {
       YEARS: 'anos',
       YES: 'Sim',
       NO: 'Não',
+      INVALID_OPTION: ({ prop, options, lastOption, }) => 'Valor inválido para a propriedade ' +
+        `${prop}. Valores aceitos são ${options} e ${lastOption}`,
+      INVALID_DATE: ({ prop, }) => `Data inválida para a propriedade ${prop}`,
+      LONG_TEXT: ({ prop, }) => `Valor muito longo para a propriedade ${prop}`,
+      INVALID_INTEGER: ({ prop, }) => `Propriedade ${prop} deve ser um valor inteiro`,
     },
   },
   help: {
@@ -85,7 +90,7 @@ global.Dictionary.add('ptbr', {
       'editar para saber editar ele!',
       CREATE_ERROR: 'ocorreu um erro ao criar o seu perfil',
       UPDATE: 'perfil atualizado',
-      UPDATE_ERROR: 'ocorreu um erro ao atualizar uma ou mais informações do perfil',
+      UPDATE_ERROR: 'ocorreram problemas ao atualizar uma ou mais informações do perfil',
       NO_PROFILE: ({ user, }) => `***${user}*** não possui um perfil ainda!`,
       PROFILE_NAME: 'Nome',
       PROFILE_NICK: 'Nick',
