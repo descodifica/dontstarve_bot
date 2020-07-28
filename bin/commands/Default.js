@@ -143,12 +143,27 @@ class DefaultCommand {
     // Onde ficarão os parâmetros formatados
     const params = { set: {}, }
 
+    // Função para criar objeto com o valor separado por pontos
+    const map = (_prop, _val, _obj = {}) => {
+      const props = [ ..._prop, ]
+      const prop = props.shift()
+      const obj = { ..._obj, }
+
+      obj[prop] = props.length === 0 ? _val : map(props, _val, obj)
+
+      return obj
+    }
+
     // Une primeira (propriedade) e segunda (valor) posições
     for (let c = 0, max = paramsList.length; c < max; c += 2) {
-      const prop = paramsList[c]
-      const val = paramsList[c + 1]
+      // Nome da propriedade separada por ponto
+      const prop = paramsList[c].split('.')
 
-      params.set[prop] = this.formatParam(prop, val, { lang: _lang, })
+      // Valor formatado da prorpiedade
+      const val = this.formatParam(prop[0], paramsList[c + 1], { lang: _lang, })
+
+      // Adiciona valor
+      params.set = { ...params.set, ...map(prop, val), }
     }
 
     return params

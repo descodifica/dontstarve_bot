@@ -85,7 +85,7 @@ global.Dictionary.add('ptbr', {
       'editar para saber editar ele!',
       CREATE_ERROR: 'ocorreu um erro ao criar o seu perfil',
       UPDATE: 'perfil atualizado',
-      UPDATE_ERROR: 'ocorreu um erro ao atualizar o perfil',
+      UPDATE_ERROR: 'ocorreu um erro ao atualizar uma ou mais informações do perfil',
       NO_PROFILE: ({ user, }) => `***${user}*** não possui um perfil ainda!`,
       PROFILE_NAME: 'Nome',
       PROFILE_NICK: 'Nick',

@@ -1,0 +1,1 @@
+module.exports = [ 'ds', 'sw', 'ham', 'dst', ]

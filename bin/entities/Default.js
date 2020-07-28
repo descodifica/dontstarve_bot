@@ -59,9 +59,12 @@ class Default {
     * @param {Object} _data Dados a serem gravados
     * @param {Object} _where Condições para gravar
     * @param {Boolean} _log Se deve imprimir o log
-    * @returns {Object} O resultado
+    * @returns {Promise} Promessa resolvida
     */
   update (_data, _where, _log) {
+    // Se não tem dados, finaliza
+    if (Object.keys(_data).length === 0) return Promise.resolve()
+
     const data = []
 
     // Monta treixo de atualização da SQL

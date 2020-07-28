@@ -3,6 +3,9 @@
 // Percorre todos os campos de um json
 const objectMap = require('object.map')
 
+// Filtra objetos
+const objectFilter = require('object-filter')
+
 // Calcula idade
 const { AgeFromDate, } = require('age-calculator')
 
@@ -210,15 +213,43 @@ class Profile extends DefaultCommand {
    * @param {Object} _message O objeto da mensagem
    * @param {Object} _config As configurações do servidor
    */
-  edit (_args, _message, _config) {
+  async edit (_args, _message, _config) {
     // Tipo dos campos
     const types = { date: [ 'birth', ], }
+
+    // Versões do jogo
+    const versions = require('../versions')
 
     // Recebe parâmetros tratados
     const params = this.params(_config.lang, 'profile', 'edit', _args, types)
 
-    // Salva
-    ProfileService.update(params.set, { id: this.authorId(_message), }, true)
+    // Parâmetros do perfil principal
+    const mainParams = objectFilter(params.set, i => typeof i !== 'object')
+
+    // Parâmetros das experiencias das versões do jogo
+    const versionParams = {}
+
+    // Valores das experiencias das versões do jogo
+    versions.map(v => {
+      if (!params.set[v]) return
+
+      versionParams[v] = params.set[v]
+    })
+
+    const promises = []
+
+    // Salva perfil principal e adiciona promessa em array
+    promises.push(ProfileService.update(mainParams, { id: this.authorId(_message), }))
+
+    // Salva perfil das experiencias e adiciona promessas em array
+    versions.map(v => {
+      if (!versionParams[v]) return
+
+      promises.push(ExperienceService.update(versionParams[v], { user: this.authorId(_message), }))
+    })
+
+    // Se todas as promessas foram resolvidas
+    Promise.all(promises)
       .then(() => {
         _message.reply(Dictionary.getMessage(_config.lang, 'profile', 'UPDATE'))
       })

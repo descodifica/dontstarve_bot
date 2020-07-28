@@ -112,7 +112,7 @@ class DontStarve {
 
   /**
    * @description Ao inciar
-  */
+   */
   onReady () {
     // Quando iniciar
     this.client.on('ready', () => {
@@ -122,7 +122,7 @@ class DontStarve {
 
   /**
    * @description Ao receber uma mensagem
-  */
+   */
   onMessage () {
     // Quando receber uma mensagem
     this.client.on('message', async message => {
@@ -183,6 +183,12 @@ class DontStarve {
     })
   }
 
+  /**
+   * @description Informa que um método não existe
+   * @params {Object} A mensagm
+   * @params {String} _originalMethod Nome original do método pedido
+   * @params {Object} _serverConfig Configurações do servidor
+   */
   methodNotExists (_message, _originalMethod, _serverConfig) {
     _message.reply(
       Dictionary.getMessage(
