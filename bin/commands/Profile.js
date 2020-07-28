@@ -99,28 +99,30 @@ class Profile extends DefaultCommand {
       objectMap(profile.experiences[k], (v, prop) => {
         switch (prop) {
           case 'level': {
+            let id
+
             switch (v) {
-              case 1: v = 'ABDUCTED'
+              case '9': id = 'ABDUCTED'
                 break
-              case 2: v = 'HUNGRY'
+              case '8': id = 'HUNGRY'
                 break
-              case 3: v = 'EXPLORER'
+              case '7': id = 'EXPLORER'
                 break
-              case 4: v = 'SURVIVOR'
+              case '6': id = 'SURVIVOR'
                 break
-              case 5: v = 'BACKPACKER'
+              case '5': id = 'BACKPACKER'
                 break
-              case 6: v = 'CONSTANTIAN'
+              case '4': id = 'CONSTANTIAN'
                 break
-              case 7: v = 'CHARLIES_FRIEND'
+              case '3': id = 'CHARLIES_FRIEND'
                 break
-              case 8: v = 'KING_OF_CONSTANT'
+              case '2': id = 'KING_OF_CONSTANT'
                 break
-              case 9: v = 'ALLY_OF_THEY_TEXT'
+              case '1': id = 'ALLY_OF_THEM'
             }
 
-            profile.experiences[k][prop] = Dictionary.getMessage(
-              _config.lang, 'profile', v + '_TEXT'
+            profile.experiences[k][prop] = `[ ${v} ] ` + Dictionary.getMessage(
+              _config.lang, 'profile', id + '_TEXT'
             )
           }
             break

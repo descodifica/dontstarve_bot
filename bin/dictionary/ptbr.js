@@ -102,11 +102,11 @@ global.Dictionary.add('ptbr', {
       PROFILE_PLATFORM: 'Plataforma',
       PROFILE_HOURS_PLAYED: 'Horas Jogadas',
       PROFILE_SURVIVED: 'Sobreviveu por',
-      PROFILE_LEVEL: 'Nível',
+      PROFILE_LEVEL: 'Rank',
       PROFILE_PROFILE: ({ name, }) => 'Perfil de ' + name,
       DAYS: 'dias',
       ABDUCTED_TEXT: 'Abduzido - Acabou de começar',
-      HUNGRY_TEXT: 'Faminto - Sobreviveu por menos de 1 ano e/ou a inda sabe pouco',
+      HUNGRY_TEXT: 'Faminto - Sobreviveu por menos de 1 ano e/ou ainda sabe pouco',
       EXPLORER_TEXT: 'Explorador - Já sobreviveu por pelo menos 1 ano... mas não conhece muito ' +
         'do jogo',
       SURVIVOR_TEXT: 'Sobrevivente - Já sobreviveu por pelo menos 1 ano e tem um conhecimento ' +
@@ -119,7 +119,7 @@ global.Dictionary.add('ptbr', {
         'conhecimento mediano do jogo',
       KING_OF_CONSTANT_TEXT: 'Rei do Constant- Já sobreviveu por pelo menos 7 anos e tem um ' +
         'conhecimento avançado do jogo',
-      ALLY_OF_THEY_TEXT: 'Aliado de "Eles" - Já sobreviveu por pelo menos 10 anos e tem um ' +
+      ALLY_OF_THEM_TEXT: 'Aliado de "Eles" - Já sobreviveu por pelo menos 10 anos e tem um ' +
         'conhecimento total ou quase total do jogo',
 
     },
@@ -134,7 +134,7 @@ global.Dictionary.add('ptbr', {
           hours: 'horas',
           main: 'main',
           survived: 'sobreviveu',
-          level: 'nivel',
+          level: 'rank',
         },
       },
     },
