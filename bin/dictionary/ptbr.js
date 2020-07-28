@@ -48,6 +48,8 @@ global.Dictionary.add('ptbr', {
       INVALID_DATE: ({ prop, }) => `Data inválida para a propriedade ${prop}`,
       LONG_TEXT: ({ prop, }) => `Valor muito longo para a propriedade ${prop}`,
       INVALID_INTEGER: ({ prop, }) => `Propriedade ${prop} deve ser um valor inteiro`,
+      INVALID_RELATION: ({ prop, options, lastOption, }) => 'Valor inválido para a propriedade ' +
+      `${prop}. Valores aceitos são ${options} e ${lastOption}`,
     },
   },
   help: {

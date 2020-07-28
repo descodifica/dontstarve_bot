@@ -25,6 +25,19 @@ class Default {
   }
 
   /**
+    * @description Retorna todos os registros
+    * @param {Boolean} _log Se deve imprimir o log
+    * @returns {Object} O resultado
+    */
+  async list (_log) {
+    const result = await Db.query(
+      `SELECT * FROM ${this.table}`, _log
+    )
+
+    return result
+  }
+
+  /**
     * @description Retorna um registro dado um Id
     * @param {String} _id Id do registro a ser recuperado
     * @param {Boolean} _log Se deve imprimir o log
@@ -74,14 +87,14 @@ class Default {
     * @param {Boolean} _log Se deve imprimir o log
     * @returns {Promise} Promessa resolvida
     */
-  update (_data, _where, _method, _serverConfig = {}, _log) {
+  async update (_data, _where, _method, _serverConfig = {}, _log) {
     // Se não tem dados, finaliza
     if (Object.keys(_data).length === 0) return Promise.resolve()
 
     const data = []
 
     // Monta treixo de atualização da SQL
-    objectMap(this.formatData(_data, _method, _serverConfig), (v, k) => {
+    objectMap(await this.formatData(_data, _method, _serverConfig), (v, k) => {
       // Se valor for string, adiciona aspas
       if (typeof v === 'string') {
         v = `"${v}"`
@@ -100,7 +113,7 @@ class Default {
 
     // Executa SQL e retorna o resultado
     return Db.query(sql, _log)
-      .catch(e => Promise.reject(this.treatMySqlError(e, _method, _serverConfig)))
+      .catch(async e => Promise.reject(await this.treatMySqlError(e, _method, _serverConfig)))
   }
 
   /**
@@ -112,6 +125,7 @@ class Default {
    */
   formatData (_record, _method, _serverConfig = {}) {
     const record = {}
+    const promises = []
 
     // Percorre todos os registros
     objectMap({ ..._record, }, (val, prop) => {
@@ -136,11 +150,21 @@ class Default {
       switch (this.props[prop].type) {
         case 'Date': record[prop] = Dictionary.dateToEn(_serverConfig.lang, val)
           break
+        case 'Relation': {
+          promises.push(
+            require('./Character').getBy({ name: val, }).then(r => {
+              record[prop] = r.length > 0 ? r[0].id : -1
+            })
+          )
+        }
+          break
         default: record[prop] = val
       }
     })
 
-    return record
+    return Promise.all(promises).then(() => {
+      return record
+    })
   }
 
   /**
@@ -149,12 +173,9 @@ class Default {
    * @param {String} _error O método que invocou o erro
    * @param {Object} _serverConfig Configurações do servidor
    */
-  treatMySqlError (_error, _method, _serverConfig) {
-    // Torna o erro um array
-    const error = _error.toString().split(' ')
-
-    // Nome da propriedade que deu erro
-    const prop = error[error.indexOf('column') + 1].slice(1, -1)
+  async treatMySqlError (_error, _method, _serverConfig) {
+    // Nome da propriedade que deu erro e o erro
+    const { column: prop, type: typeError, } = this.getMySqlErrorType(_error)
 
     // Nome traduzido da propriedade que deu erro
     const translateProp = Dictionary.getTranslateMethodParam(
@@ -163,9 +184,6 @@ class Default {
 
     // Tipo da propriedade que deu erro
     const type = (this.props[prop] || {}).type || this.props[prop] || 'String'
-
-    // Tipo do erro
-    const typeError = this.getMySqlErrorType(_error)
 
     // Retorna o erro adequado
 
@@ -194,36 +212,70 @@ class Default {
         prop: translateProp,
       })
     }
+
+    if (typeError === 'INVALID_RELATION') {
+      const Relation = require(`./${this.props[prop].entity}`)
+      const options = (await Relation.list()).map(i => i.name)
+
+      // console.log(options)
+
+      return Dictionary.getMessage(_serverConfig.lang, 'general', 'INVALID_RELATION', {
+        prop: translateProp,
+        options: options.slice(0, -1).join(', '),
+        lastOption: options.slice(-1).toString(),
+      })
+    }
   }
 
   /**
-   * @description Retorna o tipo de erro do MySql
+   * @description Retorna o tipo de erro do MySql e o nome da coluna que deu erro
    * @param {Error} _error O erro
    * @returns {String} O erro adequaddo
    */
   getMySqlErrorType (_error) {
     const error = _error.sqlMessage
     const errorCode = _error.code
-    console.log(error)
 
     if (errorCode === 'WARN_DATA_TRUNCATED') {
-      return 'WARN_DATA_TRUNCATED'
+      return {
+        type: 'WARN_DATA_TRUNCATED',
+        column: error.split(' ')[error.split(' ').indexOf('column') + 1].slice(1, -1),
+      }
     }
 
     if (error.indexOf('Incorrect date value:') > -1) {
-      return 'INCORRECT_DATE'
+      return {
+        type: 'INCORRECT_DATE',
+        column: error.split(' ')[error.split(' ').indexOf('column') + 1].slice(1, -1),
+      }
     }
 
     if (errorCode === 'R_DATA_TOO_LONG') {
-      return 'R_DATA_TOO_LONG'
+      return {
+        type: 'R_DATA_TOO_LONG',
+        column: error.split(' ')[error.split(' ').indexOf('column') + 1].slice(1, -1),
+      }
     }
 
-    if (errorCode === 'R_DATA_TOO_LONG:') {
-      return 'R_DATA_TOO_LONG'
+    if (errorCode === 'R_DATA_TOO_LONG') {
+      return {
+        type: 'R_DATA_TOO_LONG',
+        column: error.split(' ')[error.split(' ').indexOf('column') + 1].slice(1, -1),
+      }
     }
 
     if (error.indexOf('Incorrect integer value') > -1) {
-      return 'INVALID_INTEGER'
+      return {
+        type: 'INVALID_INTEGER',
+        column: error.split(' ')[error.split(' ').indexOf('column') + 1].slice(1, -1),
+      }
+    }
+
+    if (errorCode === 'ER_NO_REFERENCED_ROW_2') {
+      return {
+        type: 'INVALID_RELATION',
+        column: error.split('(')[2].split(')')[0].slice(1, -1),
+      }
     }
   }
 }

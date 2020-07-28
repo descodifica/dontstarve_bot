@@ -247,7 +247,7 @@ class Profile extends DefaultCommand {
       if (!versionParams[v]) return
 
       // Condições a serem usadas
-      const where = { user: this.authorId(_message), }
+      const where = { user: this.authorId(_message), version: v, }
 
       promises.push(
         ExperienceService.update(versionParams[v], where, 'edit', _config).catch(e => {
