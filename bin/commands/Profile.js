@@ -57,14 +57,14 @@ class Profile extends DefaultCommand {
       if (!ifMention) {
         await ProfileService.create({ id: profileId, })
 
-        _message.reply(
+        _message.channel.send(
           Dictionary.getMessage(_config.lang, 'profile', 'CREATE', { prefix: _config.prefix, })
         )
 
         profile = await ProfileService.get(profileId)
       }
       else {
-        _message.reply(
+        _message.channel.send(
           Dictionary.getMessage(_config.lang, 'profile', 'NO_PROFILE', { user: profileName, })
         )
 
@@ -197,7 +197,7 @@ class Profile extends DefaultCommand {
     }, _message)
 
     // Respode
-    _message.reply(embed)
+    _message.channel.send(embed)
   }
 
   /**
@@ -262,12 +262,12 @@ class Profile extends DefaultCommand {
     // Se todas as promessas foram resolvidas
     Promise.all(promises)
       .then(() => {
-        _message.reply(Dictionary.getMessage(_config.lang, 'profile', 'UPDATE'))
+        _message.channel.send(Dictionary.getMessage(_config.lang, 'profile', 'UPDATE'))
       })
       .catch(() => {
-        errors.map(e => _message.reply(e))
+        errors.map(e => _message.channel.send(e))
 
-        _message.reply(Dictionary.getMessage(_config.lang, 'profile', 'UPDATE_ERROR'))
+        _message.channel.send(Dictionary.getMessage(_config.lang, 'profile', 'UPDATE_ERROR'))
       })
   }
 
