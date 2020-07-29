@@ -10,9 +10,9 @@ const objectFilter = require('object-filter')
 const { AgeFromDate, } = require('age-calculator')
 
 // Serviços
-const ProfileService = require('../entities/Profile')
-const ExperienceService = require('../entities/Experience')
-const CharacterService = require('../entities/Character')
+const ProfileService = require('../services/Profile')
+const ExperienceService = require('../services/Experience')
+const CharacterService = require('../services/Character')
 
 // Importa comando padrão
 const DefaultCommand = require('./Default')
