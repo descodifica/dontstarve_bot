@@ -29,6 +29,21 @@ global.Dictionary.add('ptbr', {
       UPDATE_LANGUAGE_ERROR: 'ocorreu um problema ao mudar o idioma',
     },
   },
+  experience: {
+    methods: {
+      edit: {
+        params: {
+          version: 'versao',
+          have: 'possui',
+          platform: 'plataforma',
+          hours: 'horas',
+          main: 'main',
+          survived: 'sobreviveu',
+          level: 'rank',
+        },
+      },
+    },
+  },
   general: {
     messages: {
       COMMAND_NOT_FOUND: ({ command, }) => `comando "${command}" não existe`,
@@ -218,21 +233,6 @@ global.Dictionary.add('ptbr', {
       ALLY_OF_THEM_TEXT: 'Aliado de "Eles" - Já sobreviveu por pelo menos 10 anos e tem um ' +
         'conhecimento total ou quase total do jogo',
 
-    },
-  },
-  experience: {
-    methods: {
-      edit: {
-        params: {
-          version: 'versao',
-          have: 'possui',
-          platform: 'plataforma',
-          hours: 'horas',
-          main: 'main',
-          survived: 'sobreviveu',
-          level: 'rank',
-        },
-      },
     },
   },
 })
