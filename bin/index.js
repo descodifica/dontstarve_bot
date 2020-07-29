@@ -1,3 +1,6 @@
+// Importa pacote de limpesa do terminal
+const clear = require('clear')
+
 // Importa dicionário
 require('./Dictionary')
 
@@ -17,6 +20,12 @@ const { token, prefix, } = require('./config')
 class DontStarve {
   // Ao criar o objeto
   constructor () {
+    // Limpa terminal
+    clear()
+
+    // Informa inicio
+    console.log('Starting...')
+
     // Declara conexão com o cliente
     this.client = new Discord.Client()
 
@@ -62,16 +71,48 @@ class DontStarve {
    * @returns {Array} Array contendo todos os argumentos
    */
   getArgs (_message) {
-    return _message.content
+    // Recebe argumentos
+    let args = _message.content
+
+    // Pelo que trocar espaço dentro das aspas duplas
+    const signal = '|_|'
+
+    // Troca espaços entre aspas simples e duplas por |_|
+    args = this.parserQuoteArgs(args, '\'', signal)
+    args = this.parserQuoteArgs(args, '"', signal)
+
+    return args
       .slice(prefix.length) // Remove o prefixo
       .split(' ') // Separa pelo espaço
       .filter(i => i.trim() !== '') // Remove argumento em branco (espaço extra no comando)
-      .map(i => i.toLowerCase()) // Converte para minusculo
+      .map(i => i.split(signal).join(' ')) // Volta espaço das aspas
+  }
+
+  /**
+   * @description Retorna os argumentos com os espaços das aspas trocados
+   * @param {Array} _args Os argumentos
+   * @param {String} _quote As aspas usadas
+   * @param {String} _signal O que por no lugar do espaço
+   * @returns {Array} os argumentos com os espaços das aspas trocados
+   */
+  parserQuoteArgs (_args, _quote, _signal) {
+    // Separa pelas aspas
+    const args = _args.split(_quote)
+
+    // Percorre todas as posições, começando pela primeira e pulando de 2 em em dois
+    // Posição par é sempre com aspas
+    for (let c = 1, max = args.length; c < max; c += 2) {
+      // Troca espaço
+      args[c] = args[c].split(' ').join(_signal)
+    }
+
+    // Une em string pelas aspas e retorna
+    return args.join('')
   }
 
   /**
    * @description Ao inciar
-  */
+   */
   onReady () {
     // Quando iniciar
     this.client.on('ready', () => {
@@ -81,7 +122,7 @@ class DontStarve {
 
   /**
    * @description Ao receber uma mensagem
-  */
+   */
   onMessage () {
     // Quando receber uma mensagem
     this.client.on('message', async message => {
@@ -102,7 +143,7 @@ class DontStarve {
 
       // Se não possui o comando, informa e finaliza
       if (!Commands[command]) {
-        message.reply(
+        message.channel.send(
           Dictionary.getMessage(
             serverConfig.lang, 'general', 'COMMAND_NOT_FOUND', { command: originalCommand, }
           )
@@ -126,11 +167,7 @@ class DontStarve {
       if (!method) {
         // Se não tem método de redirecionar inválido, informa e finaliza
         if (!Commands[command].invalidRedir) {
-          message.reply(
-            Dictionary.getMessage(
-              serverConfig.lang, 'general', 'METHOD_NOT_EXISTS', { method: originalMethod, }
-            )
-          )
+          this.methodNotExists(message, originalMethod, serverConfig)
 
           return
         }
@@ -145,7 +182,21 @@ class DontStarve {
       Commands[command].exec(method || 'main', args, message, serverConfig)
     })
   }
+
+  /**
+   * @description Informa que um método não existe
+   * @params {Object} A mensagm
+   * @params {String} _originalMethod Nome original do método pedido
+   * @params {Object} _serverConfig Configurações do servidor
+   */
+  methodNotExists (_message, _originalMethod, _serverConfig) {
+    _message.channel.send(
+      Dictionary.getMessage(
+        _serverConfig.lang, 'general', 'METHOD_NOT_EXISTS', { method: _originalMethod, }
+      )
+    )
+  }
 }
 
 // Cria o objeto do bot
-new DontStarve()
+global.Bot = new DontStarve()

@@ -21,7 +21,7 @@ class Config extends DefaultCommand {
 
     // Se idioma passado for inválido, informa e finalzia
     if (langs.indexOf(lang) === -1) {
-      _message.reply(Dictionary.getMessage(_config.lang, 'config', 'INVALID_LANGUAGE', {
+      _message.channel.send(Dictionary.getMessage(_config.lang, 'config', 'INVALID_LANGUAGE', {
         lang, firstLangs: langs.slice(0, -1).join(', '), lastLang: langs.reverse()[0],
       }))
 
@@ -31,11 +31,11 @@ class Config extends DefaultCommand {
     // Configura
     this._config('lang', _args[0], _message, _config)
       .then(() => {
-        _message.reply(Dictionary.getMessage(_args[0], 'config', 'UPDATED_LANGUAGE'))
+        _message.channel.send(Dictionary.getMessage(_args[0], 'config', 'UPDATED_LANGUAGE'))
       })
       .catch((e) => {
-        _message.reply(
-          _message.reply(Dictionary.getMessage(_config.lang, 'config', 'UPDATE_LANGUAGE_ERROR'))
+        _message.channel.send(
+          _message.channel.send(Dictionary.getMessage(_config.lang, 'config', 'UPDATE_LANGUAGE_ERROR'))
         )
       })
   }
@@ -50,7 +50,7 @@ class Config extends DefaultCommand {
   _config (_k, _v, _message, _config) {
     // Impede uso se não for por usuário do servidor
     if (!this.authorOwnerServer(_message)) {
-      _message.reply(Dictionary.getMessage(_config.lang, 'general', 'OWNER_CONTROL_ONLY'))
+      _message.channel.send(Dictionary.getMessage(_config.lang, 'general', 'OWNER_CONTROL_ONLY'))
 
       return false
     }

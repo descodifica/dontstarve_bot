@@ -22,6 +22,10 @@
         {
             "name": "feature/new_translate",
             "base": "develop"
+        },
+        {
+            "name": "feature/profile",
+            "base": "develop"
         }
     ]
 }

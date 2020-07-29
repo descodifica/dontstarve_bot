@@ -1,21 +1,11 @@
-// Idiomas
-const langs = require('../config').langs
-
 // Mensagem embutida
 const { MessageEmbed, } = require('discord.js')
 
 // Classe padrão dos comandos
 class DefaultCommand {
-  constructor ({ methods, resume, } = {}) {
+  constructor () {
     // Recebe o nome do comando
     this.command = this.constructor.name.toLowerCase()
-
-    // Se não passou métodos, adiciona padrão com todos os idiomas
-    if (!methods) {
-      methods = {}
-
-      langs.map(i => methods[i] = {})
-    }
   }
 
   /**
@@ -25,7 +15,7 @@ class DefaultCommand {
    * @param {Object} _config As configurações do servidor
    */
   main (_args, _message, _config) {
-    _message.reply(Dictionary.getMessage(_config.lang, 'general', 'COMMAND_METHOD_REQUIRED'))
+    _message.channel.send(Dictionary.getMessage(_config.lang, 'general', 'COMMAND_METHOD_REQUIRED'))
   }
 
   /**
@@ -126,6 +116,41 @@ class DefaultCommand {
     }
 
     return embed
+  }
+
+  /**
+   * @description Retorna os parâmetros formatados
+   * @param {Array} _params Os parâmetros recebidos
+   * @returns {Object} Os parâmetros formatados
+   */
+  params (_params) {
+    // Onde ficarão os parâmetros formatados
+    const params = { set: {}, }
+
+    // Função para criar objeto com o valor separado por pontos
+    const map = (_prop, _val, _obj = {}) => {
+      const props = [ ..._prop, ]
+      const prop = props.shift()
+      const obj = { ..._obj, }
+
+      obj[prop] = props.length === 0 ? _val : map(props, _val, obj)
+
+      return obj
+    }
+
+    // Une primeira (propriedade) e segunda (valor) posições
+    for (let c = 0, max = _params.length; c < max; c += 2) {
+      // Nome da propriedade separada por ponto
+      const prop = _params[c].split('.')
+
+      // Valor formatado da prorpiedade
+      const val = _params[c + 1]
+
+      // Adiciona valor
+      params.set = { ...params.set, ...map(prop, val), }
+    }
+
+    return params
   }
 }
 

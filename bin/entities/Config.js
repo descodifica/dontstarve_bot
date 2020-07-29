@@ -3,9 +3,7 @@ const DefaultEntity = require('./Default')
 // Entidade de configurações
 class Config extends DefaultEntity {
   constructor () {
-    super()
-
-    this.table = 'configs'
+    super({ table: 'configs', })
   }
 }
 

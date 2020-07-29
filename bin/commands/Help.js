@@ -39,7 +39,7 @@ class Help extends DefaultCommand {
     )
 
     // Responde
-    _message.reply(msg.join('\n'))
+    _message.channel.send(msg.join('\n'))
   }
 
   /**
@@ -66,7 +66,7 @@ class Help extends DefaultCommand {
 
     // Se o comando não existe, informa e finaliza
     if (!commandInfo) {
-      _message.reply(Dictionary.getMessage(
+      _message.channel.send(Dictionary.getMessage(
         _config.lang, 'help', 'COMMAND_NOT_FOUND', { command: originalCommand, prefix, }
       ))
 
@@ -74,7 +74,7 @@ class Help extends DefaultCommand {
     }
 
     // Mensagem a ser exibida
-    let msg = []
+    let msg = [ [], ]
 
     // Método original
     const originalMethod = _args.shift()
@@ -89,7 +89,7 @@ class Help extends DefaultCommand {
 
       // Se não achou o método, informa e finaliza
       if (!method) {
-        _message.reply(Dictionary.getMessage(
+        _message.channel.send(Dictionary.getMessage(
           _config.lang, 'help', 'METHOD_NOT_FOUND', { method: originalMethod, }
         ))
 
@@ -97,7 +97,7 @@ class Help extends DefaultCommand {
       }
 
       // Texto padrão
-      msg.push(
+      msg[0].push(
         Dictionary.getMessage(
           _config.lang, 'help', 'VIEW_MORE_INFO', {
             prefix,
@@ -107,7 +107,7 @@ class Help extends DefaultCommand {
         ) + '\n'
       )
 
-      msg.push(`${method.resume}\n`)
+      msg[0].push(`${method.resume}\n`)
 
       // Se tem doc, adiciona ela
       if (method.doc) {
@@ -118,25 +118,25 @@ class Help extends DefaultCommand {
         msg = msg.concat(method.doc)
       }
       else {
-        msg.push(Dictionary.getMessage(_config.lang, 'help', 'NO_INFO_AVAILABLE'))
+        msg[0].push(Dictionary.getMessage(_config.lang, 'help', 'NO_INFO_AVAILABLE'))
       }
     }
     else {
       // Mensagem inicial
-      msg.push(this._initialMessage(_config, 'METHODS'))
+      msg[0].push(this._initialMessage(_config, 'METHODS'))
 
       objectMap(commandInfo.methods, (data, method) => {
-        msg.push(`> ${prefix}${originalCommand} ${data.name} - ${data.resume}`)
+        msg[0].push(`> ${prefix}${originalCommand} ${data.name} - ${data.resume}`)
       })
 
       // Entra com mensagem de detalhamento
-      msg.push(
+      msg[0].push(
         this._finalMessage(_config, 'METHOD', prefix + translateHelp + ' ' + originalCommand)
       )
     }
 
     // Responde
-    _message.reply(msg.join('\n'))
+    msg.map(m => _message.channel.send(m.join('\n')))
   }
 
   /**
