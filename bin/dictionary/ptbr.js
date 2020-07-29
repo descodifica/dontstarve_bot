@@ -23,10 +23,10 @@ global.Dictionary.add('ptbr', {
       },
     },
     messages: {
-      INVALID_LANGUAGE: ({ lang, firstLangs, lastLang, }) => `o idioma "${lang}" é inválido. ` +
+      INVALID_LANGUAGE: ({ lang, firstLangs, lastLang, }) => `O idioma "${lang}" é inválido. ` +
         `Valores aceitos são: ${firstLangs} e ${lastLang}`,
-      UPDATED_LANGUAGE: 'idioma atualizado com sucesso',
-      UPDATE_LANGUAGE_ERROR: 'ocorreu um problema ao mudar o idioma',
+      UPDATED_LANGUAGE: 'Idioma atualizado com sucesso',
+      UPDATE_LANGUAGE_ERROR: 'O um problema ao mudar o idioma',
     },
   },
   experience: {
@@ -46,9 +46,9 @@ global.Dictionary.add('ptbr', {
   },
   general: {
     messages: {
-      COMMAND_NOT_FOUND: ({ command, }) => `comando "${command}" não existe`,
-      METHOD_NOT_EXISTS: ({ method, }) => `método "${method}" não existe`,
-      OWNER_CONTROL_ONLY: 'esse comando só pode ser usado pelo dono do servidor!',
+      COMMAND_NOT_FOUND: ({ command, }) => `Comando "${command}" não existe`,
+      METHOD_NOT_EXISTS: ({ method, }) => `Método "${method}" não existe`,
+      OWNER_CONTROL_ONLY: 'Esse comando só pode ser usado pelo dono do servidor!',
       COMMAND_METHOD_REQUIRED: 'É necessário passar um método para o comando. Entre com o ' +
         'comando de ajuda para maiores detalhes',
       METHODS: 'métodos',
@@ -71,13 +71,13 @@ global.Dictionary.add('ptbr', {
     name: 'ajuda',
     resume: 'Busca ajuda do bot e de seus comandos',
     messages: {
-      COMMAND_NOT_FOUND: ({ command, prefix, }) => `o comando "${command}" não existe, entre ` +
-        `"${prefix}ajuda" para ver todos os comandos`,
+      COMMAND_NOT_FOUND: ({ command, }, { prefix, }) => `O comando "${command}" não existe, ` +
+        `entre "${prefix}Ajuda" para ver todos os comandos`,
       METHOD_NOT_FOUND: ({ method, }) => `Método "${method}" não encontrado`,
-      VIEW_MORE_INFO: ({ prefix, command, method, }) => `Veja maiores informações de ${prefix}` +
-       `${command} ${method}:`,
+      VIEW_MORE_INFO: ({ command, method, }, { prefix, }) => 'Veja maiores informações de ' +
+       `${prefix}${command} ${method}:`,
       NO_INFO_AVAILABLE: 'Nenhuma informação extra disponível',
-      VIEW_ALL: ({ word, }) => `veja aqui uma lista de todos os ${word} disponíveis`,
+      VIEW_ALL: ({ word, }) => `Veja aqui uma lista de todos os ${word} disponíveis`,
       VIEW_MORE_DETAILS: ({ command, word, }) => `Entre "${command}" seguido de um ${word} para ` +
         'ter maiores detalhes',
     },
@@ -199,11 +199,11 @@ global.Dictionary.add('ptbr', {
       },
     },
     messages: {
-      CREATE: ({ prefix, }) => `seu perfil acabou de ser criado! Entre ${prefix}ajuda perfil  ` +
+      CREATE: (p, { prefix, }) => `Seu perfil acabou de ser criado! Entre ${prefix}ajuda perfil  ` +
       'editar para saber editar ele!',
-      CREATE_ERROR: 'ocorreu um erro ao criar o seu perfil',
-      UPDATE: 'perfil atualizado',
-      UPDATE_ERROR: 'ocorreram problemas ao atualizar uma ou mais informações do perfil',
+      CREATE_ERROR: 'Ocorreu um erro ao criar o seu perfil',
+      UPDATE: 'Perfil atualizado',
+      UPDATE_ERROR: 'Ocorreram problemas ao atualizar uma ou mais informações do perfil',
       NO_PROFILE: ({ user, }) => `***${user}*** não possui um perfil ainda!`,
       PROFILE_NAME: 'Nome',
       PROFILE_NICK: 'Nick',

@@ -57,9 +57,7 @@ class Profile extends DefaultCommand {
       if (!ifMention) {
         await ProfileService.create({ id: profileId, })
 
-        _message.channel.send(
-          Dictionary.getMessage(_config.lang, 'profile', 'CREATE', { prefix: _config.prefix, })
-        )
+        _message.channel.send(Dictionary.getMessage(_config, 'profile', 'CREATE'))
 
         profile = await ProfileService.get(profileId)
       }
@@ -122,7 +120,7 @@ class Profile extends DefaultCommand {
             }
 
             profile.experiences[k][prop] = `[ ${v} ] ` + Dictionary.getMessage(
-              _config.lang, 'profile', id + '_TEXT'
+              _config, 'profile', id + '_TEXT'
             )
           }
             break
@@ -150,18 +148,18 @@ class Profile extends DefaultCommand {
 
     // Informações básicas
     let content = [
-      `***${Dictionary.getMessage(_config.lang, 'profile', 'PROFILE_NAME')}:*** ` +
+      `***${Dictionary.getMessage(_config, 'profile', 'PROFILE_NAME')}:*** ` +
         getValOrNotDefined(profile.name),
-      `***${Dictionary.getMessage(_config.lang, 'profile', 'PROFILE_NICK')}:*** ` +
+      `***${Dictionary.getMessage(_config, 'profile', 'PROFILE_NICK')}:*** ` +
         getValOrNotDefined(profile.nick),
-      `***${Dictionary.getMessage(_config.lang, 'profile', 'PROFILE_AGE')}:*** ` +
+      `***${Dictionary.getMessage(_config, 'profile', 'PROFILE_AGE')}:*** ` +
         getValOrNotDefined(profile.birth, v => {
           return (
             new AgeFromDate(v).age + ' ' +
-            Dictionary.getMessage(_config.lang, 'general', 'YEARS')
+            Dictionary.getMessage(_config, 'general', 'YEARS')
           )
         }),
-      `***${Dictionary.getMessage(_config.lang, 'profile', 'PROFILE_LOCATE')}:*** ` +
+      `***${Dictionary.getMessage(_config, 'profile', 'PROFILE_LOCATE')}:*** ` +
         `${getValOrNotDefined(profile.city)}/${getValOrNotDefined(profile.state)} - ` +
         getValOrNotDefined(profile.country),
     ]
@@ -170,26 +168,26 @@ class Profile extends DefaultCommand {
     versions.map(([ initials, name, ]) => {
       content = content.concat([
         `\n***Don\'t Starve ${name}***\n`,
-        `***${Dictionary.getMessage(_config.lang, 'profile', 'PROFILE_HAVE')}:*** ` +
+        `***${Dictionary.getMessage(_config, 'profile', 'PROFILE_HAVE')}:*** ` +
           getValOrNotDefined(profile.experiences[initials].have, v => {
-            return Dictionary.getMessage(_config.lang, 'general', v === '1' ? 'YES' : 'NO')
+            return Dictionary.getMessage(_config, 'general', v === '1' ? 'YES' : 'NO')
           }),
-        `***${Dictionary.getMessage(_config.lang, 'profile', 'PROFILE_PLATFORM')}:*** ` +
+        `***${Dictionary.getMessage(_config, 'profile', 'PROFILE_PLATFORM')}:*** ` +
           getValOrNotDefined(profile.experiences[initials].platform),
-        `***${Dictionary.getMessage(_config.lang, 'profile', 'PROFILE_HOURS_PLAYED')}:*** ` +
+        `***${Dictionary.getMessage(_config, 'profile', 'PROFILE_HOURS_PLAYED')}:*** ` +
           getValOrNotDefined(profile.experiences[initials].hours),
         `***Main?*** ${getValOrNotDefined(profile.experiences[initials].main)}`,
-        `***${Dictionary.getMessage(_config.lang, 'profile', 'PROFILE_SURVIVED')}:*** ` +
+        `***${Dictionary.getMessage(_config, 'profile', 'PROFILE_SURVIVED')}:*** ` +
           getValOrNotDefined(profile.experiences[initials].survived) +
-          Dictionary.getMessage(_config.lang, 'profile', 'DAYS'),
-        `***${Dictionary.getMessage(_config.lang, 'profile', 'PROFILE_LEVEL')}:*** ` +
+          Dictionary.getMessage(_config, 'profile', 'DAYS'),
+        `***${Dictionary.getMessage(_config, 'profile', 'PROFILE_LEVEL')}:*** ` +
           getValOrNotDefined(profile.experiences[initials].level),
       ])
     })
 
     // A mensagem
     const embed = this.embedMessage({
-      title: '> ' + Dictionary.getMessage(_config.lang, 'profile', 'PROFILE_NAME', {
+      title: '> ' + Dictionary.getMessage(_config, 'profile', 'PROFILE_NAME', {
         name: profileName,
       }),
       description: content.join('\n'),
@@ -262,12 +260,12 @@ class Profile extends DefaultCommand {
     // Se todas as promessas foram resolvidas
     Promise.all(promises)
       .then(() => {
-        _message.channel.send(Dictionary.getMessage(_config.lang, 'profile', 'UPDATE'))
+        _message.channel.send(Dictionary.getMessage(_config, 'profile', 'UPDATE'))
       })
       .catch(() => {
         errors.map(e => _message.channel.send(e))
 
-        _message.channel.send(Dictionary.getMessage(_config.lang, 'profile', 'UPDATE_ERROR'))
+        _message.channel.send(Dictionary.getMessage(_config, 'profile', 'UPDATE_ERROR'))
       })
   }
 

@@ -67,7 +67,7 @@ class Help extends DefaultCommand {
     // Se o comando não existe, informa e finaliza
     if (!commandInfo) {
       _message.channel.send(Dictionary.getMessage(
-        _config.lang, 'help', 'COMMAND_NOT_FOUND', { command: originalCommand, prefix, }
+        _config, 'help', 'COMMAND_NOT_FOUND', { command: originalCommand, prefix, }
       ))
 
       return
@@ -90,7 +90,7 @@ class Help extends DefaultCommand {
       // Se não achou o método, informa e finaliza
       if (!method) {
         _message.channel.send(Dictionary.getMessage(
-          _config.lang, 'help', 'METHOD_NOT_FOUND', { method: originalMethod, }
+          _config, 'help', 'METHOD_NOT_FOUND', { method: originalMethod, }
         ))
 
         return
@@ -99,8 +99,7 @@ class Help extends DefaultCommand {
       // Texto padrão
       msg[0].push(
         Dictionary.getMessage(
-          _config.lang, 'help', 'VIEW_MORE_INFO', {
-            prefix,
+          _config, 'help', 'VIEW_MORE_INFO', {
             command: originalCommand,
             method: originalMethod,
           }
@@ -111,6 +110,9 @@ class Help extends DefaultCommand {
 
       // Se tem doc, adiciona ela
       if (method.doc) {
+        // Se for função, executa e recebe resultado
+        method.doc = typeof method.doc === 'function' ? method.doc(_config) : method.doc
+
         // Se for string, vira array
         method.doc = typeof method.doc === 'string' ? [ method.doc, ] : method.doc
 
@@ -118,7 +120,7 @@ class Help extends DefaultCommand {
         msg = msg.concat(method.doc)
       }
       else {
-        msg[0].push(Dictionary.getMessage(_config.lang, 'help', 'NO_INFO_AVAILABLE'))
+        msg[0].push(Dictionary.getMessage(_config, 'help', 'NO_INFO_AVAILABLE'))
       }
     }
     else {
@@ -155,9 +157,9 @@ class Help extends DefaultCommand {
    * @param {String} _argName O nome do argumento a ser usado no texto
    */
   _initialMessage (_config, _argName) {
-    const argName = Dictionary.getMessage(_config.lang, 'general', _argName)
+    const argName = Dictionary.getMessage(_config, 'general', _argName)
 
-    return Dictionary.getMessage(_config.lang, 'help', 'VIEW_ALL', { word: argName, }) + '\n'
+    return Dictionary.getMessage(_config, 'help', 'VIEW_ALL', { word: argName, }) + '\n'
   }
 
   /**
@@ -167,10 +169,10 @@ class Help extends DefaultCommand {
    * @param {String} _command O comando a ser exibido
    */
   _finalMessage (_config, _argName, _command) {
-    const argName = Dictionary.getMessage(_config.lang, 'general', _argName)
+    const argName = Dictionary.getMessage(_config, 'general', _argName)
 
     return '\n' + Dictionary.getMessage(
-      _config.lang, 'help', 'VIEW_MORE_DETAILS', { command: _command, word: argName, }
+      _config, 'help', 'VIEW_MORE_DETAILS', { command: _command, word: argName, }
     ) + '\n'
   }
 }

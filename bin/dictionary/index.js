@@ -42,16 +42,16 @@ class Dictionary {
 
   /**
    * @description Recupera uma mensagem
-   * @param {String} _lang O idioma
+   * @param {String} _serverConfig Configurações do servidor
    * @param {String} _module O módulo
    * @param {String} _id O Id da mensagem
    * @param {Object} _params Os parâmetros da mensagem
    * @returns {String} A mensagem
    */
-  getMessage (_lang, _module, _id, _params = {}) {
-    const message = this.sessions[_lang][_module].messages[_id]
+  getMessage (_serverConfig, _module, _id, _params = {}) {
+    const message = this.sessions[_serverConfig.lang][_module].messages[_id]
 
-    return typeof message !== 'function' ? message : message(_params)
+    return typeof message !== 'function' ? message : message(_params, _serverConfig)
   }
 
   /**

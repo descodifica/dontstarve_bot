@@ -188,7 +188,7 @@ class Default {
     // Retorna o erro adequado
 
     if (type === 'Option' && typeError === 'WARN_DATA_TRUNCATED') {
-      return Dictionary.getMessage(_serverConfig.lang, 'general', 'INVALID_OPTION', {
+      return Dictionary.getMessage(_serverConfig, 'general', 'INVALID_OPTION', {
         prop: translateProp,
         options: this.props[prop].values.slice(0, -1).join(', '),
         lastOption: this.props[prop].values.slice(-1).toString(),
@@ -196,19 +196,19 @@ class Default {
     }
 
     if (typeError === 'INCORRECT_DATE') {
-      return Dictionary.getMessage(_serverConfig.lang, 'general', 'INVALID_DATE', {
+      return Dictionary.getMessage(_serverConfig, 'general', 'INVALID_DATE', {
         prop: translateProp,
       })
     }
 
     if (typeError === 'R_DATA_TOO_LONG') {
-      return Dictionary.getMessage(_serverConfig.lang, 'general', 'LONG_TEXT', {
+      return Dictionary.getMessage(_serverConfig, 'general', 'LONG_TEXT', {
         prop: translateProp,
       })
     }
 
     if (typeError === 'INVALID_INTEGER') {
-      return Dictionary.getMessage(_serverConfig.lang, 'general', 'INVALID_INTEGER', {
+      return Dictionary.getMessage(_serverConfig, 'general', 'INVALID_INTEGER', {
         prop: translateProp,
       })
     }
@@ -219,7 +219,7 @@ class Default {
 
       // console.log(options)
 
-      return Dictionary.getMessage(_serverConfig.lang, 'general', 'INVALID_RELATION', {
+      return Dictionary.getMessage(_serverConfig, 'general', 'INVALID_RELATION', {
         prop: translateProp,
         options: options.slice(0, -1).join(', '),
         lastOption: options.slice(-1).toString(),

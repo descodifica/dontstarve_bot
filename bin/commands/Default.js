@@ -15,7 +15,7 @@ class DefaultCommand {
    * @param {Object} _config As configurações do servidor
    */
   main (_args, _message, _config) {
-    _message.channel.send(Dictionary.getMessage(_config.lang, 'general', 'COMMAND_METHOD_REQUIRED'))
+    _message.channel.send(Dictionary.getMessage(_config, 'general', 'COMMAND_METHOD_REQUIRED'))
   }
 
   /**

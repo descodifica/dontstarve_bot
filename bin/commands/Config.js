@@ -21,7 +21,7 @@ class Config extends DefaultCommand {
 
     // Se idioma passado for inválido, informa e finalzia
     if (langs.indexOf(lang) === -1) {
-      _message.channel.send(Dictionary.getMessage(_config.lang, 'config', 'INVALID_LANGUAGE', {
+      _message.channel.send(Dictionary.getMessage(_config, 'config', 'INVALID_LANGUAGE', {
         lang, firstLangs: langs.slice(0, -1).join(', '), lastLang: langs.reverse()[0],
       }))
 
@@ -31,11 +31,13 @@ class Config extends DefaultCommand {
     // Configura
     this._config('lang', _args[0], _message, _config)
       .then(() => {
-        _message.channel.send(Dictionary.getMessage(_args[0], 'config', 'UPDATED_LANGUAGE'))
+        _message.channel.send(Dictionary.getMessage(
+          { lang: _args[0], }, 'config', 'UPDATED_LANGUAGE')
+        )
       })
       .catch((e) => {
         _message.channel.send(
-          _message.channel.send(Dictionary.getMessage(_config.lang, 'config', 'UPDATE_LANGUAGE_ERROR'))
+          _message.channel.send(Dictionary.getMessage(_config, 'config', 'UPDATE_LANGUAGE_ERROR'))
         )
       })
   }

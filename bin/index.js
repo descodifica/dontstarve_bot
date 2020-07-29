@@ -145,7 +145,7 @@ class DontStarve {
       if (!Commands[command]) {
         message.channel.send(
           Dictionary.getMessage(
-            serverConfig.lang, 'general', 'COMMAND_NOT_FOUND', { command: originalCommand, }
+            serverConfig, 'general', 'COMMAND_NOT_FOUND', { command: originalCommand, }
           )
         )
 
@@ -192,7 +192,7 @@ class DontStarve {
   methodNotExists (_message, _originalMethod, _serverConfig) {
     _message.channel.send(
       Dictionary.getMessage(
-        _serverConfig.lang, 'general', 'METHOD_NOT_EXISTS', { method: _originalMethod, }
+        _serverConfig, 'general', 'METHOD_NOT_EXISTS', { method: _originalMethod, }
       )
     )
   }
