@@ -6,31 +6,36 @@ const DefaultCommand = require('./Default')
 
 // Prefixo
 const { prefix, } = require('../config')
+const config = require('../config')
 
 // O comando de ajuda
 class Help extends DefaultCommand {
   /**
    * @description Método padrão quando nada for chamado
-   * @param {Array} _args Os argumentos passados
-   * @param {Object} _message O objeto da mensagem
+   * @param {Object} _Message O objeto da mensagem
    * @param {Object} _config As configurações do servidor
    */
-  main (_args, _message, _config) {
+  main (_Message, _config) {
     // Recebe todos os módulos (respeitando o idioma)
-    const modules = Dictionary.sessions[_config.lang]
+    const modules = Object.values(Dictionary.sessions[_config.lang])
 
-    // Mensagem a ser exibida
-    const msg = [ this._initialMessage(_config, 'COMMANDS'), ]
+    _Message.set(this._initialMessage(_config, 'COMMANDS'))
+    _Message.setFromDictionary('help', 'VIEW_ALL_COMMANDS')
 
     // Percorre todos os módulos e adiciona sua descrição à mensagem
-    objectMap(modules, moduleData => {
+    modules.map((moduleData, k) => {
       if (!moduleData.name) return
 
-      msg.push(`> ${prefix}${moduleData.name} - ${moduleData.resume}`)
+      const first = k === 0
+      const last = k === modules.length + 1
+
+      _Message.setExampleAndExplanation(`${prefix}${moduleData.name}`, moduleData.resume, {
+        breakTop: !first, breakBottom: !last,
+      })
     })
 
     // Entra com mensagem de detalhamento
-    msg.push(
+    _Message.set(
       this._finalMessage(
         _config,
         'COMMAND',
@@ -39,24 +44,20 @@ class Help extends DefaultCommand {
     )
 
     // Responde
-    _message.channel.send(msg.join('\n'))
+    _Message.send()
   }
 
   /**
    * @description Chama a ajuda de um dado comando
-   * @param {Array} _args Os argumentos passados
-   * @param {Object} _message O objeto da mensagem
+   * @param {Object} _Message O objeto da mensagem
    * @param {Object} _config As configurações do servidor
    */
-  commandHelp (_args, _message, _config) {
+  commandHelp (_Message, _config) {
     // Nome do módulo de ajuda traduzido no idioma do servidor
     const translateHelp = Dictionary.getTranslateModule(_config.lang, 'help')
 
-    // Ignora se pediu ajuda da ajuda
-    if (_args[0] === translateHelp) return
-
     // Comando escolhido original
-    const originalCommand = _args.shift()
+    const originalCommand = _Message.args.shift()
 
     // Nome do comando escolhido
     const commandName = Dictionary.getModuleName(_config.lang, originalCommand)
@@ -66,18 +67,16 @@ class Help extends DefaultCommand {
 
     // Se o comando não existe, informa e finaliza
     if (!commandInfo) {
-      _message.channel.send(Dictionary.getMessage(
-        _config, 'help', 'COMMAND_NOT_FOUND', { command: originalCommand, prefix, }
-      ))
+      _Message.send('help', 'COMMAND_NOT_FOUND', { command: originalCommand, prefix, })
 
       return
     }
 
-    // Mensagem a ser exibida
-    let msg = [ [], ]
-
     // Método original
-    const originalMethod = _args.shift()
+    const originalMethod = _Message.args.shift()
+
+    // Mensagem inicial
+    _Message.set(this._initialMessage(_config, 'METHODS'))
 
     // Se passou método
     if (originalMethod) {
@@ -89,66 +88,64 @@ class Help extends DefaultCommand {
 
       // Se não achou o método, informa e finaliza
       if (!method) {
-        _message.channel.send(Dictionary.getMessage(
-          _config, 'help', 'METHOD_NOT_FOUND', { method: originalMethod, }
-        ))
+        _Message.sendFromDictionary('help', 'METHOD_NOT_FOUND', { method: originalMethod, })
 
         return
       }
 
-      // Texto padrão
-      msg[0].push(
-        Dictionary.getMessage(
-          _config, 'help', 'VIEW_MORE_INFO', {
-            command: originalCommand,
-            method: originalMethod,
-          }
-        ) + '\n'
+      _Message.setExampleAndExplanation(
+        `${prefix}${originalCommand} ${originalMethod}`, method.resume
       )
 
-      msg[0].push(`${method.resume}\n`)
+      _Message.set('\n\n')
 
       // Se tem doc, adiciona ela
       if (method.doc) {
-        // Se for função, executa e recebe resultado
-        method.doc = typeof method.doc === 'function' ? method.doc(_config) : method.doc
-
-        // Se for string, vira array
-        method.doc = typeof method.doc === 'string' ? [ method.doc, ] : method.doc
-
-        // Concatena array da doc a mensagem
-        msg = msg.concat(method.doc)
+        method.doc(_Message)
       }
       else {
-        msg[0].push(Dictionary.getMessage(_config, 'help', 'NO_INFO_AVAILABLE'))
+        _Message.setFromDictionary('help', 'NO_INFO_AVAILABLE')
       }
     }
     else {
-      // Mensagem inicial
-      msg[0].push(this._initialMessage(_config, 'METHODS'))
+      if (commandInfo.doc) {
+        commandInfo.doc(_Message, _config)
+      }
 
-      objectMap(commandInfo.methods, (data, method) => {
-        msg[0].push(`> ${prefix}${originalCommand} ${data.name} - ${data.resume}`)
-      })
+      if (commandInfo.methods) {
+        _Message.setFromDictionary(
+          'help', 'VIEW_ALL_METHODS', { command: prefix + originalCommand, }
+        )
 
-      // Entra com mensagem de detalhamento
-      msg[0].push(
-        this._finalMessage(_config, 'METHOD', prefix + translateHelp + ' ' + originalCommand)
-      )
+        Object.values(commandInfo.methods).map((data, k) => {
+          const first = k === 0
+          const last = k === commandInfo.methods.length + 1
+
+          _Message.setExampleAndExplanation(
+            `${prefix}${originalCommand} ${data.name}`, data.resume, {
+              breakTop: !first, breakBottom: !last,
+            }
+          )
+        })
+
+        // Entra com mensagem de detalhamento
+        _Message.set(
+          this._finalMessage(_config, 'METHOD', prefix + translateHelp + ' ' + originalCommand)
+        )
+      }
     }
 
     // Responde
-    msg.map(m => _message.channel.send(m.join('\n')))
+    _Message.send()
   }
 
   /**
    * @description Chamado quando chamar um método não existente
-   * @param {Array} _args Os argumentos passados
-   * @param {Object} _message O objeto da mensagem
+   * @param {Object} _Message O objeto da mensagem
    * @param {Object} _config As configurações do servidor
    */
-  invalidRedir (_args, _message, _config) {
-    this.commandHelp(_args, _message, _config)
+  invalidRedir (_Message, _config) {
+    this.commandHelp(_Message, _config)
   }
 
   /**
@@ -159,7 +156,7 @@ class Help extends DefaultCommand {
   _initialMessage (_config, _argName) {
     const argName = Dictionary.getMessage(_config, 'general', _argName)
 
-    return Dictionary.getMessage(_config, 'help', 'VIEW_ALL', { word: argName, }) + '\n'
+    return Dictionary.getMessage(_config, 'help', 'WELCOME', { word: argName, }) + '\n\n'
   }
 
   /**
@@ -173,7 +170,7 @@ class Help extends DefaultCommand {
 
     return '\n' + Dictionary.getMessage(
       _config, 'help', 'VIEW_MORE_DETAILS', { command: _command, word: argName, }
-    ) + '\n'
+    )
   }
 }
 

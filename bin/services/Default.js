@@ -129,9 +129,6 @@ class Default {
 
     // Percorre todos os registros
     objectMap({ ..._record, }, (val, prop) => {
-      // Traduz nome da propriedade para o real
-      prop = Dictionary.getMethodParam(_serverConfig.lang, this.entity, _method, prop)
-
       // Se não consta na lista de propriedades, seta original
       if (!this.props[prop]) {
         record[prop] = val
@@ -216,8 +213,6 @@ class Default {
     if (typeError === 'INVALID_RELATION') {
       const Relation = require(`./${this.props[prop].entity}`)
       const options = (await Relation.list()).map(i => i.name)
-
-      // console.log(options)
 
       return Dictionary.getMessage(_serverConfig, 'general', 'INVALID_RELATION', {
         prop: translateProp,

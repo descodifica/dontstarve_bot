@@ -5,7 +5,7 @@ global.Dictionary.dateFormat('ptbr', { day: 0, month: 1, year: 2, sep: '/', })
 global.Dictionary.add('ptbr', {
   config: {
     name: 'config',
-    resume: 'Configura o bot no servidor (somente dono do servidor)',
+    resume: 'Configura o Bot no servidor (somente dono do servidor)',
     methods: {
       lang: {
         name: 'ling',
@@ -69,17 +69,48 @@ global.Dictionary.add('ptbr', {
   },
   help: {
     name: 'ajuda',
-    resume: 'Busca ajuda do bot e de seus comandos',
+    resume: 'Busca ajuda do Bot e de seus comandos',
+    doc: (_Message, { prefix, }) => {
+      _Message.set(
+        'O comando de ajuda é aquele criado com um carinho especial para poder te guiar pelo Bot.' +
+        '\n\n' +
+        `Entre com \`${prefix}ajuda\` para ter todos os comandos listados com uma explicação ` +
+          'resumida\n\n' +
+          `Quer saber maiores informações sobre um comando? entre com \`${prefix}ajuda\` seguido ` +
+            'pelo comando desejado e veja toda a descrição e métodos dele!\n\n' +
+          `Quer saber maiores informações sobre um método? entre com \`${prefix}ajuda\` seguido ` +
+            'pelo comando e método desejados e veja toda a descrição de uso dele!\n\n' +
+          `Ou seja, se tem dúvida sobre o uso de algo, basta por ele depois de \`${prefix}ajuda\`!`
+      )
+    },
     messages: {
       COMMAND_NOT_FOUND: ({ command, }, { prefix, }) => `O comando "${command}" não existe, ` +
         `entre "${prefix}Ajuda" para ver todos os comandos`,
       METHOD_NOT_FOUND: ({ method, }) => `Método "${method}" não encontrado`,
-      VIEW_MORE_INFO: ({ command, method, }, { prefix, }) => 'Veja maiores informações de ' +
-       `${prefix}${command} ${method}:`,
-      NO_INFO_AVAILABLE: 'Nenhuma informação extra disponível',
-      VIEW_ALL: ({ word, }) => `Veja aqui uma lista de todos os ${word} disponíveis`,
-      VIEW_MORE_DETAILS: ({ command, word, }) => `Entre "${command}" seguido de um ${word} para ` +
-        'ter maiores detalhes',
+      NO_INFO_AVAILABLE: '__***Nenhuma informação extra disponível***__',
+      WELCOME: ({ word, }) => {
+        return 'Bem vindo a ajuda do Bot de ***Don\'t Starve*** para o ***DISCORD***!\n\n' +
+        'Espero que seja inutitivo, então vamos começar! '
+      },
+      VIEW_ALL_COMMANDS: (p, { prefix, }) => {
+        return (
+          `Entre como o prefixo do Bot (por padrão é \`${prefix}\`) seguido de um comando para ` +
+            'executá-lo, simples assim!\n\n' +
+            'Veja abaixo uma lista descritiva de todos os comandos possíveis:\n\n'
+        )
+      },
+      VIEW_ALL_METHODS: ({ command, }, { prefix, }) => {
+        return (
+          `Entre com o comando \`${command}\` seguido de seu ` +
+            'método para executá-lo, simples assim!\n\n'
+        )
+      },
+      VIEW_MORE_DETAILS: ({ command, word, }, { prefix, }) => {
+        return (
+          `Quer mais detalhes? Entre \`${command}\` seguido de um ${word}!\n\n` +
+          `Quer aprender do inicio? Entre \`${prefix}ajuda\`!`
+        )
+      },
     },
   },
   profile: {
@@ -89,106 +120,164 @@ global.Dictionary.add('ptbr', {
       view: {
         name: 'ver',
         resume: 'Vizualiza o perfil de um jogador ou o seu próprio',
-        doc: [
-          'Exemplos:',
-          '',
-          '> ds:perfil ver - Visualiza o próprio perfil ',
-          '> ds:perfil ver @Usuario - Visualiza perfil do jogador',
-          '',
-          'Atalho: ds:perfil',
-        ],
+        doc: _Message => {
+          _Message.set('***Exemplos:***\n\n')
+
+          _Message.setExampleAndExplanation(
+            'ds:perfil ver',
+            'Visualiza o próprio perfil',
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
+            'ds:perfil ver @Usuario',
+            'Visualiza o perfil do jogador mencionado',
+            { breakBottom: 2, }
+          )
+
+          _Message.set('***Atalho:*** `ds:perfil`')
+        },
       },
       edit: {
         name: 'editar',
         resume: 'Edita informações do perfil',
-        doc: [
-          [
-            'O perfil é dividido em duas sessões básicas: Pessoal e Jogo.',
-            '',
+        doc: _Message => {
+          _Message.set(
+            'O perfil é dividido em duas sessões básicas: ***Pessoal*** e ***Jogo***.\n\n' +
             'A sessão pessoal exibe informações básicas do jogador enquanto a sessão de jogo ' +
-              'exibe informações do jogador em relação aos diferentes jogos da franquia.',
-            '',
-            'Para editar as informações, basta entrar com `ds:perfil editar` seguido do ' +
-              'identificador da informação. Veja:',
-            '',
-            '`ds:perfil editar nome "Rafael Dias"`',
-            '',
-            '> Edita o nome do jogador.',
-            '> Note que em caso de nomes compostos, deve ser posto entre aspas.',
-            '',
-            '`ds:perfil editar nascimento 03/07/1986`',
-            '',
-            '> Edita a data de nascimento do jogaodor a qual é usada para calcular a idade.',
-            '> Note que a data deve ser colocada no formato dd/mm/aaaa.',
-            '',
-            '`ds:perfil editar Petrópolis`',
-            '',
-            '> Edita a cidade do jogador',
-            '> Note que em caso de nomes compostos, deve ser posto entre aspas.',
-            '',
-            '`ds:perfil editar estado`',
-            '',
-            '> Edita o estado do jogador',
-            '> Note que em caso de nomes compostos, deve ser posto entre aspas.',
-            '',
-            '`ds:perfil editar pais`',
-            '',
-            '> Edita o pais do jogador',
-            '> Note que em caso de nomes compostos, deve ser posto entre aspas.',
-          ],
-          [
+              'exibe informações do jogador em relação aos diferentes jogos da franquia.\n\n' +
+            'Para editar as informações básicas, basta entrar com `ds:perfil editar` seguido do ' +
+              'identificador da informação. Veja:\n\n'
+          )
+
+          _Message.setExampleAndExplanation(
+            'ds:perfil editar nome "Rafael Dias"',
+            [
+              'Edita o nome do jogador.',
+              'Note que em caso de nomes compostos, deve ser posto entre aspas.',
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
+            'ds:perfil editar nascimento 03/07/1986',
+            [
+              'Edita a data de nascimento do jogador a qual é usada para calcular a idade.',
+              'Note que a data deve ser colocada no formato dd/mm/aaaa.',
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
+            'ds:perfil editar cidade Petrópolis',
+            [
+              'Edita a cidade do jogador',
+              'Note que em caso de nomes compostos, deve ser posto entre aspas.',
+              'Note também que este é um campo livre, porém procure escrever corretamente' +
+                'respeitando maiúsculas, acentos, sem abreviações e etc caso queira ser ' +
+                'encontrado nas buscas pela cidade.',
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
+            'ds:perfil editar estado "Rio de Janeiro"',
+            [
+              'Edita o estado do jogador',
+              'Note que em caso de nomes compostos, deve ser posto entre aspas.',
+              'Note também que este é um campo livre, porém procure escrever corretamente' +
+                'respeitando maiúsculas, acentos, sem abreviações e etc caso queira ser ' +
+                'encontrado nas buscas pelo estado.',
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
+            'ds:perfil editar pais Brasil',
+            [
+              'Edita o país do jogador',
+              'Note que em caso de nomes compostos, deve ser posto entre aspas.',
+              'Note também que este é um campo livre, porém procure escrever corretamente' +
+                'respeitando maiúsculas, acentos, sem abreviações e etc caso queira ser ' +
+                'encontrado nas buscas pelo país.',
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.set(
             'Para editar as informações de jogo é a mesma coisa, porém acrescentamos um prefixo  ' +
-            'ao nome da informação para informar a versão do jogo que desejamos alterar.',
-            '',
-            'Os prefixos disponíveis são:',
-            '',
-            '> ds. - Don\'t Starve Solo',
-            '> sw. - Don\'t Starve Shipwrecked',
-            '> ham. - Don\'t Starve Hamet',
-            '> dst. - Don\'t Starve Together',
-          ],
-          [
+            'ao nome da informação para informar a versão do jogo que desejamos alterar.' +
+            'Os prefixos disponíveis são\n\n' +
+            '`ds.` *Don\'t Starve Solo*\n' +
+            '`sw.` *Don\'t Starve Shipwrecked*\n' +
+            '`ham.` *Don\'t Starve Hamet*\n' +
+            '`dst.` *Don\'t Starve Together*\n\n' +
             'Para exemplificar a edição das informações de jogo, utilizaremos o prefixo da ' +
-              'versão Together do jogo, mas basta trocar o prefixo para mudar de versão! Veja:',
-            '',
-            '`ds:perfil editar dst.possui 1`',
-            '',
-            '> Define se o jogador possui esta versão do jogo.',
-            '> Aceita 1 para "Sim" e 0 para "Não".',
-            '',
-            '`ds:perfil editar dst.plataforma Steam`',
-            '',
-            '> Define em qual plataforma o jogador possui esta versão do jogo.',
-            '> Aceita somente os valores: Steam, PS, Xbox, Android ou Iphone.',
-            '',
-            '`ds:perfil editar dst.horas 300`',
-            '',
-            '> Define o número de horas do jogador nesta versão do jogo.',
-            '> Aceita somente números inteiros',
-            '',
-            '`ds:perfil editar dst.main Wickerbottom`',
-            '',
-            '> Define se o jogador é "Main" de algum personagem.',
-            '> Aceita somente os nomes dos personagens.',
-            '',
-            '`ds:perfil editar dst.sobreviveu 99`',
-            '',
-            '> Define quantos dias no maximo o jogador conseguiu sobreviver nesta versão do jogo',
-            '> Aceita somente números inteiros',
-            '',
+              'versão Together do jogo, mas basta trocar o prefixo para mudar de versão!' +
+            'Veja:\n\n'
+          )
+
+          _Message.setExampleAndExplanation(
+            'ds:perfil editar dst.possui 1',
+            [
+              'Define se o jogador possui esta versão do jogo.',
+              'Aceita **1** para **"Sim"** e **0** para **"Não"**.',
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
+            'ds:perfil editar dst.plataforma Steam',
+            [
+              'Define em qual plataforma o jogador possui esta versão do jogo.',
+              'Aceita somente os valores: Steam, PS, Xbox, Android ou Iphone.',
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
+            'ds:perfil editar dst.horas 300',
+            [
+              'Define o número de horas do jogador nesta versão do jogo.',
+              'Aceita somente números inteiros',
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
+            'ds:perfil editar dst.main Wickerbottom',
+            [
+              'Define se o jogador é "Main" de algum personagem.',
+              'Aceita somente os nomes dos personagens.',
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
+            'ds:perfil editar dst.sobreviveu 99',
+            [
+              'Define quantos dias no maximo o jogador conseguiu sobreviver nesta versão do jogo',
+              'Aceita somente números inteiros',
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
             '`ds:perfil editar dst.rank 4`',
-            '',
-            '> Define o rank do jogador nesta versão, sendo que quanto menor o número, mais ' +
-              'experiente ele é.',
-            '> Aceita somente números inteiros de 1 a 9',
-          ],
-          [
+            [
+              'Define o rank do jogador nesta versão, sendo que quanto menor o número, mais ' +
+                'experiente ele é.',
+              'Aceita somente números inteiros de 1 a 9',
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.set(
             'Também vale dizer que você não precisa editar uma única informação por comando, mas ' +
-              'pode sim editar várias de uma só vez: Veja:',
-            '',
-            '`ds:perfil editar nome "Rafael Dias" nascimento 03/07/1986 dst.main Wickerbottom`',
-          ],
-        ],
+              'pode sim editar várias de uma só vez: Veja:\n\n' +
+            '`ds:perfil editar nome "Rafael Dias" nascimento 03/07/1986 dst.main Wickerbottom`'
+          )
+        },
         params: {
           name: 'nome',
           birth: 'nascimento',

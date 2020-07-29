@@ -16,7 +16,7 @@ const Commands = require('./Commands')
 // Importa configurações
 const { token, prefix, } = require('./config')
 
-// Classe principal do bot
+// Classe principal do Bot
 class DontStarve {
   // Ao criar o objeto
   constructor () {
@@ -44,70 +44,28 @@ class DontStarve {
 
   /**
    * @description Retorna configurações do servidor
-   * @params {Object} _message Objeto da mensagem
+   * @params {Object} _Message Objeto da mensagem
    * @returns {Object} Objeto com as configurações do servidor
    */
-  async getServerConfig (_message) {
+  async getServerConfig (_Message) {
     // Importa entidade de configuração
     const ConfigEntity = require('./services/Config')
 
     // Captura configurações
-    let config = (await ConfigEntity.getBy({ server_id: _message.guild.id.toString(), }))[0]
+    let config = (await ConfigEntity.getBy({ server_id: _Message.serverId(), }))[0]
 
     // Se não achou, cria
     if (!config) {
-      await ConfigEntity.create({ server_id: _message.guild.id.toString(), })
+      await ConfigEntity.create({ server_id: _Message.guild.id.toString(), })
 
-      config = (await ConfigEntity.getBy({ server_id: _message.guild.id.toString(), }))[0]
+      config = (await ConfigEntity.getBy({ server_id: _Message.serverId(), }))[0]
     }
+
+    // Seta configurações na mensagem
+    _Message.serverConfig = { ...config, prefix, }
 
     // Retorna
     return config
-  }
-
-  /**
-   * @description Retorna os argumentos da mensagem
-   * @param {Object} _message Objeto da mensagem
-   * @returns {Array} Array contendo todos os argumentos
-   */
-  getArgs (_message) {
-    // Recebe argumentos
-    let args = _message.content
-
-    // Pelo que trocar espaço dentro das aspas duplas
-    const signal = '|_|'
-
-    // Troca espaços entre aspas simples e duplas por |_|
-    args = this.parserQuoteArgs(args, '\'', signal)
-    args = this.parserQuoteArgs(args, '"', signal)
-
-    return args
-      .slice(prefix.length) // Remove o prefixo
-      .split(' ') // Separa pelo espaço
-      .filter(i => i.trim() !== '') // Remove argumento em branco (espaço extra no comando)
-      .map(i => i.split(signal).join(' ')) // Volta espaço das aspas
-  }
-
-  /**
-   * @description Retorna os argumentos com os espaços das aspas trocados
-   * @param {Array} _args Os argumentos
-   * @param {String} _quote As aspas usadas
-   * @param {String} _signal O que por no lugar do espaço
-   * @returns {Array} os argumentos com os espaços das aspas trocados
-   */
-  parserQuoteArgs (_args, _quote, _signal) {
-    // Separa pelas aspas
-    const args = _args.split(_quote)
-
-    // Percorre todas as posições, começando pela primeira e pulando de 2 em em dois
-    // Posição par é sempre com aspas
-    for (let c = 1, max = args.length; c < max; c += 2) {
-      // Troca espaço
-      args[c] = args[c].split(' ').join(_signal)
-    }
-
-    // Une em string pelas aspas e retorna
-    return args.join('')
   }
 
   /**
@@ -126,39 +84,30 @@ class DontStarve {
   onMessage () {
     // Quando receber uma mensagem
     this.client.on('message', async message => {
-      // Se a mensagem não começar com o prefixo ou for de bot, finaliza
-      if (!message.content.startsWith(prefix) || message.author.bot) return {}
+      // Recebe mensagem
+      const Message = require('./Message')(message)
 
-      // Recebe todos os argumentos do comando, garantindo que não haja nada em branco
-      const args = this.getArgs(message)
+      // Se a mensagem não for para o Bot, finaliza
+      if (!Message.forBot()) return {}
 
       // Configurações do servidor
-      const serverConfig = await this.getServerConfig(message)
+      const serverConfig = await this.getServerConfig(Message)
 
       // Recebe o comando original (remove do primeiro argumento)
-      const originalCommand = args.shift()
+      const originalCommand = Message.command
 
       // Traduz o comando
       const command = Dictionary.getModuleName(serverConfig.lang, originalCommand)
 
       // Se não possui o comando, informa e finaliza
       if (!Commands[command]) {
-        message.channel.send(
-          Dictionary.getMessage(
-            serverConfig, 'general', 'COMMAND_NOT_FOUND', { command: originalCommand, }
-          )
-        )
+        Message.sendFromDictionary('general', 'COMMAND_NOT_FOUND', { command: originalCommand, })
 
         return
       }
 
-      // Se não passou método, vira main
-      if (!args[0]) {
-        args[0] = 'main'
-      }
-
       // Método original
-      const originalMethod = args.shift()
+      const originalMethod = Message.method || 'main'
 
       // Traduz método
       let method = Dictionary.getMethodName(serverConfig.lang, command, originalMethod)
@@ -167,19 +116,19 @@ class DontStarve {
       if (!method) {
         // Se não tem método de redirecionar inválido, informa e finaliza
         if (!Commands[command].invalidRedir) {
-          this.methodNotExists(message, originalMethod, serverConfig)
+          this.methodNotExists(Message, originalMethod, serverConfig)
 
           return
         }
         else {
-          args.unshift(originalMethod)
+          Message.args.unshift(originalMethod)
 
           method = 'invalidRedir'
         }
       }
 
       // Executa comando
-      Commands[command].exec(method || 'main', args, message, serverConfig)
+      Commands[command].exec(method || 'main', Message)
     })
   }
 
@@ -189,14 +138,10 @@ class DontStarve {
    * @params {String} _originalMethod Nome original do método pedido
    * @params {Object} _serverConfig Configurações do servidor
    */
-  methodNotExists (_message, _originalMethod, _serverConfig) {
-    _message.channel.send(
-      Dictionary.getMessage(
-        _serverConfig, 'general', 'METHOD_NOT_EXISTS', { method: _originalMethod, }
-      )
-    )
+  methodNotExists (_Message, _originalMethod, _serverConfig) {
+    _Message.sendFromDictionary('general', 'METHOD_NOT_EXISTS', { method: _originalMethod, })
   }
 }
 
-// Cria o objeto do bot
+// Cria o objeto do Bot
 global.Bot = new DontStarve()

@@ -2,7 +2,7 @@
 global.Dictionary.add('en', {
   config: {
     name: 'config',
-    resume: 'Configure the bot on the server (server owner only)',
+    resume: 'Configure the Bot on the server (server owner only)',
     methods: {
       lang: {
         name: 'lang',
@@ -41,7 +41,7 @@ global.Dictionary.add('en', {
   },
   help: {
     name: 'help',
-    resume: 'Seek help from the bot and its commands',
+    resume: 'Seek help from the Bot and its commands',
     messages: {
       COMMAND_NOT_FOUND: ({ command, prefix, }) => `the command" ${command} "does not exist, ` +
         `between "${prefix}help" to see all commands`,

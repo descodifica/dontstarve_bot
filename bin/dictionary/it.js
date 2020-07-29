@@ -41,7 +41,7 @@ global.Dictionary.add('it', {
   },
   help: {
     name: 'aiuto',
-    resume: 'Chiedi aiuto al bot e ai suoi comandi',
+    resume: 'Chiedi aiuto al Bot e ai suoi comandi',
     messages: {
       COMMAND_NOT_FOUND: ({ command, prefix, }) => `il comando "${command}"non esiste, tra` +
         `"${prefix}aiuto" per vedere tutti i comandi`,
