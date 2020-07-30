@@ -22,13 +22,29 @@ global.Dictionary.add('en', {
             '> `zhcn` - Simplified Chinese\n'
           )
         },
+      },,
+      prefix: {
+        name: 'prefix',
+        resume: 'Changes the prefix of the Bot',
+        doc: (_Message, { prefix, }) => {
+          _Message.set(
+            'Prefix is the text entered before a command to let the Bot know it is for' +
+               'he. By default we use the prefix `: ds` and currently this server is' +
+               `configured to use the prefix \`${prefix}\`, but you can change it with this` +
+               'command.\n\n' +
+               '***Example:***\n\n' +
+               '\'ds:config prefix dont:\`'
+          )
+        },
       },
     },
     messages: {
       INVALID_LANGUAGE: ({ lang, firstLangs, lastLang, }) => 'The language" $ {lang} "is ' +
         'invalid. Accepted values are: $ {firstLangs} and $ {lastLang}',
       UPDATED_LANGUAGE: 'Language updated successfully',
-      UPDATE_LANGUAGE_ERROR: 'A problem when changing the language',
+      UPDATE_LANGUAGE_ERROR: 'There was a problem changing the language',
+      UPDATED_PREFIX: 'Ocorreu um problema ao mudar o idioma',
+      UPDATE_PREFIX_ERROR: 'There was a problem changing the prefix',
     },
   },
   experience: {
