@@ -1,9 +1,6 @@
 // Importa comando padrão
 const DefaultCommand = require('./Default')
 
-// Prefixo
-const { prefix, } = require('../config')
-
 // O comando de ajuda
 class Help extends DefaultCommand {
   /**
@@ -25,9 +22,12 @@ class Help extends DefaultCommand {
       const first = k === 0
       const last = k === modules.length + 1
 
-      _Message.setExampleAndExplanation(`${prefix}${moduleData.name}`, moduleData.resume, {
-        breakTop: !first, breakBottom: !last ? 2 : false,
-      })
+      _Message.setExampleAndExplanation(
+        `${_Message.serverConfig.prefix}${moduleData.name}`, moduleData.resume, {
+          breakTop: !first,
+          breakBottom: !last ? 2 : false,
+        }
+      )
     })
 
     // Entra com mensagem de detalhamento
@@ -35,7 +35,7 @@ class Help extends DefaultCommand {
       this._finalMessage(
         _config,
         'COMMAND',
-        prefix + Dictionary.getTranslateModule(_config.lang, 'help')
+        _Message.serverConfig.prefix + Dictionary.getTranslateModule(_config.lang, 'help')
       )
     )
 
@@ -63,7 +63,10 @@ class Help extends DefaultCommand {
 
     // Se o comando não existe, informa e finaliza
     if (!commandInfo) {
-      _Message.send('help', 'COMMAND_NOT_FOUND', { command: originalCommand, prefix, })
+      _Message.send('help', 'COMMAND_NOT_FOUND', {
+        command: originalCommand,
+        prefix: _Message.serverConfig.prefix,
+      })
 
       return
     }
@@ -90,7 +93,7 @@ class Help extends DefaultCommand {
       }
 
       _Message.setExampleAndExplanation(
-        `${prefix}${originalCommand} ${originalMethod}`, method.resume
+        `${_Message.serverConfig.prefix}${originalCommand} ${originalMethod}`, method.resume
       )
 
       _Message.set('\n\n')
@@ -110,7 +113,9 @@ class Help extends DefaultCommand {
 
       if (commandInfo.methods) {
         _Message.setFromDictionary(
-          'help', 'VIEW_ALL_METHODS', { command: prefix + originalCommand, }
+          'help', 'VIEW_ALL_METHODS', {
+            command: _Message.serverConfig.prefix + originalCommand,
+          }
         )
 
         Object.values(commandInfo.methods).map((data, k) => {
@@ -118,15 +123,18 @@ class Help extends DefaultCommand {
           const last = k === commandInfo.methods.length + 1
 
           _Message.setExampleAndExplanation(
-            `${prefix}${originalCommand} ${data.name}`, data.resume, {
-              breakTop: !first, breakBottom: !last ? 2 : 0,
+            `${_Message.serverConfig.prefix}${originalCommand} ${data.name}`, data.resume, {
+              breakTop: !first,
+              breakBottom: !last ? 2 : 0,
             }
           )
         })
 
         // Entra com mensagem de detalhamento
         _Message.set(
-          this._finalMessage(_config, 'METHOD', prefix + translateHelp + ' ' + originalCommand)
+          this._finalMessage(
+            _config, 'METHOD', _Message.serverConfig.prefix + translateHelp + ' ' + originalCommand
+          )
         )
       }
     }

@@ -22,7 +22,7 @@ global.Dictionary.add('en', {
             '> `zhcn` - Simplified Chinese\n'
           )
         },
-      },,
+      },
       prefix: {
         name: 'prefix',
         resume: 'Changes the prefix of the Bot',
