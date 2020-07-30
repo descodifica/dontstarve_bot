@@ -93,6 +93,17 @@ class Dictionary {
   }
 
   /**
+   * @description Recupera nome de um método no idioma do servidor
+   * @param {String} _lang O idioma
+   * @param {String} _module O módulo desejado
+   * @param {String} _method O método desejado
+   * @returns {String} O nome traduzido
+   */
+  getTranslateMethod (_lang, _module, _method) {
+    return this.sessions[_lang][_module].methods[_method].name
+  }
+
+  /**
    * @description Recupera informações um módulo de acordo com o idioma do servidor
    * @param {String} _lang O idioma
    * @param {String} _module O módulo desejado

@@ -26,6 +26,10 @@
         {
             "name": "feature/profile",
             "base": "develop"
+        },
+        {
+            "name": "feature/new_message",
+            "base": "develop"
         }
     ]
 }

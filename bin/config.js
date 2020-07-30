@@ -11,7 +11,7 @@ const config = {
     password: '12345678',
     database: 'dontstarve_bot',
   },
-  langs: [ // Idiomas contemplados pelo bot
+  langs: [ // Idiomas contemplados pelo Bot
     // 'bg', // Búlgaro
     'de', // Alemão
     'en', // Inglês

@@ -2,11 +2,11 @@
 global.Dictionary.add('es', {
   config: {
     name: 'config',
-    resume: 'Configura el bot en el servidor (solo el propietario del servidor)',
+    resume: 'Configura el Bot en el servidor (solo el propietario del servidor)',
     methods: {
       lang: {
         name: 'idioma',
-        resume: 'Cambiar el idioma del bot',
+        resume: 'Cambiar el idioma del Bot',
         doc: [
           'Acepta los valores:\n',
           '> de - Alemán',
@@ -41,7 +41,7 @@ global.Dictionary.add('es', {
   },
   help: {
     name: 'ayuda',
-    resume: 'Busque ayuda del bot y sus comandos',
+    resume: 'Busque ayuda del Bot y sus comandos',
     messages: {
       COMMAND_NOT_FOUND: ({ command, prefix, }) => `el comando "${command}" no existe, ingrese ` +
         `"${prefix}ayuda" para ver todos los comandos`,

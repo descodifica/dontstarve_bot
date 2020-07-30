@@ -1,4 +1,6 @@
 // TODO: Adicionar mods
+// TODO: Adicionar sexo
+// TODO: Adicionar identificação sexual
 
 // Percorre todos os campos de um json
 const objectMap = require('object.map')
@@ -10,9 +12,9 @@ const objectFilter = require('object-filter')
 const { AgeFromDate, } = require('age-calculator')
 
 // Serviços
-const ProfileService = require('../entities/Profile')
-const ExperienceService = require('../entities/Experience')
-const CharacterService = require('../entities/Character')
+const ProfileService = require('../services/Profile')
+const ExperienceService = require('../services/Experience')
+const CharacterService = require('../services/Character')
 
 // Importa comando padrão
 const DefaultCommand = require('./Default')
@@ -21,32 +23,32 @@ const DefaultCommand = require('./Default')
 class Profile extends DefaultCommand {
   /**
    * @description Visualiza um perfil
-   * @param {Array} _args Os argumentos passados
-   * @param {Object} _message O objeto da mensagem
+   * @param {Object} _Message O objeto da mensagem
    * @param {Object} _config As configurações do servidor
    */
-  main (_args, _message, _config) {
-    this.view(_args, _message, _config)
+  main (Message, _config) {
+    this.view(Message, _config)
   }
 
   /**
    * @description Visualiza um perfil
-   * @param {Array} _args Os argumentos passados
-   * @param {Object} _message O objeto da mensagem
+   * @param {Object} _Message O objeto da mensagem
    * @param {Object} _config As configurações do servidor
    */
-  async view (_args, _message, _config) {
+  async view (_Message, _config) {
     // Se pediu perfil de alguém
-    const ifMention = _args.length > 0
+    const hasMention = _Message.hasArgs()
 
     // Id do perfil
-    const profileId = !ifMention ? this.authorId(_message) : _args[0].id
+    const profileId = !hasMention ? _Message.authorId() : _Message.args[0].id
 
     // Nome do perfil
-    const profileName = !ifMention ? this.authorUserName(_message) : _args[0].username
+    const profileName = !hasMention ? _Message.authorUserName() : _Message.args[0].username
 
     // Avatar do perfil
-    const profileAvatar = !ifMention ? this.authorAvatar(_message) : _args[0].displayAvatarURL()
+    const profileAvatar = (
+      !hasMention ? _Message.authorAvatar() : _Message.args[0].displayAvatarURL()
+    )
 
     // Busca o perfil
     let profile = await ProfileService.get(profileId)
@@ -54,17 +56,15 @@ class Profile extends DefaultCommand {
     // Se não achou e não tem menção, cria, informa e busca novamente
     // Se tem mensão, informa apenas
     if (!profile) {
-      if (!ifMention) {
+      if (!hasMention) {
         await ProfileService.create({ id: profileId, })
 
-        _message.channel.send(Dictionary.getMessage(_config, 'profile', 'CREATE'))
+        _Message.sendFromDictionary('profile', 'CREATE')
 
         profile = await ProfileService.get(profileId)
       }
       else {
-        _message.channel.send(
-          Dictionary.getMessage(_config.lang, 'profile', 'NO_PROFILE', { user: profileName, })
-        )
+        _Message.channel.send('profile', 'NO_PROFILE', { user: profileName, })
 
         return
       }
@@ -185,34 +185,38 @@ class Profile extends DefaultCommand {
       ])
     })
 
-    // A mensagem
-    const embed = this.embedMessage({
+    // Responde
+    _Message.sendEmbedMessage({
       title: '> ' + Dictionary.getMessage(_config, 'profile', 'PROFILE_NAME', {
         name: profileName,
       }),
       description: content.join('\n'),
       thumbnail: profileAvatar,
-    }, _message)
-
-    // Respode
-    _message.channel.send(embed)
+    })
   }
 
   /**
    * @description Edita uma informação de um perfil
-   * @param {Array} _args Os argumentos passados
-   * @param {Object} _message O objeto da mensagem
+   * @param {Object} _Message O objeto da mensagem
    * @param {Object} _config As configurações do servidor
    */
-  async edit (_args, _message, _config) {
+  async edit (_Message, _config) {
     // Versões do jogo
     const versions = require('../versions')
 
     // Recebe parâmetros tratados
-    const params = this.params(_args)
+    const params = this.params(_Message.args)
 
     // Parâmetros do perfil principal
-    const mainParams = objectFilter(params.set, i => typeof i !== 'object')
+    const mainParams = {}
+
+    // Filtra e traduz para nome real dos parâmetros do perfil principal
+    objectMap(objectFilter(params.set, i => typeof i !== 'object'), (v, k) => {
+      // Nome real
+      const prop = Dictionary.getMethodParam(_config.lang, 'profile', 'edit', k)
+
+      mainParams[prop] = v
+    })
 
     // Parâmetros das experiencias das versões do jogo
     const versionParams = {}
@@ -231,7 +235,7 @@ class Profile extends DefaultCommand {
     const errors = []
 
     // Condições a serem usadas
-    const where = { id: this.authorId(_message), }
+    const where = { id: _Message.authorId(), }
 
     // Salva perfil principal e adiciona promessa em array
     promises.push(
@@ -247,7 +251,7 @@ class Profile extends DefaultCommand {
       if (!versionParams[v]) return
 
       // Condições a serem usadas
-      const where = { user: this.authorId(_message), version: v, }
+      const where = { user: _Message.authorId(), version: v, }
 
       promises.push(
         ExperienceService.update(versionParams[v], where, 'edit', _config).catch(e => {
@@ -260,34 +264,33 @@ class Profile extends DefaultCommand {
     // Se todas as promessas foram resolvidas
     Promise.all(promises)
       .then(() => {
-        _message.channel.send(Dictionary.getMessage(_config, 'profile', 'UPDATE'))
+        _Message.sendFromDictionary('profile', 'UPDATE')
       })
       .catch(() => {
-        errors.map(e => _message.channel.send(e))
+        errors.map(e => _Message.sendFromDictionary(e))
 
-        _message.channel.send(Dictionary.getMessage(_config, 'profile', 'UPDATE_ERROR'))
+        _Message.sendFromDictionary('profile', 'UPDATE_ERROR')
       })
   }
 
   /**
    * @description Chamado quando chamar um método não existente
-   * @param {Array} _args Os argumentos passados
-   * @param {Object} _message O objeto da mensagem
+   * @param {Object} _Message O objeto da mensagem
    * @param {Object} _config As configurações do servidor
    */
-  invalidRedir (_args, _message, _config) {
+  invalidRedir (_Message, _config) {
     // As menções
-    const mentions = _message.mentions.users.array()
+    const mentions = _Message.mentions.users.array()
 
     // Se não mencionou ninguém, informa e finaliza
     if (mentions.length === 0) {
-      global.Bot.methodNotExists(_message, _args[0], _config)
+      global.Bot.methodNotExists(_Message, _Message.args[0], _config)
 
       return
     }
 
     // Chama método de vizualização
-    this.view(mentions, _message, _config)
+    this.view(mentions, _Message, _config)
   }
 }
 
