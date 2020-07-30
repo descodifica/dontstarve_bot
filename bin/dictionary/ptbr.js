@@ -362,4 +362,8 @@ global.Dictionary.add('ptbr', {
 
     },
   },
+  stream: {
+    name: 'stream',
+    resume: 'Lista canais de Streamers focados em Don\'t Starve',
+  },
 })

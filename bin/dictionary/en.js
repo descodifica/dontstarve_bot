@@ -360,5 +360,9 @@ global.Dictionary.add('en', {
       ALLY_OF_THEM_TEXT: 'Ally of "Eles" - Has survived for at least 10 years and has atotal ' +
       'or almost total knowledge of the game',
     },
+  },,
+  stream: {
+    name: 'stream',
+    resume: 'List of Streamers focused on Don \'t Starve',
   },
 })
