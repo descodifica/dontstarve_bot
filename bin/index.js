@@ -14,7 +14,10 @@ const Db = require('./Db')
 const Commands = require('./Commands')
 
 // Importa configurações
-const { token, prefix, } = require('./config')
+const { token, } = require('./config')
+
+// Lista de prefixo por servidor
+const serverPrefix = {}
 
 // Classe principal do Bot
 class DontStarve {
@@ -61,9 +64,6 @@ class DontStarve {
       config = (await ConfigEntity.getBy({ server_id: _Message.serverId(), }))[0]
     }
 
-    // Seta configurações na mensagem
-    _Message.serverConfig = { ...config, prefix, }
-
     // Retorna
     return config
   }
@@ -79,6 +79,24 @@ class DontStarve {
   }
 
   /**
+   * @description Retorna o prefixo do servidor
+   * @param {Object} _Message A mensagem enviada
+   * @returns {String} O prefixo
+   */
+  async getServerPrefix (_Message) {
+    // Id do servidor da mensagem
+    const serverId = _Message.serverId()
+
+    // Se não tem o ID na lista "quente" em código, busca e armazena nela
+    if (!serverPrefix[serverId]) {
+      serverPrefix[serverId] = (await this.getServerConfig(_Message)).prefix
+    }
+
+    // Retorna da lista quente
+    return serverPrefix[serverId]
+  }
+
+  /**
    * @description Ao receber uma mensagem
    */
   onMessage () {
@@ -87,11 +105,17 @@ class DontStarve {
       // Recebe mensagem
       const Message = require('./Message')(message)
 
+      // Prefixo a ser usado
+      const prefix = await this.getServerPrefix(Message)
+
       // Se a mensagem não for para o Bot, finaliza
-      if (!Message.forBot()) return {}
+      if (!Message.forBot(prefix)) return {}
 
       // Configurações do servidor
-      const serverConfig = await this.getServerConfig(Message)
+      const serverConfig = Message.serverConfig = await this.getServerConfig(Message)
+
+      // Trata os argumentos da mensagem
+      Message.parserArgs()
 
       // Recebe o comando original (remove do primeiro argumento)
       const originalCommand = Message.command

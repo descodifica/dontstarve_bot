@@ -24,9 +24,19 @@ DROP TABLE IF EXISTS `characters`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `characters` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) DEFAULT NULL,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `health` int(11) NOT NULL,
+  `max_health` int(11) DEFAULT NULL,
+  `hunger` int(11) NOT NULL,
+  `max_hunger` int(11) DEFAULT NULL,
+  `sanity` int(11) NOT NULL,
+  `max_sanity` int(11) DEFAULT NULL,
+  `birthday` date DEFAULT NULL,
+  `favorite_food` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `history` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -35,7 +45,7 @@ CREATE TABLE `characters` (
 
 LOCK TABLES `characters` WRITE;
 /*!40000 ALTER TABLE `characters` DISABLE KEYS */;
-INSERT INTO `characters` VALUES (1,'Wilson');
+INSERT INTO `characters` VALUES (1,'Wilson',150,NULL,150,NULL,200,NULL,'0000-00-00',NULL,NULL,NULL),(2,'Willow',150,NULL,150,NULL,120,NULL,'0000-00-00',NULL,NULL,NULL),(3,'Wolfgang',150,300,300,NULL,200,NULL,'0000-00-00',NULL,NULL,NULL),(4,'Wendy',150,NULL,150,NULL,200,NULL,'0000-00-00',NULL,NULL,NULL),(5,'WX-78',100,400,100,200,100,300,NULL,NULL,NULL,NULL),(6,'Wickerbottom',150,NULL,150,NULL,200,NULL,NULL,NULL,NULL,NULL),(7,'Woodie',150,NULL,150,NULL,200,NULL,NULL,NULL,NULL,NULL),(8,'Wes',113,NULL,113,NULL,150,NULL,NULL,NULL,NULL,NULL),(9,'Maxwell',75,NULL,150,NULL,200,NULL,NULL,NULL,NULL,NULL),(10,'Wigfrid',200,NULL,120,NULL,120,NULL,NULL,NULL,NULL,NULL),(11,'Webber',175,NULL,175,NULL,100,NULL,NULL,NULL,NULL,NULL),(12,'Winona',150,NULL,150,NULL,200,NULL,NULL,NULL,NULL,NULL),(13,'Wortox',200,NULL,175,NULL,150,NULL,NULL,NULL,NULL,NULL),(14,'Wormwood',150,NULL,150,NULL,200,NULL,NULL,NULL,NULL,NULL),(15,'Warly',150,NULL,250,NULL,200,NULL,NULL,NULL,NULL,NULL),(16,'Wagstaff',150,NULL,225,NULL,150,NULL,NULL,NULL,NULL,NULL),(17,'Walani',120,NULL,200,NULL,200,NULL,NULL,NULL,NULL,NULL),(18,'Wilbur',125,NULL,175,NULL,150,NULL,NULL,NULL,NULL,NULL),(19,'Woodlegs',150,NULL,150,NULL,120,NULL,NULL,NULL,NULL,NULL),(20,'Wilba',150,NULL,200,NULL,100,NULL,NULL,NULL,NULL,NULL),(21,'Wheeler',100,NULL,150,NULL,200,NULL,NULL,NULL,NULL,NULL),(22,'Wurt',150,250,200,250,150,200,NULL,NULL,NULL,NULL),(23,'Walter',130,NULL,110,NULL,200,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `characters` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -50,8 +60,9 @@ CREATE TABLE `configs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `lang` varchar(4) NOT NULL DEFAULT 'ptbr',
   `server_id` varchar(50) NOT NULL,
+  `prefix` varchar(20) NOT NULL DEFAULT 'ds:',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -60,7 +71,6 @@ CREATE TABLE `configs` (
 
 LOCK TABLES `configs` WRITE;
 /*!40000 ALTER TABLE `configs` DISABLE KEYS */;
-INSERT INTO `configs` VALUES (1,'ptbr','728780476671590443'),(2,'ptbr','728780476671590443');
 /*!40000 ALTER TABLE `configs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -80,13 +90,13 @@ CREATE TABLE `experiences` (
   `hours` int(11) DEFAULT NULL,
   `main` int(11) DEFAULT NULL,
   `survived` int(11) DEFAULT NULL,
-  `level` int(11) DEFAULT NULL,
+  `level` enum('1','2','3','4','5','6','7','8','9') DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `experience_fk_1` (`main`),
   KEY `experiences_fk` (`user`),
   CONSTRAINT `experience_fk_1` FOREIGN KEY (`main`) REFERENCES `characters` (`id`),
   CONSTRAINT `experiences_fk` FOREIGN KEY (`user`) REFERENCES `profiles` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -95,7 +105,6 @@ CREATE TABLE `experiences` (
 
 LOCK TABLES `experiences` WRITE;
 /*!40000 ALTER TABLE `experiences` DISABLE KEYS */;
-INSERT INTO `experiences` VALUES (1,'479280796058910720','DST','1','Steam',721,1,99,4),(2,'479280796058910720','DS','1','Steam',2,1,22,2),(3,'479280796058910720','SW','1','Steam',9,1,18,2),(4,'479280796058910720','HAM','1','Steam',9,1,0,1);
 /*!40000 ALTER TABLE `experiences` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -124,7 +133,6 @@ CREATE TABLE `profiles` (
 
 LOCK TABLES `profiles` WRITE;
 /*!40000 ALTER TABLE `profiles` DISABLE KEYS */;
-INSERT INTO `profiles` VALUES ('479280796058910720','Rafael Dias','Hicker','1986-07-03','Petrópolis','RJ','Brasil');
 /*!40000 ALTER TABLE `profiles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -141,4 +149,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-07-24  9:44:21
+-- Dump completed on 2020-07-30 10:59:06

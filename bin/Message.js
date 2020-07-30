@@ -16,13 +16,6 @@ class Message {
    */
   constructor (_message) {
     this.message = _message
-    this.prefix = require('./config').prefix
-
-    this.parserArgs()
-
-    this.command = this.args.shift()
-    this.method = this.args.shift()
-
     this.text = ''
   }
 
@@ -42,19 +35,27 @@ class Message {
     this.args = this.parserQuoteArgs(this.args, '"', signal)
 
     this.args = this.args
-      .slice(this.prefix.length) // Remove o prefixo
+      .slice(this.serverConfig.prefix.length) // Remove o prefixo
       .split(' ') // Separa pelo espaço
       .filter(i => i.trim() !== '') // Remove argumento em branco (espaço extra no comando)
       .map(i => i.split(signal).join(' ')) // Volta espaço das aspas
+
+    // Separa comando e método
+    this.command = this.args.shift()
+    this.method = this.args.shift()
   }
 
   /**
    * @description Retorna se a mensagem foi enviada para o Bot
+   * @params {String} Prefixo do servidor
    * @returns {Boolean}
    */
-  forBot () {
+  forBot (_prefix) {
+    // Prefixo é o informado ou o presente em serverConfig
+    const prefix = _prefix || this.serverConfig.prefix
+
     return (
-      this.message.content.startsWith(this.prefix) && // Se começa com o prefixo e
+      this.message.content.startsWith(prefix) && // Se começa com o prefixo e
       !this.message.author.bot // Se não é mensagem de outro Bot
     )
   }
