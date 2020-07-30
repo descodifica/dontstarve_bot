@@ -10,16 +10,18 @@ global.Dictionary.add('ptbr', {
       lang: {
         name: 'ling',
         resume: 'Altera o idioma do Bot',
-        doc: [
-          'Aceita os valores:\n',
-          '> de - Alemão',
-          '> en - Inglês',
-          '> es - Espanhol',
-          '> fr - Francês',
-          '> it - Italiano',
-          '> ptbr - Portugês do Brasil',
-          '> zhcn - Chinês Simplificado',
-        ],
+        doc: _Message => {
+          _Message.set(
+            'Aceita os valores:\n\n' +
+            '> `de` - Alemão\n' +
+            '> `en` - Inglês\n' +
+            '> `es` - Espanhol\n' +
+            '> `fr` - Francês\n' +
+            '> `it` - Italiano\n' +
+            '> `ptbr` - Portugês do Brasil\n' +
+            '> `zhcn` - Chinês Simplificado'
+          )
+        },
       },
     },
     messages: {
@@ -46,8 +48,8 @@ global.Dictionary.add('ptbr', {
   },
   general: {
     messages: {
-      COMMAND_NOT_FOUND: ({ command, }) => `Comando "${command}" não existe`,
-      METHOD_NOT_EXISTS: ({ method, }) => `Método "${method}" não existe`,
+      COMMAND_NOT_FOUND: ({ command, }) => `Comando \`${command}\` não existe`,
+      METHOD_NOT_EXISTS: ({ method, }) => `Método \`${method}\` não existe`,
       OWNER_CONTROL_ONLY: 'Esse comando só pode ser usado pelo dono do servidor!',
       COMMAND_METHOD_REQUIRED: 'É necessário passar um método para o comando. Entre com o ' +
         'comando de ajuda para maiores detalhes',
@@ -115,43 +117,43 @@ global.Dictionary.add('ptbr', {
   },
   profile: {
     name: 'perfil',
-    resume: 'Perfil dos jogadores',
+    resume: 'Perfil dos Jogadores',
     methods: {
       view: {
         name: 'ver',
         resume: 'Vizualiza o perfil de um jogador ou o seu próprio',
-        doc: _Message => {
+        doc: (_Message, { prefix, }) => {
           _Message.set('***Exemplos:***\n\n')
 
           _Message.setExampleAndExplanation(
-            'ds:perfil ver',
+            prefix + 'perfil ver',
             'Visualiza o próprio perfil',
             { breakBottom: 2, }
           )
 
           _Message.setExampleAndExplanation(
-            'ds:perfil ver @Usuario',
+            prefix + 'perfil ver @Usuario',
             'Visualiza o perfil do jogador mencionado',
             { breakBottom: 2, }
           )
 
-          _Message.set('***Atalho:*** `ds:perfil`')
+          _Message.set(`***Atalho:*** \`${prefix}:perfil\``)
         },
       },
       edit: {
         name: 'editar',
         resume: 'Edita informações do perfil',
-        doc: _Message => {
+        doc: (_Message, { prefix, }) => {
           _Message.set(
             'O perfil é dividido em duas sessões básicas: ***Pessoal*** e ***Jogo***.\n\n' +
             'A sessão pessoal exibe informações básicas do jogador enquanto a sessão de jogo ' +
               'exibe informações do jogador em relação aos diferentes jogos da franquia.\n\n' +
-            'Para editar as informações básicas, basta entrar com `ds:perfil editar` seguido do ' +
-              'identificador da informação. Veja:\n\n'
+            `Para editar as informações básicas, basta entrar com \`${prefix}perfil editar\` ` +
+              'seguido do identificador da informação. Veja:\n\n'
           )
 
           _Message.setExampleAndExplanation(
-            'ds:perfil editar nome "Rafael Dias"',
+            prefix + 'perfil editar nome "Rafael Dias"',
             [
               'Edita o nome do jogador.',
               'Note que em caso de nomes compostos, deve ser posto entre aspas.',
@@ -160,7 +162,7 @@ global.Dictionary.add('ptbr', {
           )
 
           _Message.setExampleAndExplanation(
-            'ds:perfil editar nascimento 03/07/1986',
+            prefix + 'perfil editar nascimento 03/07/1986',
             [
               'Edita a data de nascimento do jogador a qual é usada para calcular a idade.',
               'Note que a data deve ser colocada no formato dd/mm/aaaa.',
@@ -169,7 +171,7 @@ global.Dictionary.add('ptbr', {
           )
 
           _Message.setExampleAndExplanation(
-            'ds:perfil editar cidade Petrópolis',
+            prefix + 'perfil editar cidade Petrópolis',
             [
               'Edita a cidade do jogador',
               'Note que em caso de nomes compostos, deve ser posto entre aspas.',
@@ -181,7 +183,7 @@ global.Dictionary.add('ptbr', {
           )
 
           _Message.setExampleAndExplanation(
-            'ds:perfil editar estado "Rio de Janeiro"',
+            prefix + 'perfil editar estado "Rio de Janeiro"',
             [
               'Edita o estado do jogador',
               'Note que em caso de nomes compostos, deve ser posto entre aspas.',
@@ -193,7 +195,7 @@ global.Dictionary.add('ptbr', {
           )
 
           _Message.setExampleAndExplanation(
-            'ds:perfil editar pais Brasil',
+            prefix + 'perfil editar pais Brasil',
             [
               'Edita o país do jogador',
               'Note que em caso de nomes compostos, deve ser posto entre aspas.',
@@ -208,7 +210,7 @@ global.Dictionary.add('ptbr', {
             'Para editar as informações de jogo é a mesma coisa, porém acrescentamos um prefixo  ' +
             'ao nome da informação para informar a versão do jogo que desejamos alterar.' +
             'Os prefixos disponíveis são\n\n' +
-            '`ds.` *Don\'t Starve Solo*\n' +
+            '`ds.` *Don\'t Starve*\n' +
             '`sw.` *Don\'t Starve Shipwrecked*\n' +
             '`ham.` *Don\'t Starve Hamet*\n' +
             '`dst.` *Don\'t Starve Together*\n\n' +
@@ -218,7 +220,7 @@ global.Dictionary.add('ptbr', {
           )
 
           _Message.setExampleAndExplanation(
-            'ds:perfil editar dst.possui 1',
+            prefix + 'perfil editar dst.possui 1',
             [
               'Define se o jogador possui esta versão do jogo.',
               'Aceita **1** para **"Sim"** e **0** para **"Não"**.',
@@ -227,7 +229,7 @@ global.Dictionary.add('ptbr', {
           )
 
           _Message.setExampleAndExplanation(
-            'ds:perfil editar dst.plataforma Steam',
+            prefix + 'perfil editar dst.plataforma Steam',
             [
               'Define em qual plataforma o jogador possui esta versão do jogo.',
               'Aceita somente os valores: Steam, PS, Xbox, Android ou Iphone.',
@@ -236,7 +238,7 @@ global.Dictionary.add('ptbr', {
           )
 
           _Message.setExampleAndExplanation(
-            'ds:perfil editar dst.horas 300',
+            prefix + 'perfil editar dst.horas 300',
             [
               'Define o número de horas do jogador nesta versão do jogo.',
               'Aceita somente números inteiros',
@@ -245,7 +247,7 @@ global.Dictionary.add('ptbr', {
           )
 
           _Message.setExampleAndExplanation(
-            'ds:perfil editar dst.main Wickerbottom',
+            prefix + 'perfil editar dst.main Wickerbottom',
             [
               'Define se o jogador é "Main" de algum personagem.',
               'Aceita somente os nomes dos personagens.',
@@ -254,7 +256,7 @@ global.Dictionary.add('ptbr', {
           )
 
           _Message.setExampleAndExplanation(
-            'ds:perfil editar dst.sobreviveu 99',
+            prefix + 'perfil editar dst.sobreviveu 99',
             [
               'Define quantos dias no maximo o jogador conseguiu sobreviver nesta versão do jogo',
               'Aceita somente números inteiros',
@@ -263,7 +265,7 @@ global.Dictionary.add('ptbr', {
           )
 
           _Message.setExampleAndExplanation(
-            '`ds:perfil editar dst.rank 4`',
+            prefix + 'perfil editar dst.rank 4',
             [
               'Define o rank do jogador nesta versão, sendo que quanto menor o número, mais ' +
                 'experiente ele é.',
@@ -275,7 +277,8 @@ global.Dictionary.add('ptbr', {
           _Message.set(
             'Também vale dizer que você não precisa editar uma única informação por comando, mas ' +
               'pode sim editar várias de uma só vez: Veja:\n\n' +
-            '`ds:perfil editar nome "Rafael Dias" nascimento 03/07/1986 dst.main Wickerbottom`'
+              `\`${prefix}perfil editar nome "Rafael Dias" nascimento 03/07/1986 dst.main ` +
+              'Wickerbottom\`'
           )
         },
         params: {

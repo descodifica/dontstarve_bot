@@ -1,12 +1,8 @@
-// Importa função de mapeamento de objetos
-const objectMap = require('object.map')
-
 // Importa comando padrão
 const DefaultCommand = require('./Default')
 
 // Prefixo
 const { prefix, } = require('../config')
-const config = require('../config')
 
 // O comando de ajuda
 class Help extends DefaultCommand {
@@ -30,7 +26,7 @@ class Help extends DefaultCommand {
       const last = k === modules.length + 1
 
       _Message.setExampleAndExplanation(`${prefix}${moduleData.name}`, moduleData.resume, {
-        breakTop: !first, breakBottom: !last,
+        breakTop: !first, breakBottom: !last ? 2 : false,
       })
     })
 
@@ -101,7 +97,7 @@ class Help extends DefaultCommand {
 
       // Se tem doc, adiciona ela
       if (method.doc) {
-        method.doc(_Message)
+        method.doc(_Message, _config)
       }
       else {
         _Message.setFromDictionary('help', 'NO_INFO_AVAILABLE')
@@ -123,7 +119,7 @@ class Help extends DefaultCommand {
 
           _Message.setExampleAndExplanation(
             `${prefix}${originalCommand} ${data.name}`, data.resume, {
-              breakTop: !first, breakBottom: !last,
+              breakTop: !first, breakBottom: !last ? 2 : 0,
             }
           )
         })
@@ -168,7 +164,7 @@ class Help extends DefaultCommand {
   _finalMessage (_config, _argName, _command) {
     const argName = Dictionary.getMessage(_config, 'general', _argName)
 
-    return '\n' + Dictionary.getMessage(
+    return Dictionary.getMessage(
       _config, 'help', 'VIEW_MORE_DETAILS', { command: _command, word: argName, }
     )
   }
