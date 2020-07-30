@@ -13,13 +13,13 @@ global.Dictionary.add('en', {
         doc: _Message => {
           _Message.set(
             'Accept values: \n\n' +
-            '> `de` - German\n' +
-            '> `en` - English\n' +
-            '> `es` - Spanish\n' +
-            '> `fr` - French\n' +
-            '> `it` - Italian\n' +
-            '> `ptbr` - Portugês do Brasil\n' +
-            '> `zhcn` - Simplified Chinese\n'
+            '> 🇩🇪 `de` - Deutsche\n' +
+            '> 🇺🇸 `en` - English\n' +
+            '> 🇪🇸 `es` - Español\n' +
+            '> 🇫🇷 `fr` - Français\n' +
+            '> 🇮🇹 `it` - Italiano\n' +
+            '> 🇧🇷 `ptbr` - Portugês do Brasil\n' +
+            '> 🇨🇳 `zhcn` - 简体中文'
           )
         },
       },
@@ -33,7 +33,7 @@ global.Dictionary.add('en', {
                `configured to use the prefix \`${prefix}\`, but you can change it with this` +
                'command.\n\n' +
                '***Example:***\n\n' +
-               '\'ds:config prefix dont:\`'
+               `\'${prefix}config prefix dont:\``
           )
         },
       },
@@ -83,13 +83,13 @@ global.Dictionary.add('en', {
       INVALID_INTEGER: ({ prop, }) => `Property ${prop} must be an integer value`,
       INVALID_RELATION: ({ prop, options, lastOption, }) => `Invalid value for property ${prop}. ` +
         `Accepted values are ${options} and ${lastOption}.`,
-      WELCOME: ({ userName, serverName, }) => {
+      WELCOME: ({ userName, serverName, }, { prefix, }) => {
         return (
           `🇺🇲 Hello ${userName}! I'm really glad you're using me on your server ${serverName}, ` +
             'i really hope you enjoy the experience :D. \n\n' +
-            'So let\'s start? On your server, enter the command `ds: help` to get a ' +
+            `So let\'s start? On your server, enter the command \`${prefix}help\` to get a ` +
             'list of all available commands and how to use them.\n\n' +
-            'Do you want Bot in yours in english? Enter the command `ds:config ling en`! '
+            `Do you want Bot in yours in english? Enter the command \`${prefix}config ling en\`! `
         )
       },
     },
@@ -161,7 +161,7 @@ global.Dictionary.add('en', {
             { breakBottom: 2, }
           )
 
-          _Message.set(`***Shortcut:*** \`${prefix}:profile\``)
+          _Message.set(`***Shortcut:*** \`${prefix}profile\``)
         },
       },
       edit: {

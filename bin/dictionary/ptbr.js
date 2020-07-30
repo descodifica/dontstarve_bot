@@ -13,13 +13,13 @@ global.Dictionary.add('ptbr', {
         doc: _Message => {
           _Message.set(
             'Aceita os valores:\n\n' +
-            '> `de` - Alemão\n' +
-            '> `en` - Inglês\n' +
-            '> `es` - Espanhol\n' +
-            '> `fr` - Francês\n' +
-            '> `it` - Italiano\n' +
-            '> `ptbr` - Portugês do Brasil\n' +
-            '> `zhcn` - Chinês Simplificado'
+            '> 🇩🇪 `de` - Deutsche\n' +
+            '> 🇺🇸 `en` - English\n' +
+            '> 🇪🇸 `es` - Español\n' +
+            '> 🇫🇷 `fr` - Français\n' +
+            '> 🇮🇹 `it` - Italiano\n' +
+            '> 🇧🇷 `ptbr` - Portugês do Brasil\n' +
+            '> 🇨🇳 `zhcn` - 简体中文'
           )
         },
       },
@@ -33,7 +33,7 @@ global.Dictionary.add('ptbr', {
               `configurado para usar o prefixo \`${prefix}\`, mas você pode alterá-lo com este ` +
               'comando.\n\n' +
               '***Exemplo:***\n\n' +
-              '`ds:config prefix dont:`'
+              `\`${prefix}config prefix dont:\``
           )
         },
       },
@@ -83,12 +83,12 @@ global.Dictionary.add('ptbr', {
       INVALID_INTEGER: ({ prop, }) => `Propriedade ${prop} deve ser um valor inteiro`,
       INVALID_RELATION: ({ prop, options, lastOption, }) => 'Valor inválido para a propriedade ' +
       `${prop}. Valores aceitos são ${options} e ${lastOption}`,
-      WELCOME: ({ userName, serverName, }) => {
+      WELCOME: ({ userName, serverName, }, { prefix, }) => {
         return (
           `🇧🇷 Olá **${userName}**! Fico realmente feliz que esteja me utilizando no seu servidor ` +
           `**${serverName}**, espero de verdade que você curta a experiência :D.\n\n` +
-         'Então vamos começar? No seu servidor entre com o comando `ds:ajuda` para obter uma ' +
-         'lista de todos os comandos dispníveis e como usá-los.\n\n'
+         `Então vamos começar? No seu servidor entre com o comando \`${prefix}ajuda\` para obter ` +
+         'uma lista de todos os comandos dispníveis e como usá-los.\n\n'
         )
       },
     },
@@ -161,7 +161,7 @@ global.Dictionary.add('ptbr', {
             { breakBottom: 2, }
           )
 
-          _Message.set(`***Atalho:*** \`${prefix}:perfil\``)
+          _Message.set(`***Atalho:*** \`${prefix}perfil\``)
         },
       },
       edit: {

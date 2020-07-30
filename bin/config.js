@@ -13,11 +13,11 @@ const config = {
   langs: [ // Idiomas contemplados pelo Bot
     'ptbr', // Portgugês Brasil
     'en', // Inglês
-    // 'es', // Espanhol
-    // 'zhcn', // Chinês Simplificado
-    // 'it', // Italiano
-    // 'fr', // Francês
-    // 'de', // Alemão
+    'es', // Espanhol
+    'zhcn', // Chinês Simplificado
+    'it', // Italiano
+    'fr', // Francês
+    'de', // Alemão
     // 'bg', // Búlgaro
     // 'fa', // Persa, Parsi, Farsi
     // 'hu', // 'Húngaro'
