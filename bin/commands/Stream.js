@@ -62,6 +62,16 @@ const list = {
       'Horas! ',
     url: 'https://www.youtube.com/c/Magnum0fSpadesOficial',
   },
+  'Pamelita Sobreiro': {
+    type: 'Youtube',
+    avatar: 'https://yt3.ggpht.com/a/AATXAJwu1D6SYq9yxdj3FKq1CuWPmDa9GUkVvBe_tXfdRw=s100-c-k-' +
+      'c0xffffffff-no-rj-mo',
+    description: 'Procurando conteúdo sobre jogos Asa de Cristal e Don\'t Starve?\n\n' +
+      'Aqui você terá acesso a gameplays e tutorias não só sobre estes jogos mas também sobre ' +
+      'outros. Vivencie o mundo dos mods, e tenha novas experiencias. Eu espero você nessa ' +
+      'jornada :D',
+    url: 'https://www.youtube.com/PinBallGames',
+  },
 }
 
 // O comando dos Streamers
