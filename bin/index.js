@@ -129,6 +129,9 @@ class DontStarve {
       // Recebe mensagem
       const Message = require('./Message')(message)
 
+      // Finaliza se mensagem foi enviada por um bot
+      if (Message.fromBot()) return
+
       // Prefixo a ser usado
       const prefix = await this.getServerPrefix(Message)
 

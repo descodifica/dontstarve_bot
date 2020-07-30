@@ -56,8 +56,16 @@ class Message {
 
     return (
       this.message.content.startsWith(prefix) && // Se começa com o prefixo e
-      !this.message.author.bot // Se não é mensagem de outro Bot
+      !this.fromBot // Se não é mensagem de outro Bot
     )
+  }
+
+  /**
+   * @description Retorna se a mensagem foi enviada por um Bot
+   * @returns {Boolean}
+   */
+  fromBot () {
+    return this.message.author.bot
   }
 
   /**
@@ -73,7 +81,7 @@ class Message {
    * @returns {String}
    */
   serverId () {
-    return this.message.guild.id
+    return (this.message.guild || {}).id
   }
 
   /**
