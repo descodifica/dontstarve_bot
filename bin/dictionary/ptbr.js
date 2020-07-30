@@ -83,6 +83,14 @@ global.Dictionary.add('ptbr', {
       INVALID_INTEGER: ({ prop, }) => `Propriedade ${prop} deve ser um valor inteiro`,
       INVALID_RELATION: ({ prop, options, lastOption, }) => 'Valor inválido para a propriedade ' +
       `${prop}. Valores aceitos são ${options} e ${lastOption}`,
+      WELCOME: ({ userName, serverName, }) => {
+        return (
+          `🇧🇷 Olá **${userName}**! Fico realmente feliz que esteja me utilizando no seu servidor ` +
+          `**${serverName}**, espero de verdade que você curta a experiência :D.\n\n` +
+         'Então vamos começar? No seu servidor entre com o comando `ds:ajuda` para obter uma ' +
+         'lista de todos os comandos dispníveis e como usá-los.\n\n'
+        )
+      },
     },
   },
   help: {

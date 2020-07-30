@@ -11,16 +11,17 @@ const config = {
     database: 'dontstarve_bot',
   },
   langs: [ // Idiomas contemplados pelo Bot
-    // 'bg', // Búlgaro
-    'de', // Alemão
+    'ptbr', // Portgugês Brasil
     'en', // Inglês
-    'es', // Espanhol
+    // 'es', // Espanhol
+    // 'zhcn', // Chinês Simplificado
+    // 'it', // Italiano
+    // 'fr', // Francês
+    // 'de', // Alemão
+    // 'bg', // Búlgaro
     // 'fa', // Persa, Parsi, Farsi
-    'fr', // Francês
     // 'hu', // 'Húngaro'
     // 'id', // Indonésio
-    'it', // Italiano
-    'ptbr', // Portgugês Brasil
     // 'ptpt', // Portgugês Portugal
     // 'nl', // Holandês
     // 'ro', // Romeno
@@ -29,7 +30,6 @@ const config = {
     // 'th', // Tailandês
     // 'tr', // Turco
     // 'ko', // Koreano
-    'zhcn', // Chinês Simplificado
   ],
 }
 

@@ -6,7 +6,7 @@ class Config extends DefaultEntity {
     super({
       table: 'configs',
       props: {
-        lang: { type: 'Options', values: [ 'de', 'en', 'es', 'fr', 'it', 'ptbr', 'zhcn', ], },
+        lang: { type: 'Options', values: require('../config').langs, },
       },
     })
   }

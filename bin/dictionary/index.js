@@ -55,6 +55,18 @@ class Dictionary {
   }
 
   /**
+   * @description Recupera uma mensagem no idioma pedido
+   * @param {String} _lang O idioma
+   * @param {String} _module O módulo
+   * @param {String} _id O Id da mensagem
+   * @param {Object} _params Os parâmetros da mensagem
+   * @returns {String} A mensagem
+   */
+  getMessageInLang (_lang, _module, _id, _params = {}) {
+    return this.getMessage({ lang: _lang, }, _module, _id, _params)
+  }
+
+  /**
    * @description Recupera um resumo do ódulo
    * @param {String} _lang O idioma
    * @param {String} _module O módulo

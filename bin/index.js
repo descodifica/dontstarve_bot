@@ -14,7 +14,8 @@ const Db = require('./Db')
 const Commands = require('./Commands')
 
 // Importa configurações
-const { token, } = require('./config')
+const { token, langs, } = require('./config')
+const Dictionary = require('./Dictionary')
 
 // Lista de prefixo por servidor
 global.serverPrefix = {}
@@ -37,6 +38,9 @@ class DontStarve {
 
     // Executa ao iniciar
     this.onReady()
+
+    // Executa quando entrar em um novo servidor
+    this.onServerEnter()
 
     // Executa ao receber uma mensagem
     this.onMessage()
@@ -75,6 +79,26 @@ class DontStarve {
     // Quando iniciar
     this.client.on('ready', () => {
       console.log(`Logged in as ${this.client.user.tag}!`)
+    })
+  }
+
+  /**
+   * @description Ao entrar em um novo servidor
+   */
+  onServerEnter () {
+    this.client.on('guildCreate', async _server => {
+      const user = _server.owner
+      const userName = user.user.username
+      const serverName = _server.name
+      const msgs = []
+
+      langs.map(lang => {
+        msgs.push(
+          Dictionary.getMessageInLang(lang, 'general', 'WELCOME', { userName, serverName, })
+        )
+      })
+
+      await user.send(msgs.join('\n'))
     })
   }
 

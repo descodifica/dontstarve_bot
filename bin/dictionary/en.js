@@ -83,6 +83,15 @@ global.Dictionary.add('en', {
       INVALID_INTEGER: ({ prop, }) => `Property ${prop} must be an integer value`,
       INVALID_RELATION: ({ prop, options, lastOption, }) => `Invalid value for property ${prop}. ` +
         `Accepted values are ${options} and ${lastOption}.`,
+      WELCOME: ({ userName, serverName, }) => {
+        return (
+          `🇺🇲 Hello ${userName}! I'm really glad you're using me on your server ${serverName}, ` +
+            'i really hope you enjoy the experience :D. \n\n' +
+            'So let\'s start? On your server, enter the command `ds: help` to get a ' +
+            'list of all available commands and how to use them.\n\n' +
+            'Do you want Bot in yours in english? Enter the command `ds:config ling en`! '
+        )
+      },
     },
   },
   help: {
