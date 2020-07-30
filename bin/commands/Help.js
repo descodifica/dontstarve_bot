@@ -107,8 +107,17 @@ class Help extends DefaultCommand {
       }
     }
     else {
+      _Message.setExampleAndExplanation(
+        _Message.serverConfig.prefix + originalCommand, commandInfo.resume
+      )
+
+      _Message.set('\n\n')
+
       if (commandInfo.doc) {
         commandInfo.doc(_Message, _config)
+      }
+      else {
+        _Message.setFromDictionary('help', 'NO_INFO_AVAILABLE')
       }
 
       if (commandInfo.methods) {
