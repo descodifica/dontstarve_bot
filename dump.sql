@@ -36,7 +36,7 @@ CREATE TABLE `characters` (
   `history` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -58,7 +58,7 @@ DROP TABLE IF EXISTS `configs`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `configs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `lang` varchar(4) NOT NULL DEFAULT 'ptbr',
+  `lang` enum('de','en','es','fr','it','ptbr','zhcn') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'ptbr',
   `server_id` varchar(50) NOT NULL,
   `prefix` varchar(20) NOT NULL DEFAULT 'ds:',
   PRIMARY KEY (`id`)
@@ -123,6 +123,7 @@ CREATE TABLE `profiles` (
   `city` varchar(50) DEFAULT NULL,
   `state` varchar(50) DEFAULT NULL,
   `country` varchar(50) DEFAULT NULL,
+  `genre` enum('0','1') DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -149,4 +150,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-07-30 10:59:06
+-- Dump completed on 2020-07-30 14:08:55
