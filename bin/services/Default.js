@@ -185,40 +185,42 @@ class Default {
     // Retorna o erro adequado
 
     if (type === 'Option' && typeError === 'WARN_DATA_TRUNCATED') {
-      return Dictionary.getMessage(_serverConfig, 'general', 'INVALID_OPTION', {
-        prop: translateProp,
-        options: this.props[prop].values.slice(0, -1).join(', '),
-        lastOption: this.props[prop].values.slice(-1).toString(),
-      })
+      return {
+        module: 'general',
+        error: 'INVALID_OPTION',
+        params: {
+          prop: translateProp,
+          options: this.props[prop].values.slice(0, -1).join(', '),
+          lastOption: this.props[prop].values.slice(-1).toString(),
+        },
+      }
     }
 
     if (typeError === 'INCORRECT_DATE') {
-      return Dictionary.getMessage(_serverConfig, 'general', 'INVALID_DATE', {
-        prop: translateProp,
-      })
+      return { module: 'general', error: 'INVALID_DATE', params: { prop: translateProp, }, }
     }
 
     if (typeError === 'R_DATA_TOO_LONG') {
-      return Dictionary.getMessage(_serverConfig, 'general', 'LONG_TEXT', {
-        prop: translateProp,
-      })
+      return { module: 'general', error: 'LONG_TEXT', params: { prop: translateProp, }, }
     }
 
     if (typeError === 'INVALID_INTEGER') {
-      return Dictionary.getMessage(_serverConfig, 'general', 'INVALID_INTEGER', {
-        prop: translateProp,
-      })
+      return { module: 'general', error: 'INVALID_INTEGER', params: { prop: translateProp, }, }
     }
 
     if (typeError === 'INVALID_RELATION') {
       const Relation = require(`./${this.props[prop].entity}`)
       const options = (await Relation.list()).map(i => i.name)
 
-      return Dictionary.getMessage(_serverConfig, 'general', 'INVALID_RELATION', {
-        prop: translateProp,
-        options: options.slice(0, -1).join(', '),
-        lastOption: options.slice(-1).toString(),
-      })
+      return {
+        module: 'general',
+        error: 'INVALID_RELATION',
+        params: {
+          prop: translateProp,
+          options: options.slice(0, -1).join(', '),
+          lastOption: options.slice(-1).toString(),
+        },
+      }
     }
   }
 

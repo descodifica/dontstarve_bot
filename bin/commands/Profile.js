@@ -270,8 +270,7 @@ class Profile extends DefaultCommand {
         _Message.sendFromDictionary('profile', 'UPDATE')
       })
       .catch(e => {
-        _Message.send(e)
-
+        _Message.sendFromDictionary(e.module, e.error, e.params)
         _Message.sendFromDictionary('profile', 'UPDATE_ERROR')
       })
   }
