@@ -23,12 +23,28 @@ global.Dictionary.add('ptbr', {
           )
         },
       },
+      prefix: {
+        name: 'prefix',
+        resume: 'Altera o prefixo do Bot',
+        doc: (_Message, { prefix, }) => {
+          _Message.set(
+            'Prefixo é o texto informado antes de um comando para que o Bot saiba que é para ' +
+              'ele. Por padrão usamos o prefixo `:ds` e atualmente este servidor esta ' +
+              `configurado para usar o prefixo \`${prefix}\`, mas você pode alterá-lo com este ` +
+              'comando.\n\n' +
+              '***Exemplo:***\n\n' +
+              '`ds:config prefix dont:`'
+          )
+        },
+      },
     },
     messages: {
       INVALID_LANGUAGE: ({ lang, firstLangs, lastLang, }) => `O idioma "${lang}" é inválido. ` +
         `Valores aceitos são: ${firstLangs} e ${lastLang}`,
       UPDATED_LANGUAGE: 'Idioma atualizado com sucesso',
-      UPDATE_LANGUAGE_ERROR: 'O um problema ao mudar o idioma',
+      UPDATE_LANGUAGE_ERROR: 'Ocorreu um problema ao mudar o idioma',
+      UPDATED_PREFIX: 'Prefixo atualizado com sucesso',
+      UPDATE_PREFIX_ERROR: 'Ocorreu um problema ao mudar o prefixo',
     },
   },
   experience: {

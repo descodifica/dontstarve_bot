@@ -17,7 +17,7 @@ const Commands = require('./Commands')
 const { token, } = require('./config')
 
 // Lista de prefixo por servidor
-const serverPrefix = {}
+global.serverPrefix = {}
 
 // Classe principal do Bot
 class DontStarve {
@@ -88,12 +88,12 @@ class DontStarve {
     const serverId = _Message.serverId()
 
     // Se não tem o ID na lista "quente" em código, busca e armazena nela
-    if (!serverPrefix[serverId]) {
-      serverPrefix[serverId] = (await this.getServerConfig(_Message)).prefix
+    if (!global.serverPrefix[serverId]) {
+      global.serverPrefix[serverId] = (await this.getServerConfig(_Message)).prefix
     }
 
     // Retorna da lista quente
-    return serverPrefix[serverId]
+    return global.serverPrefix[serverId]
   }
 
   /**

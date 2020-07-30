@@ -1,5 +1,3 @@
-// TODO: Adicionar Prefixo
-
 // Importa comando padrão
 const DefaultCommand = require('./Default')
 
@@ -40,6 +38,27 @@ class Config extends DefaultCommand {
       })
       .catch(e => {
         _Message.sendFromDictionary('config', 'UPDATE_LANGUAGE_ERROR')
+      })
+  }
+
+  /**
+   * @description Método de configuração de prefix
+   * @param {Object} _Message O objeto da mensagem
+   * @param {Object} _config As configurações do servidor
+   */
+  prefix (_Message, _config) {
+    // O prefixo pedido
+    const prefix = _Message.args[0]
+
+    // Atualiza
+    this._config('prefix', prefix, _Message)
+      .then(() => {
+        global.serverPrefix[_Message.serverId()] = _Message.args[0]
+
+        _Message.sendFromDictionary('config', 'UPDATED_PREFIX')
+      })
+      .catch(e => {
+        _Message.sendFromDictionary('config', 'UPDATE_PREFIX_ERROR')
       })
   }
 
