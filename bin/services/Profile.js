@@ -8,6 +8,7 @@ class Profile extends DefaultEntity {
       table: 'profiles',
       props: {
         birth: 'Date',
+        genre: { type: 'Option', values: [ '0', '1', ], },
       },
     })
   }
