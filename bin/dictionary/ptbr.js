@@ -187,6 +187,15 @@ global.Dictionary.add('ptbr', {
           )
 
           _Message.setExampleAndExplanation(
+            prefix + 'perfil editar genero 1',
+            [
+              'Edita o gênero do jogador.',
+              'Note que aceita somente **1** para **Masculino** e **0** para **Feminino**',
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
             prefix + 'perfil editar cidade Petrópolis',
             [
               'Edita a cidade do jogador',
@@ -303,6 +312,7 @@ global.Dictionary.add('ptbr', {
           city: 'cidade',
           state: 'estado',
           country: 'pais',
+          genre: 'genero',
         },
       },
     },
@@ -316,6 +326,7 @@ global.Dictionary.add('ptbr', {
       PROFILE_NAME: 'Nome',
       PROFILE_NICK: 'Nick',
       PROFILE_AGE: 'Idade',
+      PROFILE_GENRE: 'Gênero',
       PROFILE_LOCATE: 'Localização',
       PROFILE_HAVE: 'Possui',
       PROFILE_PLATFORM: 'Plataforma',

@@ -1,5 +1,4 @@
 // TODO: Adicionar mods
-// TODO: Adicionar sexo
 // TODO: Adicionar identificação sexual
 
 // Percorre todos os campos de um json
@@ -158,6 +157,10 @@ class Profile extends DefaultCommand {
             new AgeFromDate(v).age + ' ' +
             Dictionary.getMessage(_config, 'general', 'YEARS')
           )
+        }),
+      `***${Dictionary.getMessage(_config, 'profile', 'PROFILE_GENRE')}:*** ` +
+        getValOrNotDefined(profile.genre, v => {
+          return v === '1' ? 'Masculino' : 'Feminino'
         }),
       `***${Dictionary.getMessage(_config, 'profile', 'PROFILE_LOCATE')}:*** ` +
         `${getValOrNotDefined(profile.city)}/${getValOrNotDefined(profile.state)} - ` +

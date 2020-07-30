@@ -186,6 +186,15 @@ global.Dictionary.add('en', {
           )
 
           _Message.setExampleAndExplanation(
+            prefix + 'profile edit genre 1',
+            [
+              'Edit the player\'s gender.',
+              'Note that you only accept **1** for **Male** and **0** for **Female**',
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
             prefix + 'profile edit city Petrópolis',
             [
               'Edit the player\'s city',
@@ -303,6 +312,7 @@ global.Dictionary.add('en', {
           city: 'city',
           state: 'state',
           country: 'country',
+          genre: 'genre',
         },
       },
     },
@@ -316,6 +326,7 @@ global.Dictionary.add('en', {
       PROFILE_NAME: 'Name',
       PROFILE_NICK: 'Nick',
       PROFILE_AGE: 'Age',
+      PROFILE_GENRE: 'Genre',
       PROFILE_LOCATE: 'Location',
       PROFILE_HAVE: 'Have',
       PROFILE_PLATFORM: 'Platform',
