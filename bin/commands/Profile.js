@@ -269,8 +269,8 @@ class Profile extends DefaultCommand {
       .then(() => {
         _Message.sendFromDictionary('profile', 'UPDATE')
       })
-      .catch(() => {
-        errors.map(e => _Message.sendFromDictionary(e))
+      .catch(e => {
+        _Message.send(e)
 
         _Message.sendFromDictionary('profile', 'UPDATE_ERROR')
       })
