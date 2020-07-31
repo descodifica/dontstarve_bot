@@ -26,7 +26,6 @@ class DontStarve {
   constructor () {
     // Limpa terminal
     clear()
-
     // Informa inicio
     console.log('Starting...')
 

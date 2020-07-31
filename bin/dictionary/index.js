@@ -1,4 +1,5 @@
 const objectMap = require('object.map')
+const objectFilter = require('object-filter')
 
 // Classe de dicionário
 class Dictionary {
@@ -9,17 +10,14 @@ class Dictionary {
     // As sessões do dicionário
     this.sessions = {}
 
-    // Os formatos de datas/horas
-    this.formatDates = {}
-
     // Importa sessões
-    require('./de')
     require('./en')
-    require('./es')
-    require('./fr')
-    require('./it')
     require('./ptbr')
-    require('./zhcn')
+    // require('./de')
+    // require('./es')
+    // require('./fr')
+    // require('./it')
+    // require('./zhcn')
   }
 
   /**
@@ -32,15 +30,6 @@ class Dictionary {
   }
 
   /**
-   * @description Adiciona formato de data para um idioma
-   * @param {String} _lang O idioma
-   * @param {Object} _format O formato
-   */
-  dateFormat (_lang, _locale) {
-    this.formatDates[_lang] = _locale
-  }
-
-  /**
    * @description Recupera uma mensagem
    * @param {String} _serverConfig Configurações do servidor
    * @param {String} _module O módulo
@@ -49,7 +38,7 @@ class Dictionary {
    * @returns {String} A mensagem
    */
   getMessage (_serverConfig, _module, _id, _params = {}) {
-    const message = this.sessions[_serverConfig.lang][_module].messages[_id]
+    const message = this.sessions[_serverConfig.lang].texts[_module].messages[_id]
 
     return typeof message !== 'function' ? message : message(_params, _serverConfig)
   }
@@ -73,7 +62,7 @@ class Dictionary {
    * @returns {String} O resumo
    */
   getResume (_lang, _module) {
-    return this.sessions[_lang][_module].resume
+    return this.sessions[_lang].texts[_module].resume
   }
 
   /**
@@ -85,7 +74,7 @@ class Dictionary {
   getModuleName (_lang, _module) {
     let module
 
-    objectMap(this.sessions[_lang], (v, k) => {
+    objectMap(this.sessions[_lang].texts, (v, k) => {
       if (v.name === _module) {
         module = k
       }
@@ -101,7 +90,7 @@ class Dictionary {
    * @returns {String} O nome do módulo
    */
   getTranslateModule (_lang, _module) {
-    return this.sessions[_lang][_module].name
+    return this.sessions[_lang].texts[_module].name
   }
 
   /**
@@ -112,7 +101,7 @@ class Dictionary {
    * @returns {String} O nome traduzido
    */
   getTranslateMethod (_lang, _module, _method) {
-    return this.sessions[_lang][_module].methods[_method].name
+    return this.sessions[_lang].texts[_module].methods[_method].name
   }
 
   /**
@@ -122,7 +111,7 @@ class Dictionary {
    * @returns {Object} O módulo
    */
   getModuleInfo (_lang, _module) {
-    return this.sessions[_lang][this.getModuleName(_lang, _module)]
+    return this.sessions[_lang].texts[this.getModuleName(_lang, _module)]
   }
 
   /**
@@ -135,7 +124,7 @@ class Dictionary {
   getMethodName (_lang, _module, _method) {
     if ([ 'main', 'invalidRedir', ].indexOf(_method) > -1) return _method
 
-    const module = this.sessions[_lang][_module] || {}
+    const module = this.sessions[_lang].texts[_module] || {}
     let method
 
     objectMap(module.methods || {}, (methodData, methodName) => {
@@ -157,7 +146,7 @@ class Dictionary {
    */
   getMethodParam (_lang, _module, _method, _param) {
     // Recebe parâmetros da sessão do dicionário
-    const dictionaryParams = this.sessions[_lang][_module].methods[_method].params
+    const dictionaryParams = this.sessions[_lang].texts[_module].methods[_method].params
 
     let param
 
@@ -182,7 +171,7 @@ class Dictionary {
    */
   getTranslateMethodParam (_lang, _module, _method, _param) {
     // Retorna
-    return this.sessions[_lang][_module].methods[_method].params[_param]
+    return this.sessions[_lang].texts[_module].methods[_method].params[_param]
   }
 
   /**
@@ -193,7 +182,7 @@ class Dictionary {
    */
   dateToEn (_lang, _date) {
     // Formato da data no idioma
-    const format = this.formatDates[_lang]
+    const format = this.sessions[_lang].dateFormat
 
     // Separa a data pelo separador
     const translateDate = _date.split(format.sep)
@@ -202,6 +191,20 @@ class Dictionary {
     return [
       translateDate[format.year], translateDate[format.month], translateDate[format.day],
     ].join('-')
+  }
+
+  /**
+   * @description Retorna todos os idiomas suportados
+   * @returns {Object} Objeto contendo nome, sigla e bandeira
+   */
+  langs () {
+    return objectMap(this.sessions, (lang, initials) => {
+      lang.initials = initials
+
+      return objectFilter(lang, (v, k) => {
+        return k !== 'texts'
+      })
+    })
   }
 }
 
