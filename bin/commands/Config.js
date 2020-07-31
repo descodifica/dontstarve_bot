@@ -13,7 +13,7 @@ class Config extends DefaultCommand {
    */
   lang (_Message, _config) {
     // Importa os idiomas
-    const langs = require('../config').langs
+    const langs = Object.keys(Dictionary.langs())
 
     // O idioma pedido
     const lang = _Message.args[0]
