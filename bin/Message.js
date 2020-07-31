@@ -43,6 +43,16 @@ class Message {
     // Separa comando e método
     this.command = this.args.shift()
     this.method = this.args.shift()
+
+    // Nome real do comando e método
+    this.realCommand = Dictionary.getModuleName(
+      this.serverConfig.lang, this.command
+    )
+
+    // Nome real do método
+    this.realMethod = Dictionary.getMethodName(
+      this.serverConfig.lang, this.realCommand, this.method
+    )
   }
 
   /**
