@@ -62,11 +62,11 @@ class Message {
    */
   forBot (_prefix) {
     // Prefixo é o informado ou o presente em serverConfig
-    const prefix = _prefix || this.serverConfig.prefix
+    const prefix = _prefix || (this.serverConfig || {}).prefix
 
     return (
       this.message.content.startsWith(prefix) && // Se começa com o prefixo e
-      !this.fromBot // Se não é mensagem de outro Bot
+      !this.fromBot() // Se não é mensagem de outro Bot
     )
   }
 

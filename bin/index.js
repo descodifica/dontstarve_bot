@@ -147,8 +147,8 @@ class DontStarve {
       // Prefixo a ser usado
       const prefix = await this.getServerPrefix(Message)
 
-      // Se for mensagem de bot, finaliza
-      if (Message.forBot(prefix)) return {}
+      // Se não for mensagem para o bot, finaliza
+      if (!Message.forBot(prefix)) return {}
 
       // Configurações do servidor
       const serverConfig = Message.serverConfig = await this.getServerConfig(Message)
