@@ -87,11 +87,51 @@ class Message {
   }
 
   /**
+   * @description Retorna as mensões
+   * @returns {Object}
+   */
+  mentions () {
+    return this.message.mentions
+  }
+
+  /**
+   * @description Retorna e mencionou alguém
+   * @returns Boolean
+   */
+  hasMention () {
+    return this.hasUserMention() || this.hasRoleMention()
+  }
+
+  /**
+   * @description Retorna e mencionou alguma pessoa
+   * @returns Boolean
+   */
+  hasUserMention () {
+    return this.mentions().users.array().length > 0
+  }
+
+  /**
+   * @description Retorna e mencionou algum cargo
+   * @returns Boolean
+   */
+  hasRoleMention () {
+    return this.mentions().roles.array().length > 0
+  }
+
+  /**
    * @description Retorna o ID do servidor
    * @returns {String}
    */
   serverId () {
     return (this.message.guild || {}).id
+  }
+
+  /**
+    * @description Retorna o autor da mensagem
+    * @returns {String}
+    */
+  author () {
+    return this.message.author
   }
 
   /**

@@ -142,7 +142,7 @@ Dictionary.add('ptbr', {
       methods: {
         view: {
           name: 'ver',
-          resume: 'Vizualiza o perfil de um jogador ou o seu próprio',
+          resume: 'Vizualiza o perfil o seu perfil ou de outros jogadores',
           doc: (_Message, { prefix, }) => {
             _Message.set('***Exemplos:***\n\n')
 
@@ -155,6 +155,12 @@ Dictionary.add('ptbr', {
             _Message.setExampleAndExplanation(
               prefix + 'perfil ver @Usuario',
               'Visualiza o perfil do jogador mencionado',
+              { breakBottom: 2, }
+            )
+
+            _Message.setExampleAndExplanation(
+              prefix + 'perfil ver @Usuario1 @Usuario2 @Usuario3',
+              'Visualiza o perfil de todos os jogadores mencionados',
               { breakBottom: 2, }
             )
 
@@ -332,12 +338,8 @@ Dictionary.add('ptbr', {
         },
       },
       messages: {
-        CREATE: (p, { prefix, }) => `Seu perfil acabou de ser criado! Entre ${prefix}ajuda ` +
-        'perfil editar para saber editar ele!',
-        CREATE_ERROR: 'Ocorreu um erro ao criar o seu perfil',
         UPDATE: 'Perfil atualizado',
         UPDATE_ERROR: 'Ocorreram problemas ao atualizar uma ou mais informações do perfil',
-        NO_PROFILE: ({ user, }) => `***${user}*** não possui um perfil ainda!`,
         PROFILE_NAME: 'Nome',
         PROFILE_NICK: 'Nick',
         PROFILE_AGE: 'Idade',
@@ -350,21 +352,21 @@ Dictionary.add('ptbr', {
         PROFILE_LEVEL: 'Rank',
         PROFILE_PROFILE: ({ name, }) => 'Perfil de ' + name,
         DAYS: 'dias',
-        ABDUCTED_TEXT: 'Abduzido - Acabou de começar',
+        ABDUCTED_TEXT: '*Abduzido* - Acabou de começar',
         HUNGRY_TEXT: 'Faminto - Sobreviveu por menos de 1 ano e/ou ainda sabe pouco',
-        EXPLORER_TEXT: 'Explorador - Já sobreviveu por pelo menos 1 ano... mas não conhece muito ' +
-          'do jogo',
-        SURVIVOR_TEXT: 'Sobrevivente - Já sobreviveu por pelo menos 1 ano e tem um conhecimento ' +
-          'básico do jogo',
-        BACKPACKER_TEXT: 'Mochileiro - Já sobreviveu por pelo menos 1 ano e tem um conhecimento ' +
-          'razoável do jogo',
-        CONSTANTIAN_TEXT: 'Constantiano - Já sobreviveu por pelo menos 5 anos e tem um ' +
+        EXPLORER_TEXT: '*Explorador* - Já sobreviveu por pelo menos 1 ano... mas não conhece ' +
+          'muito do jogo',
+        SURVIVOR_TEXT: '*Sobrevivente* - Já sobreviveu por pelo menos 1 ano e tem um ' +
+          'conhecimento básico do jogo',
+        BACKPACKER_TEXT: '*Mochileiro* - Já sobreviveu por pelo menos 1 ano e tem um ' +
+          'conhecimento razoável do jogo',
+        CONSTANTIAN_TEXT: '*Constantiano* - Já sobreviveu por pelo menos 5 anos e tem um ' +
           'conhecimento mediano do jogo',
-        CHARLIES_FRIEND_TEXT: 'Amigo da Charlie - Já sobreviveu por pelo menos 7 anos e tem um ' +
+        CHARLIES_FRIEND_TEXT: '*Amigo da Charlie* - Já sobreviveu por pelo menos 7 anos e tem um ' +
           'conhecimento mediano do jogo',
-        KING_OF_CONSTANT_TEXT: 'Rei do Constant- Já sobreviveu por pelo menos 7 anos e tem um ' +
+        KING_OF_CONSTANT_TEXT: '*Rei do Constant*- Já sobreviveu por pelo menos 7 anos e tem um ' +
           'conhecimento avançado do jogo',
-        ALLY_OF_THEM_TEXT: 'Aliado de "Eles" - Já sobreviveu por pelo menos 10 anos e tem um ' +
+        ALLY_OF_THEM_TEXT: '*Aliado de "Eles"* - Já sobreviveu por pelo menos 10 anos e tem um ' +
           'conhecimento total ou quase total do jogo',
 
       },
