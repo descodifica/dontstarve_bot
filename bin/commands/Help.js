@@ -10,7 +10,7 @@ class Help extends DefaultCommand {
    */
   main (_Message, _config) {
     // Recebe todos os módulos (respeitando o idioma)
-    const modules = Object.values(Dictionary.sessions[_config.lang])
+    const modules = Object.values(Dictionary.sessions[_config.lang].texts)
 
     _Message.set(this._initialMessage(_config, 'COMMANDS'))
     _Message.setFromDictionary('help', 'VIEW_ALL_COMMANDS')
@@ -55,9 +55,6 @@ class Help extends DefaultCommand {
     // Comando escolhido original
     const originalCommand = _Message.args.shift()
 
-    // Nome do comando escolhido
-    const commandName = Dictionary.getModuleName(_config.lang, originalCommand)
-
     // Recebe informações do comando escolhido
     const commandInfo = Dictionary.getModuleInfo(_config.lang, originalCommand)
 
@@ -71,19 +68,16 @@ class Help extends DefaultCommand {
       return
     }
 
-    // Método original
+    // // Método original
     const originalMethod = _Message.args.shift()
 
-    // Mensagem inicial
+    // // Mensagem inicial
     _Message.set(this._initialMessage(_config, 'METHODS'))
 
     // Se passou método
-    if (originalMethod) {
-      // Nome do método escolhido
-      const methodName = Dictionary.getMethodName(_config.lang, commandName, originalMethod)
-
+    if (originalMethod) { // config ling
       // Recebe informações do métdo escolhido
-      const method = commandInfo.methods[methodName]
+      const method = commandInfo.methods[_Message.realMethod]
 
       // Se não achou o método, informa e finaliza
       if (!method) {
@@ -106,21 +100,14 @@ class Help extends DefaultCommand {
         _Message.setFromDictionary('help', 'NO_INFO_AVAILABLE')
       }
     }
-    else {
+    else { // config
       _Message.setExampleAndExplanation(
         _Message.serverConfig.prefix + originalCommand, commandInfo.resume
       )
 
-      _Message.set('\n\n')
-
-      if (commandInfo.doc) {
-        commandInfo.doc(_Message, _config)
-      }
-      else {
-        _Message.setFromDictionary('help', 'NO_INFO_AVAILABLE')
-      }
-
       if (commandInfo.methods) {
+        _Message.set('\n\n')
+
         _Message.setFromDictionary(
           'help', 'VIEW_ALL_METHODS', {
             command: _Message.serverConfig.prefix + originalCommand,
@@ -145,6 +132,15 @@ class Help extends DefaultCommand {
             _config, 'METHOD', _Message.serverConfig.prefix + translateHelp + ' ' + originalCommand
           )
         )
+      }
+
+      if (commandInfo.doc) {
+        commandInfo.doc(_Message, _config)
+      }
+
+      if (!commandInfo.doc && !commandInfo.methods) {
+        _Message.set('\n\n')
+        _Message.setFromDictionary('help', 'NO_INFO_AVAILABLE')
       }
     }
 

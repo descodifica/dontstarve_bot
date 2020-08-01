@@ -42,7 +42,7 @@ class Message {
 
     // Separa comando e método
     this.command = this.args.shift()
-    this.method = this.args.shift()
+    this.method = this.args.shift() || 'main'
 
     // Nome real do comando e método
     this.realCommand = Dictionary.getModuleName(

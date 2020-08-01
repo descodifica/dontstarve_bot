@@ -1,3 +1,6 @@
+const objectFilter = require('object-filter')
+const objectMap = require('object.map')
+
 // Classe padrão dos comandos
 class DefaultCommand {
   constructor () {
@@ -37,34 +40,34 @@ class DefaultCommand {
 
   /**
    * @description Retorna os parâmetros formatados
-   * @param {Array} _params Os parâmetros recebidos
+   * @param {String} _command O comando real usado
+   * @param {String} _method O método real usado
+   * @param {String} _params Os parâmetros
+   * @param {String} _sub Chave de sub-valores
    * @returns {Object} Os parâmetros formatados
    */
-  params (_params) {
+  params (_command, _method, _params, _lang, _sub) {
     // Onde ficarão os parâmetros formatados
     const params = { set: {}, }
 
-    // Função para criar objeto com o valor separado por pontos
-    const map = (_prop, _val, _obj = {}) => {
-      const props = [ ..._prop, ]
-      const prop = props.shift()
-      const obj = { ..._obj, }
-
-      obj[prop] = props.length === 0 ? _val : map(props, _val, obj)
-
-      return obj
-    }
-
     // Une primeira (propriedade) e segunda (valor) posições
     for (let c = 0, max = _params.length; c < max; c += 2) {
-      // Nome da propriedade separada por ponto
-      const prop = _params[c].split('.')
+      // Nome da propriedade
+      const prop = _params[c]
 
-      // Valor formatado da prorpiedade
-      const val = _params[c + 1]
+      // Se é compativel com o sub
+      if ((!_sub && prop.split('.').length <= 1) || prop.indexOf(_sub) > -1) {
+        // Valor formatado da prorpiedade
+        const val = _params[c + 1]
 
-      // Adiciona valor
-      params.set = { ...params.set, ...map(prop, val), }
+        // Propriedade real
+        const realProp = Dictionary.getMethodParam(
+          _lang, _command, _method, prop.split('.')[1] || prop.split('.')[0]
+        )
+
+        // Adiciona valor
+        params.set[realProp] = val
+      }
     }
 
     return params

@@ -313,6 +313,7 @@ global.Dictionary.add('en', {
           },
           params: {
             name: 'name',
+            nick: 'nick',
             birth: 'birth',
             city: 'city',
             state: 'state',

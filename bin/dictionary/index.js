@@ -11,11 +11,11 @@ class Dictionary {
     this.sessions = {}
 
     // Importa sessões
-    require('./en')
     require('./ptbr')
+    require('./en')
     // require('./de')
-    // require('./es')
     // require('./fr')
+    // require('./es')
     // require('./it')
     // require('./zhcn')
   }
@@ -49,10 +49,11 @@ class Dictionary {
    * @param {String} _module O módulo
    * @param {String} _id O Id da mensagem
    * @param {Object} _params Os parâmetros da mensagem
+   * @param {Object} _config Configurações do servidor
    * @returns {String} A mensagem
    */
-  getMessageInLang (_lang, _module, _id, _params = {}) {
-    return this.getMessage({ lang: _lang, }, _module, _id, _params)
+  getMessageInLang (_lang, _module, _id, _params = {}, _config = {}) {
+    return this.getMessage({ lang: _lang, ..._config, }, _module, _id, _params)
   }
 
   /**

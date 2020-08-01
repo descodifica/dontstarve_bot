@@ -183,6 +183,15 @@ Dictionary.add('ptbr', {
             )
 
             _Message.setExampleAndExplanation(
+              prefix + 'perfil editar nick "Hiker"',
+              [
+                'Edita o nick do jogador.',
+                'Note que em caso de nomes compostos, deve ser posto entre aspas.',
+              ],
+              { breakBottom: 2, }
+            )
+
+            _Message.setExampleAndExplanation(
               prefix + 'perfil editar nascimento 03/07/1986',
               [
                 'Edita a data de nascimento do jogador a qual é usada para calcular a idade.',
@@ -313,6 +322,7 @@ Dictionary.add('ptbr', {
           },
           params: {
             name: 'nome',
+            nick: 'nick',
             birth: 'nascimento',
             city: 'cidade',
             state: 'estado',

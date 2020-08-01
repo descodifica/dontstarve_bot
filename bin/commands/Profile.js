@@ -57,6 +57,10 @@ class Profile extends DefaultCommand {
     if (!profile) {
       if (!hasMention) {
         await ProfileService.create({ id: profileId, })
+        await ExperienceService.create({ user: profileId, version: 'DS', })
+        await ExperienceService.create({ user: profileId, version: 'SW', })
+        await ExperienceService.create({ user: profileId, version: 'HAM', })
+        await ExperienceService.create({ user: profileId, version: 'DST', })
 
         _Message.sendFromDictionary('profile', 'CREATE')
 
@@ -208,28 +212,7 @@ class Profile extends DefaultCommand {
     const versions = require('../versions')
 
     // Recebe parâmetros tratados
-    const params = this.params(_Message.args)
-
-    // Parâmetros do perfil principal
-    const mainParams = {}
-
-    // Filtra e traduz para nome real dos parâmetros do perfil principal
-    objectMap(objectFilter(params.set, i => typeof i !== 'object'), (v, k) => {
-      // Nome real
-      const prop = Dictionary.getMethodParam(_config.lang, 'profile', 'edit', k)
-
-      mainParams[prop] = v
-    })
-
-    // Parâmetros das experiencias das versões do jogo
-    const versionParams = {}
-
-    // Valores das experiencias das versões do jogo
-    versions.map(v => {
-      if (!params.set[v]) return
-
-      versionParams[v] = params.set[v]
-    })
+    const params = this.params('profile', 'edit', _Message.args, _Message.serverConfig.lang)
 
     // Promessas
     const promises = []
@@ -242,7 +225,7 @@ class Profile extends DefaultCommand {
 
     // Salva perfil principal e adiciona promessa em array
     promises.push(
-      ProfileService.update(mainParams, where, 'edit', _config).catch(e => {
+      ProfileService.update(params.set, where, 'edit', _config).catch(e => {
         if (e) errors.push(e)
 
         return Promise.reject(e)
@@ -251,13 +234,17 @@ class Profile extends DefaultCommand {
 
     // Salva perfil das experiencias e adiciona promessas em array
     versions.map(v => {
-      if (!versionParams[v]) return
+      const params = this.params(
+        'experience', 'edit', _Message.args, _Message.serverConfig.lang, v + '.'
+      )
+
+      if (Object.keys(params.set).length === 0) return
 
       // Condições a serem usadas
       const where = { user: _Message.authorId(), version: v, }
 
       promises.push(
-        ExperienceService.update(versionParams[v], where, 'edit', _config).catch(e => {
+        ExperienceService.update(params.set, where, 'edit', _config).catch(e => {
           if (e) errors.push(e)
 
           return Promise.reject(e)
@@ -270,7 +257,7 @@ class Profile extends DefaultCommand {
         _Message.sendFromDictionary('profile', 'UPDATE')
       })
       .catch(e => {
-        _Message.sendFromDictionary(e.module, e.error, e.params)
+        // _Message.sendFromDictionary(e.module, e.error, e.params)
         _Message.sendFromDictionary('profile', 'UPDATE_ERROR')
       })
   }

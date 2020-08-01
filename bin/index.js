@@ -14,7 +14,7 @@ const Db = require('./Db')
 const Commands = require('./Commands')
 
 // Importa configurações
-const { token, langs, } = require('./config')
+const { token, } = require('./config')
 const Dictionary = require('./Dictionary')
 
 // Lista de prefixo por servidor
@@ -26,6 +26,7 @@ class DontStarve {
   constructor () {
     // Limpa terminal
     clear()
+
     // Informa inicio
     console.log('Starting...')
 
@@ -86,18 +87,30 @@ class DontStarve {
    */
   onServerEnter () {
     this.client.on('guildCreate', async _server => {
+      // Usuário dono do servidor
       const user = _server.owner
+
+      // Nome do dono do servidor
       const userName = user.user.username
+
+      // Nome do servidor
       const serverName = _server.name
+
+      // Onde armazenar as mensagens
       const msgs = []
 
-      langs.map(lang => {
+      // Percorre todos os idiomas
+      Object.keys(Dictionary.langs()).map(lang => {
+        // Adiciona mensagem de boas vindas no idioma
         msgs.push(
-          Dictionary.getMessageInLang(lang, 'general', 'WELCOME', { userName, serverName, })
+          Dictionary.getMessageInLang(
+            lang, 'general', 'WELCOME', { userName, serverName, }, { prefix: 'ds:', }
+          )
         )
       })
 
-      await user.send(msgs.join('\n'))
+      // Envia mensagens
+      await user.send(msgs.join('\n\n'))
     })
   }
 
@@ -143,42 +156,30 @@ class DontStarve {
       // Trata os argumentos da mensagem
       Message.parserArgs()
 
-      // Recebe o comando original (remove do primeiro argumento)
-      const originalCommand = Message.command
-
-      // Traduz o comando
-      const command = Dictionary.getModuleName(serverConfig.lang, originalCommand)
-
       // Se não possui o comando, informa e finaliza
-      if (!Commands[command]) {
-        Message.sendFromDictionary('general', 'COMMAND_NOT_FOUND', { command: originalCommand, })
+      if (!Commands[Message.realCommand]) {
+        Message.sendFromDictionary('general', 'COMMAND_NOT_FOUND', { command: Message.command, })
 
         return
       }
 
-      // Método original
-      const originalMethod = Message.method || 'main'
-
-      // Traduz método
-      let method = Dictionary.getMethodName(serverConfig.lang, command, originalMethod)
-
       // Se método não existe
-      if (!method) {
+      if (!Message.realMethod) {
         // Se não tem método de redirecionar inválido, informa e finaliza
-        if (!Commands[command].invalidRedir) {
-          this.methodNotExists(Message, originalMethod, serverConfig)
+        if (!Commands[Message.realCommand].invalidRedir) {
+          this.methodNotExists(Message, Message.method, serverConfig)
 
           return
         }
         else {
-          Message.args.unshift(originalMethod)
+          Message.args.unshift(Message.method)
 
-          method = 'invalidRedir'
+          Message.realMethod = 'invalidRedir'
         }
       }
 
       // Executa comando
-      Commands[command].exec(method || 'main', Message)
+      Commands[Message.realCommand].exec(Message.realMethod || 'main', Message)
     })
   }
 
