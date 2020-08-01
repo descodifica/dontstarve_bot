@@ -4,7 +4,7 @@
   "description": "",
   "main": "bin/index.js",
   "scripts": {
-    "start": "node bin",
+    "start": "node bin/index",
     "dev": "cls && nodemon ./bin"
   },
   "author": "",
