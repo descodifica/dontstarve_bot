@@ -162,7 +162,6 @@ class DontStarve {
 
         return
       }
-
       // Se método não existe
       if (!Message.realMethod) {
         // Se não tem método de redirecionar inválido, informa e finaliza
@@ -172,14 +171,12 @@ class DontStarve {
           return
         }
         else {
-          Message.args.unshift(Message.method)
-
           Message.realMethod = 'invalidRedir'
         }
       }
 
       // Executa comando
-      Commands[Message.realCommand].exec(Message.realMethod || 'main', Message)
+      Commands[Message.realCommand].exec(Message)
     })
   }
 

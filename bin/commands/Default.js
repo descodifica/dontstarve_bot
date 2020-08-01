@@ -1,6 +1,3 @@
-const objectFilter = require('object-filter')
-const objectMap = require('object.map')
-
 // Classe padrão dos comandos
 class DefaultCommand {
   constructor () {
@@ -20,12 +17,11 @@ class DefaultCommand {
 
   /**
     * @description Executa o comando
-    * @param {String} _method Nome do método
     * @param {Object} _Message Objeto da mensagem
     */
-  exec (_method, _Message) {
+  exec (_Message) {
     // Chama o método passando os parâmetros
-    this[_method](_Message, _Message.serverConfig)
+    this[_Message.realMethod](_Message, _Message.serverConfig)
   }
 
   /**

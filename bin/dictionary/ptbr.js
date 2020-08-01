@@ -107,8 +107,8 @@ Dictionary.add('ptbr', {
         )
       },
       messages: {
-        COMMAND_NOT_FOUND: ({ command, }, { prefix, }) => `O comando "${command}" não existe, ` +
-          `entre "${prefix}Ajuda" para ver todos os comandos`,
+        COMMAND_NOT_FOUND: ({ command, }, { prefix, }) => `O comando \`${command}\` não existe, ` +
+          `entre \`${prefix}ajuda\` para ver todos os comandos`,
         METHOD_NOT_FOUND: ({ method, }) => `Método "${method}" não encontrado`,
         NO_INFO_AVAILABLE: '__***Nenhuma informação extra disponível***__',
         WELCOME: ({ word, }) => {

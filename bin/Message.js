@@ -41,10 +41,10 @@ class Message {
       .map(i => i.split(signal).join(' ')) // Volta espaço das aspas
 
     // Separa comando e método
-    this.command = this.args.shift()
-    this.method = this.args.shift() || 'main'
+    this.command = this.originalCommand = this.args.shift()
+    this.method = this.originalMethod = this.args.shift() || 'main'
 
-    // Nome real do comando e método
+    // Nome real do comando
     this.realCommand = Dictionary.getModuleName(
       this.serverConfig.lang, this.command
     )

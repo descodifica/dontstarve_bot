@@ -52,15 +52,20 @@ class Help extends DefaultCommand {
     // Nome do módulo de ajuda traduzido no idioma do servidor
     const translateHelp = Dictionary.getTranslateModule(_config.lang, 'help')
 
-    // Comando escolhido original
-    const originalCommand = _Message.args.shift()
+    // Comando e método escolhidos
+    const originalCommand = _Message.originalMethod
+    const originalMethod = _Message.args[0]
+
+    // Comando e método reais
+    const realCommand = Dictionary.getModuleName(_config.lang, _Message.originalMethod)
+    const realMethod = Dictionary.getMethodName(_config.lang, realCommand, originalMethod)
 
     // Recebe informações do comando escolhido
     const commandInfo = Dictionary.getModuleInfo(_config.lang, originalCommand)
 
     // Se o comando não existe, informa e finaliza
     if (!commandInfo) {
-      _Message.send('help', 'COMMAND_NOT_FOUND', {
+      _Message.sendFromDictionary('help', 'COMMAND_NOT_FOUND', {
         command: originalCommand,
         prefix: _Message.serverConfig.prefix,
       })
@@ -68,16 +73,13 @@ class Help extends DefaultCommand {
       return
     }
 
-    // // Método original
-    const originalMethod = _Message.args.shift()
-
-    // // Mensagem inicial
+    // Mensagem inicial
     _Message.set(this._initialMessage(_config, 'METHODS'))
 
     // Se passou método
-    if (originalMethod) { // config ling
+    if (originalMethod) {
       // Recebe informações do métdo escolhido
-      const method = commandInfo.methods[_Message.realMethod]
+      const method = commandInfo.methods[realMethod]
 
       // Se não achou o método, informa e finaliza
       if (!method) {

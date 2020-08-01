@@ -12,7 +12,7 @@ class Dictionary {
 
     // Importa sessões
     require('./ptbr')
-    require('./en')
+    // require('./en')
     // require('./de')
     // require('./fr')
     // require('./es')
