@@ -185,7 +185,7 @@ class Profile extends DefaultCommand {
 
       // Responde
       _Message.sendEmbedMessage({
-        title: '> ' + Dictionary.getMessage(_config, 'profile', 'PROFILE_NAME', {
+        title: '> ' + Dictionary.getMessage(_config, 'profile', 'PROFILE_PROFILE', {
           name: profileName,
         }),
         description: content.join('\n'),
