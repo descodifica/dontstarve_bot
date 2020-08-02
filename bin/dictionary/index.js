@@ -1,5 +1,5 @@
-const objectMap = require('object.map')
-const objectFilter = require('object-filter')
+const objectMap = require('./node_modules/object.map')
+const objectFilter = require('./node_modules/object-filter')
 
 // Classe de dicionário
 class Dictionary {

@@ -131,7 +131,7 @@ Dictionary.add('ptbr', {
         VIEW_MORE_DETAILS: ({ command, word, }, { prefix, }) => {
           return (
             `Quer mais detalhes? Entre \`${command}\` seguido de um ${word}!\n\n` +
-            `Quer aprender do inicio? Entre \`${prefix}ajuda\`!`
+            `Quer aprender do inicio? Entre \`${prefix}ajuda\`!!`
           )
         },
       },
