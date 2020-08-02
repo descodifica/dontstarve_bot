@@ -5,8 +5,8 @@
   "main": "bin/index.js",
   "scripts": {
     "prestart": "npm i",
-    "start": "cls ; node bin/index",
-    "dev": "cls && nodemon ./bin"
+    "start": "node bin/index",
+    "dev": "nodemon ./bin"
   },
   "author": "",
   "license": "ISC",
