@@ -1,5 +1,5 @@
 // Importa pacote de limpesa do terminal
-const clear = require('clear')
+// const clear = require('clear')
 
 // Importa dicionário
 require('./Dictionary')
@@ -25,7 +25,7 @@ class DontStarve {
   // Ao criar o objeto
   constructor () {
     // Limpa terminal
-    clear()
+    // clear()
 
     // Informa inicio
     console.log('Starting...')
