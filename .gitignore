@@ -1,3 +1,3 @@
 node_modules
 token.js
-bin/dbProduction.js
+dbProduction.js

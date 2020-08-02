@@ -15,7 +15,7 @@ const config = {
 
 // Se estiver em produção, usa configurações de banco em produção
 if (config.environment === 'production') {
-  config.Db = require('./dbProduction')
+  config.Db = require('../dbProduction')
 }
 
 module.exports = config
