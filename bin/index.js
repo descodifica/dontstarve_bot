@@ -1,6 +1,3 @@
-// Importa pacote de limpesa do terminal
-// const clear = require('clear')
-
 // Importa dicionário
 require('./Dictionary')
 
@@ -14,8 +11,7 @@ const Db = require('./Db')
 const Commands = require('./Commands')
 
 // Importa configurações
-const { token, } = require('./config')
-const Dictionary = require('./Dictionary')
+const { token, environment, } = require('./config')
 
 // Lista de prefixo por servidor
 global.serverPrefix = {}
@@ -25,7 +21,9 @@ class DontStarve {
   // Ao criar o objeto
   constructor () {
     // Limpa terminal
-    // clear()
+    if (environment === 'development') {
+      require('clear')()
+    }
 
     // Informa inicio
     console.log('Starting...')
