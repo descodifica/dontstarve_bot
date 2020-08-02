@@ -4,6 +4,7 @@
   "description": "",
   "main": "bin/index.js",
   "scripts": {
+    "prestart": "npm i",
     "start": "node bin/index",
     "dev": "cls && nodemon ./bin"
   },
