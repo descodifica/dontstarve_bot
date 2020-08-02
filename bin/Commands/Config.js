@@ -6,6 +6,30 @@ const ConfigService = require('../services/Config')
 
 // O comando de configurações
 class Config extends DefaultCommand {
+  constructor () {
+    super({
+      doc: {
+        lang: _Message => {
+          _Message.set('Aceita os valores:\n\n')
+
+          Object.values(Dictionary.langs()).map(lang => {
+            _Message.set(`> ${lang.flag} \`${lang.initials.padEnd(4, ' ')} | ${lang.name}\` \n`)
+          })
+        },
+        prefix: (_Message, { prefix, }) => {
+          _Message.set(
+            'Prefixo é o texto informado antes de um comando para que o Bot saiba que é para ' +
+              'ele. Por padrão usamos o prefixo `:ds` e atualmente este servidor esta ' +
+              `configurado para usar o prefixo \`${prefix}\`, mas você pode alterá-lo com este ` +
+              'comando.\n\n' +
+              '***Exemplo:***\n\n' +
+              `\`${prefix}config prefix dont:\``
+          )
+        },
+      },
+    })
+  }
+
   /**
    * @description Método de configuração de idioma
    * @param {Object} _Message O objeto da mensagem

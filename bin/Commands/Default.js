@@ -1,8 +1,11 @@
 // Classe padrão dos comandos
 class DefaultCommand {
-  constructor () {
+  constructor (_params = {}) {
     // Recebe o nome do comando
     this.command = this.constructor.name.toLowerCase()
+
+    // Recebe documentação
+    this.doc = _params.doc
   }
 
   /**

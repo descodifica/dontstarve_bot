@@ -3,6 +3,27 @@ const DefaultCommand = require('./Default')
 
 // O comando de ajuda
 class Help extends DefaultCommand {
+  constructor () {
+    super({
+      doc: { // Documentação
+        main: (_Message, { prefix, }) => {
+          _Message.set(
+            'O comando de ajuda é aquele criado com um carinho especial para poder te guiar pelo ' +
+            'Bot.\n\n' +
+            `Entre com \`${prefix}ajuda\` para ter todos os comandos listados com uma explicação ` +
+              'resumida\n\n' +
+              `Quer saber maiores informações sobre um comando? entre com \`${prefix}ajuda\` ` +
+                'seguido pelo comando desejado e veja toda a descrição e métodos dele!\n\n' +
+              `Quer saber maiores informações sobre um método? entre com \`${prefix}ajuda\` ` +
+                'seguido pelo comando e método desejados e veja toda a descrição de uso dele!\n\n' +
+              'Ou seja, se tem dúvida sobre o uso de algo, basta por ele depois de ' +
+              `\`${prefix}ajuda\`!`
+          )
+        },
+      },
+    })
+  }
+
   /**
    * @description Método padrão quando nada for chamado
    * @param {Object} _Message O objeto da mensagem
@@ -63,8 +84,11 @@ class Help extends DefaultCommand {
     // Recebe informações do comando escolhido
     const commandInfo = Dictionary.getModuleInfo(_config.lang, originalCommand)
 
+    // Recebe o comando
+    const command = require('./')[realCommand]
+
     // Se o comando não existe, informa e finaliza
-    if (!commandInfo) {
+    if (!command) {
       _Message.sendFromDictionary('help', 'COMMAND_NOT_FOUND', {
         command: originalCommand,
         prefix: _Message.serverConfig.prefix,
@@ -89,20 +113,21 @@ class Help extends DefaultCommand {
       }
 
       _Message.setExampleAndExplanation(
-        `${_Message.serverConfig.prefix}${originalCommand} ${originalMethod}`, method.resume
+        `${_Message.serverConfig.prefix}${originalCommand} ${originalMethod}`,
+        commandInfo.methods[realMethod].resume
       )
 
       _Message.set('\n\n')
 
       // Se tem doc, adiciona ela
-      if (method.doc) {
-        method.doc(_Message, _config)
+      if (command.doc[realMethod]) {
+        command.doc[realMethod](_Message, _config)
       }
       else {
         _Message.setFromDictionary('help', 'NO_INFO_AVAILABLE')
       }
     }
-    else { // config
+    else {
       _Message.setExampleAndExplanation(
         _Message.serverConfig.prefix + originalCommand, commandInfo.resume
       )
@@ -136,11 +161,11 @@ class Help extends DefaultCommand {
         )
       }
 
-      if (commandInfo.doc) {
-        commandInfo.doc(_Message, _config)
+      if (command.doc.main) {
+        command.doc.main(_Message, _config)
       }
 
-      if (!commandInfo.doc && !commandInfo.methods) {
+      if (!command.doc.main && !commandInfo.methods) {
         _Message.set('\n\n')
         _Message.setFromDictionary('help', 'NO_INFO_AVAILABLE')
       }
