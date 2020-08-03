@@ -156,7 +156,7 @@ Dictionary.add('ptbr', {
         HELP_ABOUT_COMMAND_MORE_METHOD: ({ command, }, { prefix, }) => {
           return (
             `Quer saber maiores informações sobre um método? entre com \`${prefix}${command}\` ` +
-              'seguido pelo comando e método desejados e veja toda a descrição de uso dele!\n\n'
+              'seguido pelo comando e método desejados e veja toda a descrição de uso dele!'
           )
         },
         HELP_ABOUT_COMMAND_CONCLUSION: ({ command, }, { prefix, }) => {
@@ -223,6 +223,7 @@ Dictionary.add('ptbr', {
         HELP_VIEW_ONLY: 'Visualiza o perfil do jogador mencionado',
         HELP_VIEW_MENTION: 'Visualiza o próprio perfil',
         HELP_VIEW_MENTIONS: 'Visualiza o perfil de todos os jogadores mencionados',
+        HELP_PROFILE_ABOUT: 'O perfil é dividido em duas sessões básicas: **Pessoal** e **Jogo**.',
         HELP_PROFILE_ABOUT_PERSONAL: 'A sessão pessoal exibe informações básicas do jogador ' +
           'enquanto a sessão de jogo exibe informações do jogador em relação aos diferentes ' +
           'jogos da franquia.',

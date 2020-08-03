@@ -10,12 +10,13 @@ const config = {
     user: 'root',
     password: '12345678',
     database: 'dontstarve_bot',
+    reconnect: true,
   },
 }
 
 // Se estiver em produção, usa configurações de banco em produção
 if (config.environment === 'production') {
-  config.Db = require('../dbProduction')
+  config.Db = { ...config.Db, ...require('../dbProduction'), }
 }
 
 module.exports = config

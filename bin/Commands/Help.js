@@ -15,11 +15,11 @@ class Help extends DefaultCommand {
             'help', 'HELP_ABOUT_COMMAND_ALL', { command, }, { breakLine: 2, }
           )
 
-          _Message.HELP_ABOUT_COMMAND_MORE(
+          _Message.setFromDictionary(
             'help', 'HELP_ABOUT_COMMAND_MORE_COMMAND', { command, }, { breakLine: 2, }
           )
 
-          _Message.HELP_ABOUT_COMMAND_MORE(
+          _Message.setFromDictionary(
             'help', 'HELP_ABOUT_COMMAND_MORE_METHOD', { command, }, { breakLine: 2, }
           )
 

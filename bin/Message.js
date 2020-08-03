@@ -329,7 +329,7 @@ class Message {
    */
   break (_length) {
     for (let c = 0; c < _length; c++) {
-      this.text += '\n'
+      this.text += zeroWidthSpace + '\n'
     }
   }
 

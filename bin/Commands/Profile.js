@@ -170,7 +170,6 @@ class Profile extends DefaultCommand {
             { command: commandTranslated, method: methodTranslated, },
             { breakLine: 2, }
           )
-
           _Message.setExampleAndExplanation(
             commandMethod + ' ' + paramNameTranslated + ' "Rafael Dias"',
             [

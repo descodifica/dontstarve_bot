@@ -30,10 +30,6 @@
         {
             "name": "feature/new_message",
             "base": "develop"
-        },
-        {
-            "name": "feature/new_doc",
-            "base": "develop"
         }
     ]
 }
