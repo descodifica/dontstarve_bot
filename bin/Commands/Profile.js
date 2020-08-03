@@ -167,9 +167,10 @@ class Profile extends DefaultCommand {
           _Message.setFromDictionary(
             'profile',
             'HELP_PROFILE_ABOUT_PERSONAL_EDIT',
-            { command: commandTranslated, method: methodTranslated, },
+            { command: commandMethod, },
             { breakLine: 2, }
           )
+
           _Message.setExampleAndExplanation(
             commandMethod + ' ' + paramNameTranslated + ' "Rafael Dias"',
             [

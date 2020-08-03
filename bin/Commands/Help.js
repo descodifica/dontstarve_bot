@@ -12,18 +12,26 @@ class Help extends DefaultCommand {
           _Message.setFromDictionary('help', 'HELP_ABOUT_COMMAND', {}, { breakLine: 2, })
 
           _Message.setFromDictionary(
-            'help', 'HELP_ABOUT_COMMAND_ALL', { command, }, { breakLine: 2, }
+            'help', 'HELP_ABOUT_COMMAND_ALL', { command: prefix + command, }, { breakLine: 2, }
           )
 
           _Message.setFromDictionary(
-            'help', 'HELP_ABOUT_COMMAND_MORE_COMMAND', { command, }, { breakLine: 2, }
+            'help',
+            'HELP_ABOUT_COMMAND_MORE_COMMAND',
+            { command: prefix + command, },
+            { breakLine: 2, }
           )
 
           _Message.setFromDictionary(
-            'help', 'HELP_ABOUT_COMMAND_MORE_METHOD', { command, }, { breakLine: 2, }
+            'help',
+            'HELP_ABOUT_COMMAND_MORE_METHOD',
+            { command: prefix + command, },
+            { breakLine: 2, }
           )
 
-          _Message.setFromDictionary('help', 'HELP_ABOUT_COMMAND_CONCLUSION', { command, })
+          _Message.setFromDictionary(
+            'help', 'HELP_ABOUT_COMMAND_CONCLUSION', { command: prefix + command, }
+          )
         },
       },
     })
@@ -56,14 +64,26 @@ class Help extends DefaultCommand {
       )
     })
 
-    // Entra com mensagem de detalhamento
-    _Message.set(
-      this._finalMessage(
-        _config,
-        'COMMAND',
-        _Message.serverConfig.prefix + Dictionary.getTranslateModule(_config.lang, 'help')
-      )
+    // Prefixo + Comando de ajuda
+    const dsHelp = _Message.serverConfig.prefix + Dictionary.getTranslateModule(
+      _config.lang, 'help'
     )
+
+    const translatedProfile = Dictionary.getTranslateModule(_config.lang, 'profile')
+
+    // Entra com mensagem de detalhamento
+    _Message.setFromDictionary(
+      'help', 'VIEW_MORE_DETAILS_COMMAND', { command: dsHelp, }, { breakLine: 2, }
+    )
+
+    // Entra com titulo de exemplo
+    _Message.setFromDictionary('general', 'EXAMPLE')
+
+    // Exemplo
+    _Message.set(`\`${dsHelp} ${translatedProfile}\``, { breakLine: 2, })
+
+    // Entra com mensagem de ver do início
+    _Message.setFromDictionary('help', 'SEE_FROM_THE_BEGINNING', { command: dsHelp, })
 
     // Responde
     _Message.send()
@@ -92,11 +112,22 @@ class Help extends DefaultCommand {
     // Recebe o comando
     const command = require('./')[realCommand]
 
+    // Prefixo + Comando de ajuda
+    const dsHelp = _Message.serverConfig.prefix + Dictionary.getTranslateModule(
+      _config.lang, 'help'
+    )
+
+    // Prefixo + comando de ajuda + comando
+    const dsHelpCommand = dsHelp + ' ' + originalCommand
+
+    // Prefixo + comando
+    const dsCommand = _Message.serverConfig.prefix + originalCommand
+
     // Se o comando não existe, informa e finaliza
     if (!command) {
       _Message.sendFromDictionary('help', 'COMMAND_NOT_FOUND', {
         command: originalCommand,
-        prefix: _Message.serverConfig.prefix,
+        helpCommand: dsHelp,
       })
 
       return
@@ -118,7 +149,7 @@ class Help extends DefaultCommand {
       }
 
       _Message.setExampleAndExplanation(
-        `${_Message.serverConfig.prefix}${originalCommand} ${originalMethod}`,
+        `${dsCommand} ${originalMethod}`,
         commandInfo.methods[realMethod].resume
       )
 
@@ -151,7 +182,7 @@ class Help extends DefaultCommand {
           const last = k === commandInfo.methods.length + 1
 
           _Message.setExampleAndExplanation(
-            `${_Message.serverConfig.prefix}${originalCommand} ${data.name}`, data.resume, {
+            `${dsCommand} ${data.name}`, data.resume, {
               breakTop: !first,
               breakBottom: !last ? 2 : 0,
             }
@@ -159,10 +190,21 @@ class Help extends DefaultCommand {
         })
 
         // Entra com mensagem de detalhamento
+        _Message.setFromDictionary(
+          'help', 'VIEW_MORE_DETAILS_METHOD', { command: dsHelpCommand, }, { breakLine: 2, }
+        )
+
+        // Entra com titulo de exemplo
+        _Message.setFromDictionary('general', 'EXAMPLE')
+
+        // Exemplo
         _Message.set(
-          this._finalMessage(
-            _config, 'METHOD', _Message.serverConfig.prefix + translateHelp + ' ' + originalCommand
-          )
+          `\`${dsHelpCommand} ${Object.values(commandInfo.methods)[0].name}\``, { breakLine: 2, }
+        )
+
+        // Entra com mensagem de ver do início
+        _Message.setFromDictionary(
+          'help', 'SEE_FROM_THE_BEGINNING', { command: dsHelpCommand.split(' ')[0], }
         )
       }
 
@@ -195,23 +237,7 @@ class Help extends DefaultCommand {
    * @param {String} _argName O nome do argumento a ser usado no texto
    */
   _initialMessage (_config, _argName) {
-    const argName = Dictionary.getMessage(_config, 'general', _argName)
-
-    return Dictionary.getMessage(_config, 'help', 'WELCOME', { word: argName, }) + '\n\n'
-  }
-
-  /**
-   * @description Retorna mensagem final
-   * @param {Object} _config As configurações do servidor
-   * @param {String} _argName O nome do argumento a ser usado no texto
-   * @param {String} _command O comando a ser exibido
-   */
-  _finalMessage (_config, _argName, _command) {
-    const argName = Dictionary.getMessage(_config, 'general', _argName)
-
-    return Dictionary.getMessage(
-      _config, 'help', 'VIEW_MORE_DETAILS', { command: _command, word: argName, }
-    )
+    return Dictionary.getMessage(_config, 'help', 'WELCOME') + '\n\n'
   }
 }
 

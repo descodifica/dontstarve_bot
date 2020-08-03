@@ -46,8 +46,8 @@ Dictionary.add('ptbr', {
         ACCEPT_CHARACTER_ONLY: 'Aceita somente os nomes dos personagens.',
         HELP_PROFILE_ABOUT_SURVIVED_PARAM: 'Define quantos dias no maximo o jogador conseguiu ' +
           'sobreviver nesta versão do jogo',
-        HELP_PROFILE_ABOUT_RANK_PARAM: 'Define o rank do jogador nesta versão, sendo que quanto menor o número, mais ' +
-          'experiente ele é.',
+        HELP_PROFILE_ABOUT_RANK_PARAM: 'Define o rank do jogador nesta versão, sendo que quanto ' +
+          'menor o número, mais experiente ele é.',
       },
       methods: {
         edit: {
@@ -100,7 +100,7 @@ Dictionary.add('ptbr', {
         HELP_ABOUT_VALID_DATE: 'Note que a data deve ser colocada no formato dd/mm/aaaa.',
         HELP_ABOUT_BOOLEAN: ({ values, }) => 'Note que aceita somente **1** para ' +
           `**${values[1]}** e **0** para **${values[0]}**,`,
-        HELP_ABOUT_ALLOW_FIELD: ({ text, }) => 'Note que este é um campo livre, porém procure ' +
+        HELP_ABOUT_ALLOW_FIELD: () => 'Note que este é um campo livre, porém procure ' +
           'escrever corretamente respeitando maiúsculas, acentos, sem abreviações e etc.',
         HELP_ABOUT_ACCEPT_VALUES_ONLY: ({ values, lastValue, }) => 'Aceita somente os valores: ' +
           values + ' ou ' + lastValue,
@@ -112,11 +112,11 @@ Dictionary.add('ptbr', {
       name: 'ajuda',
       resume: 'Busca ajuda do Bot e de seus comandos',
       messages: {
-        COMMAND_NOT_FOUND: ({ command, }, { prefix, }) => `O comando \`${command}\` não existe, ` +
-          `entre \`${prefix}ajuda\` para ver todos os comandos`,
+        COMMAND_NOT_FOUND: ({ command, helpCommand, }) => `O comando \`${command}\` não existe, ` +
+          `entre \`${helpCommand}\` para ver todos os comandos`,
         METHOD_NOT_FOUND: ({ method, }) => `Método \`${method}\` não encontrado`,
         NO_INFO_AVAILABLE: '__***Nenhuma informação extra disponível***__',
-        WELCOME: ({ word, }) => {
+        WELCOME: () => {
           return 'Bem vindo a ajuda do Bot de ***Don\'t Starve*** para o ***DISCORD***!\n\n' +
           'Espero que seja inutitivo, então vamos começar! '
         },
@@ -127,42 +127,45 @@ Dictionary.add('ptbr', {
               'Veja abaixo uma lista descritiva de todos os comandos possíveis:\n\n'
           )
         },
-        VIEW_ALL_METHODS: ({ command, }, { prefix, }) => {
+        VIEW_ALL_METHODS: ({ command, }) => {
           return (
             `Entre com o comando \`${command}\` seguido de seu ` +
               'método para executá-lo, simples assim!\n\n'
           )
         },
-        VIEW_MORE_DETAILS: ({ command, word, }, { prefix, }) => {
-          return (
-            `Quer mais detalhes? Entre \`${command}\` seguido de um ${word}!\n\n` +
-              `Quer aprender do inicio? Entre \`${prefix}ajuda\`!`
-          )
+        VIEW_MORE_DETAILS_COMMAND: ({ command, }) => {
+          return `Quer mais detalhes? Entre \`${command}\` seguido de um comando!`
+        },
+        VIEW_MORE_DETAILS_METHOD: ({ command, }) => {
+          return `Quer mais detalhes? Entre \`${command}\` seguido de um método!`
+        },
+        SEE_FROM_THE_BEGINNING: ({ command, }) => {
+          return `Quer aprender do inicio? Entre \`${command}\` apenas!`
         },
         HELP_ABOUT_COMMAND: 'O comando de ajuda é aquele criado com um carinho especial para ' +
           'poder te guiar pelo Bot',
-        HELP_ABOUT_COMMAND_ALL: ({ command, }, { prefix, }) => {
+        HELP_ABOUT_COMMAND_ALL: ({ command, }) => {
           return (
-            `Entre com \`${prefix}${command}\` para ter todos os comandos listados com uma ` +
+            `Entre com \`${command}\` para ter todos os comandos listados com uma ` +
               'explicação resumida'
           )
         },
-        HELP_ABOUT_COMMAND_MORE_COMMAND: ({ command, }, { prefix, }) => {
+        HELP_ABOUT_COMMAND_MORE_COMMAND: ({ command, }) => {
           return (
-            `Quer saber maiores informações sobre um comando? entre com \`${prefix}${command}\` ` +
+            `Quer saber maiores informações sobre um comando? entre com \`${command}\` ` +
               'seguido pelo comando desejado e veja toda a descrição e métodos dele!'
           )
         },
-        HELP_ABOUT_COMMAND_MORE_METHOD: ({ command, }, { prefix, }) => {
+        HELP_ABOUT_COMMAND_MORE_METHOD: ({ command, }) => {
           return (
-            `Quer saber maiores informações sobre um método? entre com \`${prefix}${command}\` ` +
+            `Quer saber maiores informações sobre um método? entre com \`${command}\` ` +
               'seguido pelo comando e método desejados e veja toda a descrição de uso dele!'
           )
         },
-        HELP_ABOUT_COMMAND_CONCLUSION: ({ command, }, { prefix, }) => {
+        HELP_ABOUT_COMMAND_CONCLUSION: ({ command, }) => {
           return (
             'Ou seja, se tem dúvida sobre o uso de algo, basta por ele depois de ' +
-              `\`${prefix}${command}\`!`
+              `\`${command}\`!`
           )
         },
       },
@@ -227,9 +230,9 @@ Dictionary.add('ptbr', {
         HELP_PROFILE_ABOUT_PERSONAL: 'A sessão pessoal exibe informações básicas do jogador ' +
           'enquanto a sessão de jogo exibe informações do jogador em relação aos diferentes ' +
           'jogos da franquia.',
-        HELP_PROFILE_ABOUT_PERSONAL_EDIT: ({ command, method, }, { prefix, }) => 'Para editar as ' +
-          `informações básicas, basta entrar com \`${prefix}${command} ${method}\` seguido do ` +
-          'identificador da informação. Veja:',
+        HELP_PROFILE_ABOUT_PERSONAL_EDIT: ({ command, }) => 'Para editar as ' +
+          `informações básicas, basta entrar com \`${command}\` seguido do identificador da ` +
+          'informação. Veja:',
         HELP_PROFILE_ABOUT_NAME_PARAM: 'Edita o nome do jogador.',
         HELP_PROFILE_ABOUT_NICK_PARAM: 'Edita o nick do jogador',
         HELP_PROFILE_ABOUT_BIRTH_PARAM: 'Edita a data de nascimento do jogador, a qual é usada ' +
@@ -244,8 +247,8 @@ Dictionary.add('ptbr', {
         HELP_PROFILE_ABOUT_EXPERIENCE_TO_EXAMPLE: 'Para exemplificar a edição das informações de ' +
           'jogo, utilizaremos o prefixo da versão Together do jogo, mas basta trocar o prefixo ' +
           'para mudar de versão!',
-        HELP_PROFILE_MULTIPLE_EDIT: 'Também vale dizer que você não precisa editar uma única informação por comando, ' +
-        'mas pode sim editar várias de uma só vez:',
+        HELP_PROFILE_MULTIPLE_EDIT: 'Também vale dizer que você não precisa editar uma única ' +
+          'informação por comando, mas pode sim editar várias de uma só vez:',
       },
     },
     stream: {
