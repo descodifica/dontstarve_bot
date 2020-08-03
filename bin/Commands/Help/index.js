@@ -1,42 +1,8 @@
 // Importa comando padrão
-const DefaultCommand = require('./Default')
+const DefaultCommand = require('../Default')
 
 // O comando de ajuda
 class Help extends DefaultCommand {
-  constructor () {
-    super({
-      doc: { // Documentação
-        main: (_Message, { prefix, }) => {
-          const command = Dictionary.getTranslateModule(_Message.serverConfig.lang, 'help')
-
-          _Message.setFromDictionary('help', 'HELP_ABOUT_COMMAND', {}, { breakLine: 2, })
-
-          _Message.setFromDictionary(
-            'help', 'HELP_ABOUT_COMMAND_ALL', { command: prefix + command, }, { breakLine: 2, }
-          )
-
-          _Message.setFromDictionary(
-            'help',
-            'HELP_ABOUT_COMMAND_MORE_COMMAND',
-            { command: prefix + command, },
-            { breakLine: 2, }
-          )
-
-          _Message.setFromDictionary(
-            'help',
-            'HELP_ABOUT_COMMAND_MORE_METHOD',
-            { command: prefix + command, },
-            { breakLine: 2, }
-          )
-
-          _Message.setFromDictionary(
-            'help', 'HELP_ABOUT_COMMAND_CONCLUSION', { command: prefix + command, }
-          )
-        },
-      },
-    })
-  }
-
   /**
    * @description Método padrão quando nada for chamado
    * @param {Object} _Message O objeto da mensagem
@@ -95,9 +61,6 @@ class Help extends DefaultCommand {
    * @param {Object} _config As configurações do servidor
    */
   commandHelp (_Message, _config) {
-    // Nome do módulo de ajuda traduzido no idioma do servidor
-    const translateHelp = Dictionary.getTranslateModule(_config.lang, 'help')
-
     // Comando e método escolhidos
     const originalCommand = _Message.originalMethod
     const originalMethod = _Message.args[0]
@@ -110,7 +73,7 @@ class Help extends DefaultCommand {
     const commandInfo = Dictionary.getModuleInfo(_config.lang, originalCommand)
 
     // Recebe o comando
-    const command = require('./')[realCommand]
+    const command = require('../')[realCommand]
 
     // Prefixo + Comando de ajuda
     const dsHelp = _Message.serverConfig.prefix + Dictionary.getTranslateModule(

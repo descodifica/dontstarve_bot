@@ -5,7 +5,7 @@ class DefaultCommand {
     this.command = this.constructor.name.toLowerCase()
 
     // Recebe documentação
-    this.doc = _params.doc
+    this.doc = require('./' + this.constructor.name + '/doc')
   }
 
   /**

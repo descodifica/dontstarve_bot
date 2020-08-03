@@ -2,7 +2,7 @@
 const objectMap = require('object.map')
 
 // Importa comando padrão
-const DefaultCommand = require('./Default')
+const DefaultCommand = require('../Default')
 
 // Lista de links de canais
 const list = {
