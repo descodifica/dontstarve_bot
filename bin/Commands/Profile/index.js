@@ -201,7 +201,7 @@ class Profile extends DefaultCommand {
    */
   async edit (_Message, _config) {
     // Versões do jogo
-    const versions = require('../versions')
+    const versions = require('../../versions')
 
     // Recebe parâmetros tratados
     const params = this.params('profile', 'edit', _Message.args, _Message.serverConfig.lang)
