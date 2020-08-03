@@ -7,18 +7,23 @@ class Help extends DefaultCommand {
     super({
       doc: { // Documentação
         main: (_Message, { prefix, }) => {
-          _Message.set(
-            'O comando de ajuda é aquele criado com um carinho especial para poder te guiar pelo ' +
-            'Bot.\n\n' +
-            `Entre com \`${prefix}ajuda\` para ter todos os comandos listados com uma explicação ` +
-              'resumida\n\n' +
-              `Quer saber maiores informações sobre um comando? entre com \`${prefix}ajuda\` ` +
-                'seguido pelo comando desejado e veja toda a descrição e métodos dele!\n\n' +
-              `Quer saber maiores informações sobre um método? entre com \`${prefix}ajuda\` ` +
-                'seguido pelo comando e método desejados e veja toda a descrição de uso dele!\n\n' +
-              'Ou seja, se tem dúvida sobre o uso de algo, basta por ele depois de ' +
-              `\`${prefix}ajuda\`!`
+          const command = Dictionary.getTranslateModule(_Message.serverConfig.lang, 'help')
+
+          _Message.setFromDictionary('help', 'HELP_ABOUT_COMMAND', {}, { breakLine: 2, })
+
+          _Message.setFromDictionary(
+            'help', 'HELP_ABOUT_COMMAND_ALL', { command, }, { breakLine: 2, }
           )
+
+          _Message.HELP_ABOUT_COMMAND_MORE(
+            'help', 'HELP_ABOUT_COMMAND_MORE_COMMAND', { command, }, { breakLine: 2, }
+          )
+
+          _Message.HELP_ABOUT_COMMAND_MORE(
+            'help', 'HELP_ABOUT_COMMAND_MORE_METHOD', { command, }, { breakLine: 2, }
+          )
+
+          _Message.setFromDictionary('help', 'HELP_ABOUT_COMMAND_CONCLUSION', { command, })
         },
       },
     })

@@ -14,6 +14,7 @@ const CharacterService = require('../services/Character')
 
 // Importa comando padrão
 const DefaultCommand = require('./Default')
+const Dictionary = require('../Dictionary')
 
 // O comando de Perfil
 class Profile extends DefaultCommand {
@@ -21,182 +22,376 @@ class Profile extends DefaultCommand {
     super({
       doc: {
         view: (_Message, { prefix, }) => {
-          _Message.set('***Exemplos:***\n\n')
+          const commandTranslated = Dictionary.getTranslateModule(
+            _Message.serverConfig.lang, 'profile'
+          )
+
+          const methodTranslated = Dictionary.getTranslateMethod(
+            _Message.serverConfig.lang, 'profile', 'view'
+          )
+
+          const user = Dictionary.getMessage(_Message.serverConfig, 'general', '@USER')
+
+          const shortcut = Dictionary.getMessage(_Message.serverConfig, 'general', 'SHORTCUT')
+
+          _Message.setFromDictionary('general', 'EXAMPLES', {}, { breakLine: 2, })
 
           _Message.setExampleAndExplanation(
-            prefix + 'perfil ver',
-            'Visualiza o próprio perfil',
+            prefix + commandTranslated + ' ' + methodTranslated,
+            Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_VIEW_ONLY'),
             { breakBottom: 2, }
           )
 
           _Message.setExampleAndExplanation(
-            prefix + 'perfil ver @Usuario',
-            'Visualiza o perfil do jogador mencionado',
+            (
+              prefix + commandTranslated + ' ' + methodTranslated + ' ' + user + '1'
+            ),
+            Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_VIEW_MENTION'),
             { breakBottom: 2, }
           )
 
           _Message.setExampleAndExplanation(
-            prefix + 'perfil ver @Usuario1 @Usuario2 @Usuario3',
-            'Visualiza o perfil de todos os jogadores mencionados',
+            (
+              prefix + commandTranslated + ' ' + methodTranslated + ' ' +
+              user + '1' + ' ' + user + '2' + ' ' + user + '3'
+            ),
+            Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_VIEW_MENTIONS'),
             { breakBottom: 2, }
           )
 
-          _Message.set(`***Atalho:*** \`${prefix}perfil\``)
+          _Message.set(`**${shortcut}:** \`${prefix}${commandTranslated}\``)
         },
         edit: (_Message, { prefix, }) => {
+          const yesTranslated = Dictionary.getMessage(
+            _Message.serverConfig, 'general', 'YES'
+          )
+
+          const noTranslated = Dictionary.getMessage(
+            _Message.serverConfig, 'general', 'NO'
+          )
+
+          const commandTranslated = Dictionary.getTranslateModule(
+            _Message.serverConfig.lang, 'profile'
+          )
+
+          const methodTranslated = Dictionary.getTranslateMethod(
+            _Message.serverConfig.lang, 'profile', 'edit'
+          )
+
+          const commandMethod = prefix + commandTranslated + ' ' + methodTranslated
+
+          const paramNameTranslated = (
+            Dictionary.getTranslateMethodParam(
+              _Message.serverConfig.lang, 'profile', 'edit', 'name'
+            )
+          )
+
+          const paramNickTranslated = (
+            Dictionary.getTranslateMethodParam(
+              _Message.serverConfig.lang, 'profile', 'edit', 'nick'
+            )
+          )
+
+          const paramBirthTranslated = (
+            Dictionary.getTranslateMethodParam(
+              _Message.serverConfig.lang, 'profile', 'edit', 'birth'
+            )
+          )
+
+          const paramGenreTranslated = (
+            Dictionary.getTranslateMethodParam(
+              _Message.serverConfig.lang, 'profile', 'edit', 'genre'
+            )
+          )
+
+          const paramCityTranslated = (
+            Dictionary.getTranslateMethodParam(
+              _Message.serverConfig.lang, 'profile', 'edit', 'city'
+            )
+          )
+
+          const paramStateTranslated = (
+            Dictionary.getTranslateMethodParam(
+              _Message.serverConfig.lang, 'profile', 'edit', 'state'
+            )
+          )
+
+          const paramCountryTranslated = (
+            Dictionary.getTranslateMethodParam(
+              _Message.serverConfig.lang, 'profile', 'edit', 'country'
+            )
+          )
+
+          const paramHaveTranslated = (
+            Dictionary.getTranslateMethodParam(
+              _Message.serverConfig.lang, 'experience', 'edit', 'have'
+            )
+          )
+
+          const paramPlatformTranslated = (
+            Dictionary.getTranslateMethodParam(
+              _Message.serverConfig.lang, 'experience', 'edit', 'platform'
+            )
+          )
+
+          const paramHoursTranslated = (
+            Dictionary.getTranslateMethodParam(
+              _Message.serverConfig.lang, 'experience', 'edit', 'hours'
+            )
+          )
+
+          const paramMainTranslated = (
+            Dictionary.getTranslateMethodParam(
+              _Message.serverConfig.lang, 'experience', 'edit', 'main'
+            )
+          )
+
+          const paramSurvivedTranslated = (
+            Dictionary.getTranslateMethodParam(
+              _Message.serverConfig.lang, 'experience', 'edit', 'survived'
+            )
+          )
+
+          const paramRankTranslated = (
+            Dictionary.getTranslateMethodParam(
+              _Message.serverConfig.lang, 'experience', 'edit', 'rank'
+            )
+          )
+
+          _Message.setFromDictionary('profile', 'HELP_PROFILE_ABOUT', {}, { breakLine: 2, })
+
+          _Message.setFromDictionary(
+            'profile', 'HELP_PROFILE_ABOUT_PERSONAL', {}, { breakLine: 2, }
+          )
+
+          _Message.setFromDictionary(
+            'profile',
+            'HELP_PROFILE_ABOUT_PERSONAL_EDIT',
+            { command: commandTranslated, method: methodTranslated, },
+            { breakLine: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
+            commandMethod + ' ' + paramNameTranslated + ' "Rafael Dias"',
+            [
+              Dictionary.getMessage(
+                _Message.serverConfig, 'profile', 'HELP_PROFILE_ABOUT_NAME_PARAM'
+              ),
+              Dictionary.getMessage(
+                _Message.serverConfig, 'general', 'HELP_ABOUT_QUOTES'
+              ),
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
+            commandMethod + ' ' + paramNickTranslated + ' Hiker',
+            [
+              Dictionary.getMessage(
+                _Message.serverConfig, 'profile', 'HELP_PROFILE_ABOUT_NICK_PARAM'
+              ),
+              Dictionary.getMessage(
+                _Message.serverConfig, 'general', 'HELP_ABOUT_QUOTES'
+              ),
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
+            commandMethod + ' ' + paramBirthTranslated + ' 03/07/1986',
+            [
+              Dictionary.getMessage(
+                _Message.serverConfig, 'profile', 'HELP_PROFILE_ABOUT_BIRTH_PARAM'
+              ),
+              Dictionary.getMessage(
+                _Message.serverConfig, 'general', 'HELP_ABOUT_VALID_DATE'
+              ),
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
+            commandMethod + ' ' + paramGenreTranslated + ' 1',
+            [
+              Dictionary.getMessage(
+                _Message.serverConfig, 'profile', 'HELP_PROFILE_ABOUT_GENRE_PARAM'
+              ),
+              Dictionary.getMessage(
+                _Message.serverConfig, 'general', 'HELP_ABOUT_BOOLEAN', {
+                  values: [ 'Feminino', 'Masculino', ],
+                }
+              ),
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
+            commandMethod + ' ' + paramCityTranslated + ' Petrópolis',
+            [
+              Dictionary.getMessage(
+                _Message.serverConfig, 'profile', 'HELP_PROFILE_ABOUT_CITY_PARAM'
+              ),
+              Dictionary.getMessage(
+                _Message.serverConfig, 'general', 'HELP_ABOUT_QUOTES'
+              ),
+              Dictionary.getMessage(
+                _Message.serverConfig, 'general', 'HELP_ABOUT_ALLOW_FIELD'
+              ),
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
+            commandMethod + ' ' + paramStateTranslated + ' "Rio de Janeiro"',
+            [
+              Dictionary.getMessage(
+                _Message.serverConfig, 'profile', 'HELP_PROFILE_ABOUT_STATE_PARAM'
+              ),
+              Dictionary.getMessage(
+                _Message.serverConfig, 'general', 'HELP_ABOUT_QUOTES'
+              ),
+              Dictionary.getMessage(
+                _Message.serverConfig, 'general', 'HELP_ABOUT_ALLOW_FIELD'
+              ),
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setExampleAndExplanation(
+            commandMethod + ' ' + paramCountryTranslated + ' Brasil',
+            [
+              Dictionary.getMessage(
+                _Message.serverConfig, 'profile', 'HELP_PROFILE_ABOUT_COUNTRY_PARAM'
+              ),
+              Dictionary.getMessage(
+                _Message.serverConfig, 'general', 'HELP_ABOUT_QUOTES'
+              ),
+              Dictionary.getMessage(
+                _Message.serverConfig, 'general', 'HELP_ABOUT_ALLOW_FIELD'
+              ),
+            ],
+            { breakBottom: 2, }
+          )
+
+          _Message.setFromDictionary(
+            'profile',
+            'HELP_PROFILE_ABOUT_EXPERIENCE_EDIT',
+            {},
+            { breakLine: 2, }
+          )
+
           _Message.set(
-            'O perfil é dividido em duas sessões básicas: ***Pessoal*** e ***Jogo***.\n\n' +
-            'A sessão pessoal exibe informações básicas do jogador enquanto a sessão de jogo ' +
-              'exibe informações do jogador em relação aos diferentes jogos da franquia.\n\n' +
-            `Para editar as informações básicas, basta entrar com \`${prefix}perfil editar\` ` +
-              'seguido do identificador da informação. Veja:\n\n'
-          )
-
-          _Message.setExampleAndExplanation(
-            prefix + 'perfil editar nome "Rafael Dias"',
-            [
-              'Edita o nome do jogador.',
-              'Note que em caso de nomes compostos, deve ser posto entre aspas.',
-            ],
-            { breakBottom: 2, }
-          )
-
-          _Message.setExampleAndExplanation(
-            prefix + 'perfil editar nick "Hiker"',
-            [
-              'Edita o nick do jogador.',
-              'Note que em caso de nomes compostos, deve ser posto entre aspas.',
-            ],
-            { breakBottom: 2, }
-          )
-
-          _Message.setExampleAndExplanation(
-            prefix + 'perfil editar nascimento 03/07/1986',
-            [
-              'Edita a data de nascimento do jogador a qual é usada para calcular a idade.',
-              'Note que a data deve ser colocada no formato dd/mm/aaaa.',
-            ],
-            { breakBottom: 2, }
-          )
-
-          _Message.setExampleAndExplanation(
-            prefix + 'perfil editar genero 1',
-            [
-              'Edita o gênero do jogador.',
-              'Note que aceita somente **1** para **Masculino** e **0** para **Feminino**',
-            ],
-            { breakBottom: 2, }
-          )
-
-          _Message.setExampleAndExplanation(
-            prefix + 'perfil editar cidade Petrópolis',
-            [
-              'Edita a cidade do jogador',
-              'Note que em caso de nomes compostos, deve ser posto entre aspas.',
-              'Note também que este é um campo livre, porém procure escrever corretamente' +
-                'respeitando maiúsculas, acentos, sem abreviações e etc caso queira ser ' +
-                'encontrado nas buscas pela cidade.',
-            ],
-            { breakBottom: 2, }
-          )
-
-          _Message.setExampleAndExplanation(
-            prefix + 'perfil editar estado "Rio de Janeiro"',
-            [
-              'Edita o estado do jogador',
-              'Note que em caso de nomes compostos, deve ser posto entre aspas.',
-              'Note também que este é um campo livre, porém procure escrever corretamente' +
-                'respeitando maiúsculas, acentos, sem abreviações e etc caso queira ser ' +
-                'encontrado nas buscas pelo estado.',
-            ],
-            { breakBottom: 2, }
-          )
-
-          _Message.setExampleAndExplanation(
-            prefix + 'perfil editar pais Brasil',
-            [
-              'Edita o país do jogador',
-              'Note que em caso de nomes compostos, deve ser posto entre aspas.',
-              'Note também que este é um campo livre, porém procure escrever corretamente' +
-                'respeitando maiúsculas, acentos, sem abreviações e etc caso queira ser ' +
-                'encontrado nas buscas pelo país.',
-            ],
-            { breakBottom: 2, }
-          )
-
-          _Message.set(
-            'Para editar as informações de jogo é a mesma coisa, porém acrescentamos um ' +
-            'prefixo ao nome da informação para informar a versão do jogo que desejamos ' +
-            'alterar. Os prefixos disponíveis são\n\n' +
-            '`ds.` *Don\'t Starve*\n' +
-            '`sw.` *Don\'t Starve Shipwrecked*\n' +
+            '`ds.`   *Don\'t Starve*\n' +
+            '`sw.`   *Don\'t Starve Shipwrecked*\n' +
             '`ham.` *Don\'t Starve Hamet*\n' +
-            '`dst.` *Don\'t Starve Together*\n\n' +
-            'Para exemplificar a edição das informações de jogo, utilizaremos o prefixo da ' +
-              'versão Together do jogo, mas basta trocar o prefixo para mudar de versão!' +
-            'Veja:\n\n'
+            '`dst.` *Don\'t Starve Together*\n\n'
+          )
+
+          _Message.setFromDictionary(
+            'profile',
+            'HELP_PROFILE_ABOUT_EXPERIENCE_TO_EXAMPLE',
+            {},
+            { breakLine: 2, }
           )
 
           _Message.setExampleAndExplanation(
-            prefix + 'perfil editar dst.possui 1',
+            commandMethod + ' dst.' + paramHaveTranslated + ' 1',
             [
-              'Define se o jogador possui esta versão do jogo.',
-              'Aceita **1** para **"Sim"** e **0** para **"Não"**.',
+              Dictionary.getMessage(
+                _Message.serverConfig, 'experience', 'HELP_PROFILE_ABOUT_HAVE_PARAM'
+              ),
+              Dictionary.getMessage(
+                _Message.serverConfig, 'general', 'HELP_ABOUT_BOOLEAN', {
+                  values: [ noTranslated, yesTranslated, ],
+                }
+              ),
             ],
             { breakBottom: 2, }
           )
 
           _Message.setExampleAndExplanation(
-            prefix + 'perfil editar dst.plataforma Steam',
+            commandMethod + ' dst.' + paramPlatformTranslated + ' Steam',
             [
-              'Define em qual plataforma o jogador possui esta versão do jogo.',
-              'Aceita somente os valores: Steam, PS, Xbox, Android ou Iphone.',
+              Dictionary.getMessage(
+                _Message.serverConfig, 'experience', 'HELP_PROFILE_ABOUT_PLATFORM_PARAM'
+              ),
+              Dictionary.getMessage(
+                _Message.serverConfig, 'general', 'HELP_ABOUT_ACCEPT_VALUES_ONLY',
+                {
+                  values: 'Steam, PS, Xbox, Android',
+                  lastValue: 'Iphone',
+                }
+              ),
             ],
             { breakBottom: 2, }
           )
 
           _Message.setExampleAndExplanation(
-            prefix + 'perfil editar dst.horas 300',
+            commandMethod + ' dst.' + paramHoursTranslated + ' 300',
             [
-              'Define o número de horas do jogador nesta versão do jogo.',
-              'Aceita somente números inteiros',
+              Dictionary.getMessage(
+                _Message.serverConfig, 'experience', 'HELP_PROFILE_ABOUT_HOURS_PARAM'
+              ),
+              Dictionary.getMessage(
+                _Message.serverConfig, 'general', 'HELP_ABOUT_INTEGER_ONLY'
+              ),
             ],
             { breakBottom: 2, }
           )
 
           _Message.setExampleAndExplanation(
-            prefix + 'perfil editar dst.main Wickerbottom',
+            commandMethod + ' dst.' + paramMainTranslated + ' Wickerbottom',
             [
-              'Define se o jogador é "Main" de algum personagem.',
-              'Aceita somente os nomes dos personagens.',
+              Dictionary.getMessage(
+                _Message.serverConfig, 'experience', 'HELP_PROFILE_ABOUT_MAIN_PARAM'
+              ),
+              Dictionary.getMessage(
+                _Message.serverConfig, 'experience', 'HELP_ABOUT_CHARACTER_ONLY'
+              ),
             ],
             { breakBottom: 2, }
           )
 
           _Message.setExampleAndExplanation(
-            prefix + 'perfil editar dst.sobreviveu 99',
+            commandMethod + ' dst.' + paramSurvivedTranslated + ' 99',
             [
-              'Define quantos dias no maximo o jogador conseguiu sobreviver nesta versão do jogo',
-              'Aceita somente números inteiros',
+              Dictionary.getMessage(
+                _Message.serverConfig, 'experience', 'HELP_PROFILE_ABOUT_SURVIVED_PARAM'
+              ),
+              Dictionary.getMessage(
+                _Message.serverConfig, 'general', 'HELP_ABOUT_INTEGER_ONLY'
+              ),
             ],
             { breakBottom: 2, }
           )
 
           _Message.setExampleAndExplanation(
-            prefix + 'perfil editar dst.rank 4',
+            commandMethod + ' dst.' + paramRankTranslated + ' 4',
             [
-              'Define o rank do jogador nesta versão, sendo que quanto menor o número, mais ' +
-                'experiente ele é.',
-              'Aceita somente números inteiros de 1 a 9',
+              Dictionary.getMessage(
+                _Message.serverConfig, 'experience', 'HELP_PROFILE_ABOUT_RANK_PARAM'
+              ),
+              Dictionary.getMessage(
+                _Message.serverConfig, 'general', 'HELP_ABOUT_INTEGER_ONLY', {
+                  range: [ 0, 9, ],
+                }
+              ),
             ],
             { breakBottom: 2, }
+          )
+
+          _Message.setFromDictionary(
+            'profile',
+            'HELP_PROFILE_MULTIPLE_EDIT',
+            {},
+            { breakLine: 2, }
           )
 
           _Message.set(
-            'Também vale dizer que você não precisa editar uma única informação por comando, ' +
-              'mas pode sim editar várias de uma só vez: Veja:\n\n' +
-              `\`${prefix}perfil editar nome "Rafael Dias" nascimento 03/07/1986 dst.main ` +
-              'Wickerbottom\`'
+            `\`${prefix}${commandTranslated} ${methodTranslated} ` +
+              `${paramNameTranslated} "Rafael Dias" ` +
+              `${paramBirthTranslated} 03/07/1986 ` +
+              `dst.${paramMainTranslated} Wickerbottom\``
           )
         },
       },

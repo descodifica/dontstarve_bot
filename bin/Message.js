@@ -216,9 +216,10 @@ class Message {
    * @param {String} _msg Id da mensagem
    * @param {String} _module Módulo da mensagem
    * @param {Object} _params Parâmetros extras da mensagem
+   * @param {Object} _config Configurações extras
    */
-  setFromDictionary (_module, _msg, _params = {}) {
-    this.set(Dictionary.getMessage(this.serverConfig, _module, _msg, _params))
+  setFromDictionary (_module, _msg, _params = {}, _config = {}) {
+    this.set(Dictionary.getMessage(this.serverConfig, _module, _msg, _params), _config)
   }
 
   /**
@@ -290,9 +291,14 @@ class Message {
   /**
    * @description Recebe um texto a ser enviado (concatena com o anterior)
    * @param {String} _text O texto
+   * @param {Object} _config Configurações extras
    */
-  set (_text) {
+  set (_text, _config = {}) {
     this.text += _text
+
+    if (_config.breakLine) {
+      this.break(_config.breakLine)
+    }
   }
 
   /**

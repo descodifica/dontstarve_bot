@@ -10,21 +10,23 @@ class Config extends DefaultCommand {
     super({
       doc: {
         lang: _Message => {
-          _Message.set('Aceita os valores:\n\n')
+          _Message.setFromDictionary('config', 'HELP_ACCEPT_VALUES', {}, { breakLine: 2, })
 
           Object.values(Dictionary.langs()).map(lang => {
             _Message.set(`> ${lang.flag} \`${lang.initials.padEnd(4, ' ')} | ${lang.name}\` \n`)
           })
         },
         prefix: (_Message, { prefix, }) => {
-          _Message.set(
-            'Prefixo é o texto informado antes de um comando para que o Bot saiba que é para ' +
-              'ele. Por padrão usamos o prefixo `:ds` e atualmente este servidor esta ' +
-              `configurado para usar o prefixo \`${prefix}\`, mas você pode alterá-lo com este ` +
-              'comando.\n\n' +
-              '***Exemplo:***\n\n' +
-              `\`${prefix}config prefix dont:\``
+          const translateCommand = (
+            Dictionary.getTranslateModule(_Message.serverConfig.lang, 'config')
           )
+          const translatedMethod = (
+            Dictionary.getTranslateMethod(_Message.serverConfig.lang, 'config', 'lang')
+          )
+
+          _Message.setFromDictionary('config', 'HELP_ABOUT_PREFIX', {}, { breakLine: 2, })
+          _Message.setFromDictionary('general', 'EXAMPLE', {}, { breakLine: 2, })
+          _Message.set(`\`${prefix}${translateCommand} ${translatedMethod} dont:\``)
         },
       },
     })
