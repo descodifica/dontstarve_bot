@@ -4,9 +4,6 @@ require('./Dictionary')
 // Importa API do discord
 const Discord = require('discord.js')
 
-// Conexão com o banco
-const Db = require('./Db')
-
 // Importa todos os módulos
 const Commands = require('./Commands')
 
@@ -30,9 +27,6 @@ class DontStarve {
 
     // Declara conexão com o cliente
     this.client = new Discord.Client()
-
-    // Conecta ao banco
-    Db.connect()
 
     // Executa ao iniciar
     this.onReady()
