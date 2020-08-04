@@ -41,8 +41,6 @@ class Default {
     const sqlWhere = _params.where ? `WHERE ${jsonToSqlWhere(_params.where)}` : ''
     const sql = `SELECT * FROM ${this.table} ${sqlWhere} ${sqlLimitOffset}`
 
-    console.log(sql)
-
     const result = await Db.query(sql, _log)
 
     return result

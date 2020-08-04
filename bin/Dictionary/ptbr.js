@@ -253,6 +253,9 @@ Dictionary.add('ptbr', {
           'para mudar de versão!',
         HELP_PROFILE_MULTIPLE_EDIT: 'Também vale dizer que você não precisa editar uma única ' +
           'informação por comando, mas pode sim editar várias de uma só vez:',
+        NO_PROFILE: ({ profile, }) => profile + ' ainda não possui um perfil',
+        PROFILE_CREATE: ({ command, }) => `Perfil criado! Use ${command} para aprender a editar ` +
+          'o perfil',
       },
     },
     stream: {

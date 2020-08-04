@@ -56,15 +56,35 @@ class Profile extends DefaultCommand {
       // Busca o perfil
       profile = await ProfileService.get(profileId)
 
-      // Se não achou e não tem menção, cria, informa e busca novamente
+      // Se não achou
       if (!profile) {
-        await ProfileService.create({ id: profileId, })
-        await ExperienceService.create({ user: profileId, version: 'DS', })
-        await ExperienceService.create({ user: profileId, version: 'SW', })
-        await ExperienceService.create({ user: profileId, version: 'HAM', })
-        await ExperienceService.create({ user: profileId, version: 'DST', })
+        // Se não tem menção, cria, informa e busca novamente
+        if (!hasMention) {
+          await ProfileService.create({ id: profileId, })
+          await ExperienceService.create({ user: profileId, version: 'DS', })
+          await ExperienceService.create({ user: profileId, version: 'SW', })
+          await ExperienceService.create({ user: profileId, version: 'HAM', })
+          await ExperienceService.create({ user: profileId, version: 'DST', })
 
-        profile = await ProfileService.get(profileId)
+          profile = await ProfileService.get(profileId)
+
+          _Message.sendFromDictionary('profile', 'PROFILE_CREATE')
+        }
+        // Se tem mensão, manda mensagem informando que não tem perfil e finaliza
+        else {
+          // Envia
+          _Message.sendEmbedMessage({
+            title: '> ' + Dictionary.getMessage(_config, 'profile', 'PROFILE_PROFILE', {
+              name: profileName,
+            }),
+            description: _Message.getFromDictionary(
+              'profile', 'NO_PROFILE', { profile: _Message.createMention(profileId), }
+            ),
+            thumbnail: profileAvatar,
+          })
+
+          return
+        }
       }
 
       // Adiciona posição de experiências

@@ -203,10 +203,19 @@ class Message {
    * @param {Object} _params Parâmetros extras da mensagem
    */
   sendFromDictionary (_module, _msg, _params = {}) {
-    this.message.channel.send(
-      Dictionary.getMessage(
-        this.serverConfig, _module, _msg, _params
-      )
+    this.message.channel.send(this.getFromDictionary(_module, _msg, _params))
+  }
+
+  /**
+   * @description Retorna uma mensagem ao servidor de acordo com a tradução do dicionário
+   * @param {String} _msg Id da mensagem
+   * @param {String} _module Módulo da mensagem
+   * @param {Object} _params Parâmetros extras da mensagem
+   * @returns {String}
+   */
+  getFromDictionary (_module, _msg, _params = {}) {
+    return Dictionary.getMessage(
+      this.serverConfig, _module, _msg, _params
     )
   }
 
@@ -346,7 +355,7 @@ class Message {
    * @returns {String} A mensão
    */
   createMention (_id) {
-    return `<<@${_id}>>`
+    return `<@${_id}>`
   }
 }
 
