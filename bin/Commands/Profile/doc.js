@@ -389,7 +389,10 @@ module.exports = {
         Dictionary.getTranslateMethodParam(_Message.serverConfig.lang, 'profile', 'list', 'pag') +
         ' 2'
       ),
-      Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_LIST_PAG'),
+      [
+        Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_LIST_PAG'),
+        Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_LIST_PAG_HIDDEN'),
+      ],
       { breakBottom: 2, }
     )
   },

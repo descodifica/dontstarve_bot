@@ -36,7 +36,7 @@
             "base": "develop"
         },
         {
-            "name": "feature/lista-perfil",
+            "name": "feature/search_profile",
             "base": "develop"
         }
     ]

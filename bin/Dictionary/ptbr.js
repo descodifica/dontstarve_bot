@@ -268,6 +268,8 @@ Dictionary.add('ptbr', {
           'vez, sendo assim será necessário adicionar um parâmetro de página para visualizar ' +
           'mais registros. Veja:',
         HELP_LIST_PAG: 'Exibe os registros da página solicitada.',
+        HELP_LIST_PAG_HIDDEN: 'Caso este parâmetro seja omitido, será considerado valor **1** ' +
+          'por padrão',
       },
     },
     stream: {
