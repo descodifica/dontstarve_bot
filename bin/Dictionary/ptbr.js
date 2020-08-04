@@ -191,6 +191,10 @@ Dictionary.add('ptbr', {
             genre: 'genero',
           },
         },
+        list: {
+          name: 'listar',
+          resume: 'Lista os perfis disponíveis',
+        },
       },
       messages: {
         UPDATE: 'Perfil atualizado',

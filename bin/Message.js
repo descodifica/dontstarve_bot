@@ -339,6 +339,15 @@ class Message {
   clean () {
     this.text = ''
   }
+
+  /**
+   * @description Cria e retorna uma mensão
+   * @params {String} _id o Id do usuário mensionado
+   * @returns {String} A mensão
+   */
+  createMention (_id) {
+    return `<<@${_id}>>`
+  }
 }
 
 // Exporta função que retorna um novo objeto de mensagem

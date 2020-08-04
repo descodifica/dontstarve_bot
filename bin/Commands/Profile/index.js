@@ -255,6 +255,27 @@ class Profile extends DefaultCommand {
   }
 
   /**
+   * @description Lista os perfis disponíveis
+   * @param {Object} _Message A mensagem enviada pelo usuário
+   * @param {Object} _config As configurações do servidor
+   */
+  async list (_Message, _config) {
+    // Busca perfis
+    const profiles = await ProfileService.list({ page: 1, })
+
+    // Onde ficará a lista
+    const list = []
+    // Monta a lista com base nos resultados da busca
+    profiles.map(async i => {
+      console.log(global.Bot.client.fetchUser)
+      list.push(`${i.nick || i.name} ${_Message.createMention(i.id)}`)
+    })
+
+    // Envia a lista
+    _Message.sendEmbedMessage({ description: list.join('\n'), })
+  }
+
+  /**
    * @description Chamado quando chamar um método não existente
    * @param {Object} _Message O objeto da mensagem
    * @param {Object} _config As configurações do servidor

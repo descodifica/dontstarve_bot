@@ -26,13 +26,24 @@ class Default {
 
   /**
     * @description Retorna todos os registros
+    * @param {Object} _params Parâmetros da listagem
     * @param {Boolean} _log Se deve imprimir o log
     * @returns {Object} O resultado
     */
-  async list (_log) {
-    const result = await Db.query(
-      `SELECT * FROM ${this.table}`, _log
-    )
+  async list (_params = {}, _log) {
+    const perPage = _params.perPage || 10
+    const page = _params.page || 1
+
+    const limit = perPage
+    const offset = (page - 1) * perPage
+
+    const sqlLimitOffset = `LIMIT ${limit} OFFSET ${offset}`
+    const sqlWhere = _params.where ? `WHERE ${jsonToSqlWhere(_params.where)}` : ''
+    const sql = `SELECT * FROM ${this.table} ${sqlWhere} ${sqlLimitOffset}`
+
+    console.log(sql)
+
+    const result = await Db.query(sql, _log)
 
     return result
   }
@@ -52,15 +63,12 @@ class Default {
   /**
     * @description Retorna um registro dado um ou mais condições
     * @param {Object} _where Condições
+    * @param {Object} _params Parâmetros extras
     * @param {Boolean} _log Se deve imprimir o log
     * @returns {Object} O resultado
     */
-  async getBy (_where, _log) {
-    const result = await Db.query(
-      `SELECT * FROM ${this.table} WHERE ${jsonToSqlWhere(_where)}`, _log
-    )
-
-    return result
+  async getBy (_where, _params, _log) {
+    return await this.list({ ..._params, where: _where, }, _log)
   }
 
   /**

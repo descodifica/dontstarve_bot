@@ -30,6 +30,14 @@
         {
             "name": "feature/new_message",
             "base": "develop"
+        },
+        {
+            "name": "feature/busca-perfil",
+            "base": "develop"
+        },
+        {
+            "name": "feature/lista-perfil",
+            "base": "develop"
         }
     ]
 }

@@ -372,4 +372,7 @@ module.exports = {
         `dst.${paramMainTranslated} Wickerbottom\``
     )
   },
+  list: (_Message, { prefix, }) => {
+
+  },
 }
