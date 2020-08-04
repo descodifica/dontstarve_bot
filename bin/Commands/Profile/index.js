@@ -14,6 +14,9 @@ const CharacterService = require('../../services/Character')
 
 // Importa comando padrão
 const DefaultCommand = require('../Default')
+const Dictionary = require('../../Dictionary')
+const { Message, } = require('discord.js')
+const config = require('../../config')
 
 // O comando de Perfil
 class Profile extends DefaultCommand {
@@ -68,7 +71,18 @@ class Profile extends DefaultCommand {
 
           profile = await ProfileService.get(profileId)
 
-          _Message.sendFromDictionary('profile', 'PROFILE_CREATE')
+          _Message.sendFromDictionary('profile', 'PROFILE_CREATE', {
+            command: (
+              '**' +
+              _config.prefix +
+              Dictionary.getTranslateModule(_config.lang, 'help') +
+              ' ' +
+              Dictionary.getTranslateModule(_config.lang, 'profile') +
+              ' ' +
+              Dictionary.getTranslateMethod(_config.lang, 'profile', 'edit') +
+              '**'
+            ),
+          })
         }
         // Se tem mensão, manda mensagem informando que não tem perfil e finaliza
         else {
@@ -77,9 +91,9 @@ class Profile extends DefaultCommand {
             title: '> ' + Dictionary.getMessage(_config, 'profile', 'PROFILE_PROFILE', {
               name: profileName,
             }),
-            description: _Message.getFromDictionary(
-              'profile', 'NO_PROFILE', { profile: _Message.createMention(profileId), }
-            ),
+            description: _Message.getFromDictionary('profile', 'NO_PROFILE', {
+              profile: _Message.createMention(profileId),
+            }),
             thumbnail: profileAvatar,
           })
 
@@ -280,19 +294,106 @@ class Profile extends DefaultCommand {
    * @param {Object} _config As configurações do servidor
    */
   async list (_Message, _config) {
+    // Recebe parâmetros tratados
+    const params = this.params('profile', 'list', _Message.args, _Message.serverConfig.lang)
+
     // Busca perfis
-    const profiles = await ProfileService.list({ page: 1, })
+    const profiles = await ProfileService.list({ page: params.set.pag || 1, })
+
+    // Se não achou perfil, informa e finaliza
+    if (profiles.length === 0) {
+      _Message.sendFromDictionary('profile', 'NO_PROFILE_FOUND')
+
+      return
+    }
 
     // Onde ficará a lista
     const list = []
+
     // Monta a lista com base nos resultados da busca
-    profiles.map(async i => {
-      console.log(global.Bot.client.fetchUser)
-      list.push(`${i.nick || i.name} ${_Message.createMention(i.id)}`)
+    profiles.map(async (i, k) => {
+      // Array de mensagem
+      const msg = []
+      // Objeto com outros dados a serem informados na mensagem
+      const data = { age: '', locate: '', }
+
+      // Se tem nascimento, calcula idade e adiciona no objeto de outros dados
+      if (i.birth) {
+        data.age = (
+          new AgeFromDate(i.birth).age + ' ' + _Message.getFromDictionary('general', 'YEARS')
+        )
+      }
+
+      // Se tem cidade, adiciona no objeto de outros dados
+      if (i.city) data.locate += i.city
+
+      // Se tem estado, concatena na cidade da lista de outros dados
+      if (i.state) {
+        if (i.city) data.locate += ' / '
+
+        data.locate += i.state
+      }
+
+      // Se tem país, concatena na cidade da lista de outros dados
+      if (i.country) {
+        if (i.city || i.state) data.locate += ' - '
+
+        data.locate += i.country
+      }
+
+      // Recebe outros dados em array filtrando os em branco
+      const dataArray = Object.values(data).filter(i => i !== '')
+
+      // Adiciona nick ou nome e mensão do jogador na mensagem
+      msg.push((i.nick || i.name ? i.nick || i.name + ' ' : '') + _Message.createMention(i.id))
+      msg.push('\n')
+
+      // Se tem outros dados, adiciona na mensagem
+      if (dataArray.length > 0) {
+        msg.push('*' + dataArray.join(' | ') + '*')
+        msg.push('\n')
+      }
+
+      // Adiciona mensagem a lista
+      list.push(msg.join(''))
     })
 
+    // Monta conteúdo da mensagem
+    const description = (
+      list.join('\n') +
+      '\n*' +
+      (
+        _Message.getFromDictionary(
+          'profile', 'USE_PAGE_PARAM', {
+            param: (
+              Dictionary.getTranslateMethodParam(_config.lang, 'profile', 'list', 'pag') +
+              ' ' +
+              _Message.getFromDictionary('profile', 'N')
+            ),
+          }
+        )
+      ) +
+      '*' +
+      '\n*' +
+      (
+        _Message.getFromDictionary('profile', 'LIST_HELP', {
+          command: (
+            '`' +
+            _config.prefix +
+            Dictionary.getTranslateModule(_config.lang, 'help') +
+            ' ' +
+            Dictionary.getTranslateModule(_config.lang, 'profile') +
+            ' ' +
+            Dictionary.getTranslateMethod(_config.lang, 'profile', 'list') +
+            '`'
+          ),
+        })
+      ) +
+      '*'
+    )
+
     // Envia a lista
-    _Message.sendEmbedMessage({ description: list.join('\n'), })
+    _Message.sendEmbedMessage({ title: 'Jogadores (Página 1)', description, })
   }
 
   /**

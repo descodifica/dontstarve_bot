@@ -373,6 +373,24 @@ module.exports = {
     )
   },
   list: (_Message, { prefix, }) => {
+    _Message.setFromDictionary('profile', 'HELP_ABOUT_LIST_PAG', { amount: 10, }, { breakLine: 2, })
 
+    const prefixCommandMethod = (
+      prefix +
+      Dictionary.getTranslateModule(_Message.serverConfig.lang, 'profile') +
+      ' ' +
+      Dictionary.getTranslateMethod(_Message.serverConfig.lang, 'profile', 'list')
+    )
+
+    _Message.setExampleAndExplanation(
+      (
+        prefixCommandMethod +
+        ' ' +
+        Dictionary.getTranslateMethodParam(_Message.serverConfig.lang, 'profile', 'list', 'pag') +
+        ' 2'
+      ),
+      Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_LIST_PAG'),
+      { breakBottom: 2, }
+    )
   },
 }

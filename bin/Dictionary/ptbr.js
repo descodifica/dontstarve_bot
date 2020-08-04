@@ -194,6 +194,9 @@ Dictionary.add('ptbr', {
         list: {
           name: 'listar',
           resume: 'Lista os perfis disponíveis',
+          params: {
+            pag: 'pag',
+          },
         },
       },
       messages: {
@@ -256,6 +259,15 @@ Dictionary.add('ptbr', {
         NO_PROFILE: ({ profile, }) => profile + ' ainda não possui um perfil',
         PROFILE_CREATE: ({ command, }) => `Perfil criado! Use ${command} para aprender a editar ` +
           'o perfil',
+        USE_PAGE_PARAM: ({ param, }) => `Use o parâmetro \`${param}\` para mudar de ` +
+          'página, sendo **N** a página desejada.',
+        LIST_HELP: ({ command, }) => `Entre ${command} para maiores detalhes.`,
+        N: 'N',
+        NO_PROFILE_FOUND: 'Nenhum perfil encontrado com os critérios solicitados',
+        HELP_ABOUT_LIST_PAG: ({ amount, }) => `Este método exibe apenas ${amount} registros por ` +
+          'vez, sendo assim será necessário adicionar um parâmetro de página para visualizar ' +
+          'mais registros. Veja:',
+        HELP_LIST_PAG: 'Exibe os registros da página solicitada.',
       },
     },
     stream: {
