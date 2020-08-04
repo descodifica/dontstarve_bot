@@ -6,9 +6,24 @@ const { Db: DbConfig, } = require('./config')
 
 // Classe de conexão com o banco
 class Db {
-  // Coneta ao banco
+  /**
+   * @description Coneta ao banco
+   */
   async connect () {
-    this.Conn = await MySQL.createConnection(DbConfig)
+    // Se não ta conectado, conecta
+    if (!this.connected()) {
+      this.Conn = await MySQL.createConnection(DbConfig)
+    }
+  }
+
+  /**
+   * @description Verifica se esta conectado
+   * @returns {Boolean}
+   */
+  connected () {
+    const connected = !!this.Conn && this.Conn.connection.state === 'authenticated'
+
+    return connected
   }
 
   /**
@@ -18,9 +33,13 @@ class Db {
      * @param {Bolean} _log Se deve exibir um log no console
      * @returns {Object} O resultado
      */
-  query (_query, _log = false) {
+  async query (_query, _log = false) {
     if (_log) console.log(_query)
 
+    // Conecta ao banco
+    await this.connect()
+
+    // Executa e retorna
     return this.Conn.query(_query)
   }
 }
