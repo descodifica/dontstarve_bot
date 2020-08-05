@@ -41,7 +41,11 @@ class Default {
     const sqlWhere = _params.where ? `WHERE ${jsonToSqlWhere(_params.where)}` : ''
     const sql = `SELECT * FROM ${this.table} ${sqlWhere} ${sqlLimitOffset}`
 
-    const result = await Db.query(sql, _log)
+    const result = await Db.query(sql, _log).catch(e => {
+      console.error({ code: e.code, sqlMessage: e.sqlMessage, sql: e.sql, })
+
+      return Promise.reject(e)
+    })
 
     return result
   }
@@ -65,7 +69,7 @@ class Default {
     * @param {Boolean} _log Se deve imprimir o log
     * @returns {Object} O resultado
     */
-  async getBy (_where, _params, _log) {
+  async getBy (_where = {}, _params, _log) {
     return await this.list({ ..._params, where: _where, }, _log)
   }
 

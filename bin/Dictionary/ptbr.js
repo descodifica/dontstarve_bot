@@ -196,6 +196,13 @@ Dictionary.add('ptbr', {
           resume: 'Lista os perfis disponíveis',
           params: {
             pag: 'pag',
+            name: 'nome',
+            nick: 'nick',
+            age: 'idade',
+            city: 'cidade',
+            state: 'estado',
+            country: 'pais',
+            genre: 'genero',
           },
         },
       },
@@ -268,6 +275,21 @@ Dictionary.add('ptbr', {
           'vez, sendo assim será necessário adicionar um parâmetro de página para visualizar ' +
           'mais registros. Veja:',
         HELP_LIST_PAG: 'Exibe os registros da página solicitada.',
+        HELP_LIST_PAG_HIDDEN: 'Caso este parâmetro seja omitido, será considerado valor **1** ' +
+          'por padrão',
+        HELP_ABOUT_LIST_SEARCH: 'Também é possível filtrar os perfis listados pelas suas ' +
+          'propriedades, veja:',
+        HELP_LIST_SEARCH_NAME: 'Busca perfis com o nome digitado',
+        HELP_LIST_SEARCH_NICK: 'Busca perfis com o nick digitado',
+        HELP_LIST_SEARCH_AGE: 'Busca perfis com a idade digitada',
+        HELP_LIST_SEARCH_GENRE: 'Busca perfis do gênero digitado',
+        HELP_LIST_SEARCH_CITY: 'Busca perfis da cidade digitada',
+        HELP_LIST_SEARCH_STATE: 'Busca perfis do estado digitado',
+        HELP_LIST_SEARCH_COUNTRY: 'Busca perfis do país digitado',
+        HELP_ABOUT_LIST_MULTI_SEARCH: 'Você também pode buscar por vários filtros ao mesmo ' +
+          'tempo, porém note que somente irá encontrar resultados que combinem com **todos** os ' +
+          'filtros',
+        HELP_LIST_MULTI_SEARCH: 'Efetua busca de perfis por mais de uma informação',
       },
     },
     stream: {

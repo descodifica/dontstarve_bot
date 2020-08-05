@@ -389,7 +389,139 @@ module.exports = {
         Dictionary.getTranslateMethodParam(_Message.serverConfig.lang, 'profile', 'list', 'pag') +
         ' 2'
       ),
-      Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_LIST_PAG'),
+      [
+        Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_LIST_PAG'),
+        Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_LIST_PAG_HIDDEN'),
+      ],
+      { breakBottom: 2, }
+    )
+
+    _Message.setFromDictionary('profile', 'HELP_ABOUT_LIST_SEARCH', {}, { breakLine: 2, })
+
+    _Message.setExampleAndExplanation(
+      (
+        prefixCommandMethod +
+        ' ' +
+        Dictionary.getTranslateMethodParam(_Message.serverConfig.lang, 'profile', 'list', 'name') +
+        ' "Rafael Dias"'
+      ),
+      [
+        Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_LIST_SEARCH_NAME'),
+        Dictionary.getMessage(_Message.serverConfig, 'general', 'HELP_ABOUT_QUOTES'),
+      ],
+      { breakBottom: 2, }
+    )
+
+    _Message.setExampleAndExplanation(
+      (
+        prefixCommandMethod +
+        ' ' +
+        Dictionary.getTranslateMethodParam(_Message.serverConfig.lang, 'profile', 'list', 'nick') +
+        ' Hiker'
+      ),
+      [
+        Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_LIST_SEARCH_NICK'),
+        Dictionary.getMessage(_Message.serverConfig, 'general', 'HELP_ABOUT_QUOTES'),
+      ],
+      { breakBottom: 2, }
+    )
+
+    _Message.setExampleAndExplanation(
+      (
+        prefixCommandMethod +
+        ' ' +
+        Dictionary.getTranslateMethodParam(_Message.serverConfig.lang, 'profile', 'list', 'age') +
+        ' 34'
+      ),
+      [
+        Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_LIST_SEARCH_AGE'),
+        Dictionary.getMessage(_Message.serverConfig, 'general', 'HELP_ABOUT_INTEGER_ONLY'),
+      ],
+      { breakBottom: 2, }
+    )
+
+    _Message.setExampleAndExplanation(
+      (
+        prefixCommandMethod +
+        ' ' +
+        Dictionary.getTranslateMethodParam(_Message.serverConfig.lang, 'profile', 'list', 'genre') +
+        ' 1'
+      ),
+      [
+        Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_LIST_SEARCH_GENRE'),
+        Dictionary.getMessage(_Message.serverConfig, 'general', 'HELP_ABOUT_BOOLEAN', {
+          values: [ 'Feminino', 'Masculino', ],
+        }),
+      ],
+      { breakBottom: 2, }
+    )
+
+    _Message.setExampleAndExplanation(
+      (
+        prefixCommandMethod +
+        ' ' +
+        Dictionary.getTranslateMethodParam(_Message.serverConfig.lang, 'profile', 'list', 'city') +
+        ' Petrópolis'
+      ),
+      [
+        Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_LIST_SEARCH_CITY'),
+        Dictionary.getMessage(_Message.serverConfig, 'general', 'HELP_ABOUT_QUOTES'),
+      ],
+      { breakBottom: 2, }
+    )
+
+    _Message.setExampleAndExplanation(
+      (
+        prefixCommandMethod +
+        ' ' +
+        Dictionary.getTranslateMethodParam(_Message.serverConfig.lang, 'profile', 'list', 'state') +
+        ' "Rio de Janeiro"'
+      ),
+      [
+        Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_LIST_SEARCH_STATE'),
+        Dictionary.getMessage(_Message.serverConfig, 'general', 'HELP_ABOUT_QUOTES'),
+      ],
+      { breakBottom: 2, }
+    )
+
+    _Message.setExampleAndExplanation(
+      (
+        prefixCommandMethod +
+        ' ' +
+        Dictionary.getTranslateMethodParam(
+          _Message.serverConfig.lang, 'profile', 'list', 'country'
+        ) +
+        ' Brasil'
+      ),
+      [
+        Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_LIST_SEARCH_COUNTRY'),
+        Dictionary.getMessage(_Message.serverConfig, 'general', 'HELP_ABOUT_QUOTES'),
+      ],
+      { breakBottom: 2, }
+    )
+
+    _Message.setFromDictionary('profile', 'HELP_ABOUT_LIST_MULTI_SEARCH', {}, { breakLine: 2, })
+
+    _Message.setExampleAndExplanation(
+      (
+        prefixCommandMethod +
+        ' ' +
+        Dictionary.getTranslateMethodParam(
+          _Message.serverConfig.lang, 'profile', 'list', 'name'
+        ) +
+        ' "Rafael Dias" ' +
+        Dictionary.getTranslateMethodParam(
+          _Message.serverConfig.lang, 'profile', 'list', 'country'
+        ) +
+        ' Brasil ' +
+        Dictionary.getTranslateMethodParam(
+          _Message.serverConfig.lang, 'profile', 'list', 'age'
+        ) +
+        ' 34'
+      ),
+      [
+        Dictionary.getMessage(_Message.serverConfig, 'profile', 'HELP_LIST_MULTI_SEARCH'),
+      ],
       { breakBottom: 2, }
     )
   },

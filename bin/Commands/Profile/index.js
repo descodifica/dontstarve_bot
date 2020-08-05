@@ -7,6 +7,9 @@ const objectMap = require('object.map')
 // Calcula idade
 const { AgeFromDate, } = require('age-calculator')
 
+// Calcula ano de nascimento
+const birthRangeByAge = require('@desco/birth-range-by-age')
+
 // Serviços
 const ProfileService = require('../../services/Profile')
 const ExperienceService = require('../../services/Experience')
@@ -15,8 +18,7 @@ const CharacterService = require('../../services/Character')
 // Importa comando padrão
 const DefaultCommand = require('../Default')
 const Dictionary = require('../../Dictionary')
-const { Message, } = require('discord.js')
-const config = require('../../config')
+const objectFilter = require('object-filter')
 
 // O comando de Perfil
 class Profile extends DefaultCommand {
@@ -297,8 +299,14 @@ class Profile extends DefaultCommand {
     // Recebe parâmetros tratados
     const params = this.params('profile', 'list', _Message.args, _Message.serverConfig.lang)
 
+    // Monta os parâmetros de filtragem
+    const filter = this._listFilter(params, _Message)
+
     // Busca perfis
-    const profiles = await ProfileService.list({ page: params.set.pag || 1, })
+    const profiles = await ProfileService.list({
+      page: params.set.pag || 1,
+      where: Object.keys(filter).length > 0 ? filter : undefined,
+    })
 
     // Se não achou perfil, informa e finaliza
     if (profiles.length === 0) {
@@ -307,13 +315,60 @@ class Profile extends DefaultCommand {
       return
     }
 
-    // Onde ficará a lista
+    // Monta a lista com base nos resultados da busca
+    const list = this._mountList(profiles, _Message)
+
+    // Monta conteúdo da mensagem
+    const description = (
+      list.join('\n') +
+      '\n*' +
+      (
+        _Message.getFromDictionary(
+          'profile', 'USE_PAGE_PARAM', {
+            param: (
+              Dictionary.getTranslateMethodParam(_config.lang, 'profile', 'list', 'pag') +
+              ' ' +
+              _Message.getFromDictionary('profile', 'N')
+            ),
+          }
+        )
+      ) +
+      '*' +
+      '\n*' +
+      (
+        _Message.getFromDictionary('profile', 'LIST_HELP', {
+          command: (
+            '`' +
+            _config.prefix +
+            Dictionary.getTranslateModule(_config.lang, 'help') +
+            ' ' +
+            Dictionary.getTranslateModule(_config.lang, 'profile') +
+            ' ' +
+            Dictionary.getTranslateMethod(_config.lang, 'profile', 'list') +
+            '`'
+          ),
+        })
+      ) +
+      '*'
+    )
+
+    // Envia a lista
+    _Message.sendEmbedMessage({ title: 'Jogadores (Página 1)', description, })
+  }
+
+  /**
+   * @description Monta a lista de perfis
+   * @param {Array} _profiles Os perfis
+   * @param {Object} _Message A mensagem enviada pelo usuário
+   * @returns {Array}
+   */
+  _mountList (_profiles, _Message) {
     const list = []
 
-    // Monta a lista com base nos resultados da busca
-    profiles.map(async (i, k) => {
+    _profiles.map(async (i, k) => {
       // Array de mensagem
       const msg = []
+
       // Objeto com outros dados a serem informados na mensagem
       const data = { age: '', locate: '', }
 
@@ -358,42 +413,45 @@ class Profile extends DefaultCommand {
       list.push(msg.join(''))
     })
 
-    // Monta conteúdo da mensagem
-    const description = (
-      list.join('\n') +
-      '\n*' +
-      (
-        _Message.getFromDictionary(
-          'profile', 'USE_PAGE_PARAM', {
-            param: (
-              Dictionary.getTranslateMethodParam(_config.lang, 'profile', 'list', 'pag') +
-              ' ' +
-              _Message.getFromDictionary('profile', 'N')
-            ),
-          }
-        )
-      ) +
-      '*' +
-      '\n*' +
-      (
-        _Message.getFromDictionary('profile', 'LIST_HELP', {
-          command: (
-            '`' +
-            _config.prefix +
-            Dictionary.getTranslateModule(_config.lang, 'help') +
-            ' ' +
-            Dictionary.getTranslateModule(_config.lang, 'profile') +
-            ' ' +
-            Dictionary.getTranslateMethod(_config.lang, 'profile', 'list') +
-            '`'
-          ),
-        })
-      ) +
-      '*'
-    )
+    return list
+  }
 
-    // Envia a lista
-    _Message.sendEmbedMessage({ title: 'Jogadores (Página 1)', description, })
+  /**
+   * @description Monta corretamente os parâmetros de filtro da lista
+   * @param {Object} _params Os parâmetros
+   * @param {Object|Undefined} _Message A mensagem enviada pelo usuário
+   */
+  _listFilter (_params, _Message) {
+    // Filtra parâmetros para conter somente oq pode ser adicionado no filtro
+    const filteredFarams = objectFilter(_params.set, (i, k) => {
+      // Parâmetros válidos
+      const validParams = Dictionary.getMethodParams(_Message.serverConfig.lang, 'profile', 'list')
+
+      // Remove pag dos parametros válidos
+      delete validParams.pag
+
+      // Mantém se estiver contido nos parâmetros válidos
+      return Object.keys(validParams).indexOf(k) > -1
+    })
+
+    // Parâmetros formatados
+    const formatedParams = {}
+
+    // Formata os parâmetros
+    objectMap(filteredFarams, (v, k) => {
+      switch (k) {
+        // Se for idade, busca pelo range de datas de nascimento possíveis
+        case 'age': {
+          formatedParams.birth = {
+            type: 'BETWEEN', value: birthRangeByAge(v, { quotes: true, }),
+          }
+        }
+          break
+        default: formatedParams[k] = v
+      }
+    })
+
+    return formatedParams
   }
 
   /**
