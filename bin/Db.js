@@ -12,7 +12,7 @@ class Db {
   async connect () {
     // Se não ta conectado, conecta
     if (!this.connected()) {
-      this.Conn = await MySQL.createConnection(DbConfig)
+      this.Conn = await MySQL.createPool(DbConfig)
     }
   }
 
@@ -21,7 +21,7 @@ class Db {
    * @returns {Boolean}
    */
   connected () {
-    const connected = !!this.Conn && this.Conn.connection.state === 'authenticated'
+    const connected = !!this.Conn && !this.Conn.pool._closed
 
     return connected
   }

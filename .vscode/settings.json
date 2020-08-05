@@ -36,7 +36,7 @@
             "base": "develop"
         },
         {
-            "name": "feature/search_profile",
+            "name": "feature/PROTOCOL_CONNECTION_LOST",
             "base": "develop"
         }
     ]
