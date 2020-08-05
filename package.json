@@ -11,7 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@desco/json-to-sql-where": "^2.0.4",
+    "@desco/birth-range-by-age": "^1.0.0",
+    "@desco/json-to-sql-where": "^2.1.0",
     "age-calculator": "^1.0.0",
     "clear": "^0.1.0",
     "dateformat": "^3.0.3",
@@ -23,6 +24,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "is-array": "^1.0.1",
+    "moment": "^2.27.0",
     "object-filter": "^1.0.2",
     "object.map": "^1.0.1",
     "promise-mysql": "^4.1.3"
