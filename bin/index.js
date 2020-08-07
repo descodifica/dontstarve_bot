@@ -55,9 +55,7 @@ class DontStarve {
 
     // Se não achou, cria
     if (!config) {
-      await ConfigEntity.create({ server_id: _Message.serverId(), })
-
-      config = (await ConfigEntity.getBy({ server_id: _Message.serverId(), }))[0]
+      config = await ConfigEntity.create({ server_id: _Message.serverId(), })
     }
 
     // Retorna
