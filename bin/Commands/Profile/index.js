@@ -236,36 +236,56 @@ class Profile extends DefaultCommand {
    * @param {Object} _config As configurações do servidor
    */
   async edit (_Message, _config) {
+    // Promessas
+    const promises = []
+
+    // Propriedades inválidas
+    let invalids = []
+
+    // Erros
+    const errors = []
+
     // Versões do jogo
     const versions = require('../../versions')
 
     // Recebe parâmetros tratados
     const params = this.params('profile', 'edit', _Message.args, _Message.serverConfig.lang)
 
-    // Promessas
-    const promises = []
+    // Se não passou propriedade principal inválida, atualiza
+    if (params.invalid.length === 0) {
+      // Condições a serem usadas
+      const where = { id: _Message.authorId(), }
 
-    // Erros
-    const errors = []
+      // Salva perfil principal e adiciona promessa em array
+      promises.push(
+        ProfileService.update(params.set, where, 'edit', _config).catch(e => {
+          if (e) errors.push(e)
 
-    // Condições a serem usadas
-    const where = { id: _Message.authorId(), }
-
-    // Salva perfil principal e adiciona promessa em array
-    promises.push(
-      ProfileService.update(params.set, where, 'edit', _config).catch(e => {
-        if (e) errors.push(e)
-
-        return Promise.reject(e)
-      })
-    )
+          return Promise.reject(e)
+        })
+      )
+    }
+    else {
+      // Adiciona propriedade inválida na lista
+      invalids = invalids.concat(params.invalid)
+    }
 
     // Salva perfil das experiencias e adiciona promessas em array
     versions.map(v => {
+      // Recebe parâmetros tratados
       const params = this.params(
         'experience', 'edit', _Message.args, _Message.serverConfig.lang, v + '.'
       )
 
+      // Se passou propriedade de experiencia inválida
+      if (params.invalid.length > 0) {
+        // Adiciona propriedade inválida na lista
+        invalids = invalids.concat(params.invalid)
+
+        return
+      }
+
+      // Se não tem propriedades, finaliza
       if (Object.keys(params.set).length === 0) return
 
       // Condições a serem usadas
@@ -278,6 +298,15 @@ class Profile extends DefaultCommand {
           return Promise.reject(e)
         }))
     })
+
+    // Se tem propriedades inválidas, informa e finaliza
+    if (invalids.length > 0) {
+      _Message.sendFromDictionary('profile', 'PROFILE_EDIT_INVALID_PARAM', {
+        params: invalids.map(i => `**${i}**`),
+      })
+
+      return
+    }
 
     // Se todas as promessas foram resolvidas
     Promise.all(promises)

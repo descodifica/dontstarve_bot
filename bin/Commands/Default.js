@@ -47,7 +47,7 @@ class DefaultCommand {
    */
   params (_command, _method, _params, _lang, _sub) {
     // Onde ficarão os parâmetros formatados
-    const params = { set: {}, }
+    const params = { set: {}, invalid: [], }
 
     // Une primeira (propriedade) e segunda (valor) posições
     for (let c = 0, max = _params.length; c < max; c += 2) {
@@ -64,8 +64,15 @@ class DefaultCommand {
           _lang, _command, _method, prop.split('.')[1] || prop.split('.')[0]
         )
 
-        // Adiciona valor
-        params.set[realProp] = val
+        // Se achou propriedade real
+        if (realProp) {
+          // Adiciona valor
+          params.set[realProp] = val
+        }
+        else {
+          // Adiciona nome pedido na lista de invalidos
+          params.invalid.push(prop)
+        }
       }
     }
 

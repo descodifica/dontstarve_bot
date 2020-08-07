@@ -290,6 +290,7 @@ Dictionary.add('ptbr', {
           'tempo, porém note que somente irá encontrar resultados que combinem com **todos** os ' +
           'filtros',
         HELP_LIST_MULTI_SEARCH: 'Efetua busca de perfis por mais de uma informação',
+        PROFILE_EDIT_INVALID_PARAM: ({ params, }) => 'Propriedades inválidas: ' + params.join(', '),
       },
     },
     stream: {
