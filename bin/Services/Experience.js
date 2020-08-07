@@ -10,6 +10,9 @@ class Experience extends DefaultEntity {
         main: { type: 'Relation', entity: 'Character', },
         rank: { type: 'Option', values: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, ], },
       },
+      relations: {
+        belongsTo: [ 'Character', 'Profile', ],
+      },
     })
   }
 }

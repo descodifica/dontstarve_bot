@@ -1,15 +1,19 @@
 // Mapea um objeto
 const objectMap = require('object.map')
 
+// Se uma variável é um objeto
+const isObject = require('is-object')
+
 // Converte um JSON para clausula where do SQL
 const jsonToSqlWhere = require('@desco/json-to-sql-where')
 
 // Importa conexão com o banco
 const Db = require('../Db')
+const isArray = require('is-array')
 
 // Classe de entidade padrão
 class Default {
-  constructor ({ table, props, }) {
+  constructor ({ table, props = {}, relations = {}, }) {
     // Recebe o nome da entidade
     this.entity = this.constructor.name.toLowerCase()
 
@@ -17,11 +21,14 @@ class Default {
     this.table = table
 
     // Recebe propriedades
-    this.props = objectMap((props || {}), (i, k) => {
+    this.props = objectMap(props, (i, k) => {
       if (typeof i === 'object') return i
 
       return { type: i, }
     })
+
+    // Recebe relacionamentos
+    this.relations = relations
   }
 
   /**
@@ -41,11 +48,13 @@ class Default {
     const sqlWhere = _params.where ? `WHERE ${jsonToSqlWhere(_params.where)}` : ''
     const sql = `SELECT * FROM ${this.table} ${sqlWhere} ${sqlLimitOffset}`
 
-    const result = await Db.query(sql, _log).catch(e => {
-      console.error({ code: e.code, sqlMessage: e.sqlMessage, sql: e.sql, })
+    const result = await Db.query(sql, _log)
+      .then(result => this.getRelations(result, _params.deep))
+      .catch(e => {
+        console.error({ code: e.code, sqlMessage: e.sqlMessage, sql: e.sql, })
 
-      return Promise.reject(e)
-    })
+        return Promise.reject(e)
+      })
 
     return result
   }
@@ -53,11 +62,12 @@ class Default {
   /**
     * @description Retorna um registro dado um Id
     * @param {String} _id Id do registro a ser recuperado
+    * @param {Object} _params Parâmetros extras
     * @param {Boolean} _log Se deve imprimir o log
     * @returns {Object} O resultado
     */
-  async get (_id, _log) {
-    const result = await this.getBy({ id: _id, }, _log)
+  async get (_id, _params = {}, _log = false) {
+    const result = await this.getBy({ id: _id, }, _params, _log)
 
     return result[0]
   }
@@ -69,7 +79,7 @@ class Default {
     * @param {Boolean} _log Se deve imprimir o log
     * @returns {Object} O resultado
     */
-  async getBy (_where = {}, _params, _log) {
+  async getBy (_where = {}, _params = {}, _log = false) {
     return await this.list({ ..._params, where: _where, }, _log)
   }
 
@@ -80,12 +90,20 @@ class Default {
     * @param {Boolean} _log Se deve imprimir o log
     * @returns {Object} O resultado
     */
-  create (_data, _serverConfig = {}, _log) {
-    const columns = Object.keys(_data).join(', ')
-    const values = Object.values(_data).map(i => typeof i === 'string' ? `"${i}"` : i).join(', ')
+  async create (_data, _serverConfig = {}, _log) {
+    const { main: mainData, relations: relationData, } = this.separateRelation(_data)
 
-    // Executa SQL de criação e retorna o resultado
-    return Db.query(`INSERT INTO ${this.table} (${columns}) VALUES (${values})`, _log)
+    const columns = Object.keys(mainData).join(', ')
+    const values = Object.values(mainData).map(i => typeof i === 'string' ? `"${i}"` : i).join(', ')
+
+    // Executa SQL de criação
+    const result = await Db.query(`INSERT INTO ${this.table} (${columns}) VALUES (${values})`, _log)
+
+    // Id do registro criado
+    const id = mainData.id || result.insertId
+
+    // Cria relacionamentos e retorna registro criado
+    return this.createRelations((await this.get(id)), relationData, _log)
   }
 
   /**
@@ -284,6 +302,190 @@ class Default {
         column: error.split('(')[2].split(')')[0].slice(1, -1),
       }
     }
+  }
+
+  /**
+   * @description Efetua a busca dos relacionamentos e retorna o resultado
+   * @param {Object} _record Resultados iniciais
+   * @param {Number} _deep Profundidade atual
+   */
+  getRelations (_record, _deep = 0) {
+    // Se profundidade for 0, finaliza e retorna original
+    if (_deep === 0) return Promise.resolve(_record)
+
+    // Array onde ficarão todas as promessas a serem concluidas antes de retornar
+    const promises = []
+
+    // Se é um único registro
+    const unique = !isArray(_record)
+
+    // Captura registro(s)
+    const record = unique ? { ..._record, } : [ ..._record, ]
+
+    // Captura profundidade menos 1 para controle
+    const deep = _deep - 1
+
+    // Se não for registro úmico
+    if (!unique) {
+      // Percorre todos os registros
+      record.map((recordLine, k) => {
+        // Eexecuta getRelations em cada um deles, adicinando a promessa ao array de promessas
+        promises.push(
+          this.getRelations(recordLine, _deep).then(result => {
+            record[k] = result // Sobrescreve resultado na posição do array
+          })
+        )
+      })
+    }
+    // Se for registro único
+    else {
+      // Percorre todos os tipos de relacionamentos
+      objectMap(this.relations, (relations, type) => {
+        relations.map(relation => {
+          // Monta objeto de referencias do relacionamento
+          const Relation = this.createRelationDefs(relation)
+
+          // Importa objeto do relacionamento
+          Relation.obj = require(`./${Relation.entity}`)
+
+          // Seta FK e PK com valores passados ou padrões
+          Relation.fk = Relation.fk || this.entity
+          Relation.pk = Relation.pk || 'id'
+
+          // A partir daqui, lógica muda de acordo com o tipo de relacionamento
+          switch (type) {
+            case 'oneToMany': {
+              // Condições
+              const where = {}
+
+              // Seta condições
+              where[Relation.fk] = _record[Relation.pk]
+
+              // Executa a busca, adicionando promessa ao array de promesas
+              promises.push(
+                Relation.obj.getBy(where, deep).then(result => {
+                  // Adiciona posição ao objeto
+                  record[Relation.entity] = result
+                })
+              )
+            }
+              break
+          }
+        })
+      })
+    }
+
+    return Promise.all(promises).then(() => {
+      return record
+    })
+  }
+
+  /**
+   * @description Recebe dados e separa eles entre principais e de relacionamentos
+   * @param {Object} _data Dados
+   * @reutrns {Object} Dados separados
+   */
+  separateRelation (_data) {
+    // Onde ficarão os dados organizados
+    const data = {
+      main: {},
+      relations: {
+        oneToOne: [],
+        oneToMany: [],
+        belongsTo: [],
+        manyToMany: [],
+      },
+    }
+
+    // Percorre tipos relacionamentos
+    objectMap(this.relations, (relations, type) => {
+      // Percorre relacionamentos
+      relations.map(relation => {
+        // Se esse relacionamento consta nos dados
+        if (_data[relation.entity]) {
+          // Armazena corretamente
+          data.relations[type][relation.entity] = _data[relation.entity]
+
+          // Remove dos dados principais
+          delete _data[relation.entity]
+        }
+      })
+    })
+
+    // Adiciona dados que restaram (principais) nos dados principais
+    data.main = { ..._data, }
+
+    // Retorna
+    return data
+  }
+
+  /**
+   * @description Cria relacionamentos e retorna registro completo
+   * @param {Object} _data Dados principais
+   * @param {Oject} _relationData Dados dos relacionamentos
+   * @param {Boolean} _log Se deve exibir log
+   */
+  createRelations (_data, _relationData, _log) {
+    // Lista de promessas que devem ser executadas antes de finalizar
+    const promises = []
+
+    // Dados
+    const data = { ..._data, }
+
+    // Percorre todos os tipos de relacionamentos
+    objectMap(this.relations, (relations, type) => {
+      // Percorre todos os relacionamentos
+      relations.map(relation => {
+        // Monta objeto de referencias do relacionamento
+        const Relation = this.createRelationDefs(relation)
+
+        // Dados dos relacionamentos
+        const relationData = _relationData[type][relation.entity]
+
+        // Se achou dados dos relacionamentos
+        if (relationData) {
+          // A partir daqui, muda dependendo do tipo de relacionamento
+          switch (type) {
+            case 'oneToMany': {
+              // Cria posição nos dados principais
+              data[Relation.entity] = data[Relation.entity] || []
+
+              // Rercorre todos os dados de relacionamentos
+              relationData.map(relation => {
+                // Cria, armazena promessa em array e resultado nos dados principais
+                promises.push(
+                  Relation.obj.create(relation, _log).then(result => {
+                    data[Relation.entity].push(result)
+                  })
+                )
+              })
+            }
+          }
+        }
+      })
+    })
+
+    // Retorna apenas quando todas as promessas estiverem resolvidas
+    return Promise.all(promises).then(() => data)
+  }
+
+  /**
+   * @description Cria definições de relacionamento
+   * @param {Object} _relation O relacionamento
+   */
+  createRelationDefs (_relation) {
+    // Se não é objeto, vira
+    const Relation = isObject(_relation) ? { ..._relation, } : { entity: _relation, }
+
+    // Importa objeto da entidade relacionada
+    Relation.obj = require(`./${Relation.entity}`)
+
+    // Definie FK e PK ou seus padrões
+    Relation.fk = Relation.fk || this.entity
+    Relation.pk = Relation.pk || 'id'
+
+    // Retorna
+    return Relation
   }
 }
 

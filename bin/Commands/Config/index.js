@@ -2,7 +2,7 @@
 const DefaultCommand = require('../Default')
 
 // Importa entidade padrão de configuração
-const ConfigService = require('../../services/Config')
+const ConfigService = require('../../Services/Config')
 
 // O comando de configurações
 class Config extends DefaultCommand {
