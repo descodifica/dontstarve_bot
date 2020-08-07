@@ -1,15 +1,19 @@
 // Mapea um objeto
 const objectMap = require('object.map')
 
+// Se uma variável é um objeto
+const isObject = require('is-object')
+
 // Converte um JSON para clausula where do SQL
 const jsonToSqlWhere = require('@desco/json-to-sql-where')
 
 // Importa conexão com o banco
 const Db = require('../Db')
+const isArray = require('is-array')
 
 // Classe de entidade padrão
 class Default {
-  constructor ({ table, props, }) {
+  constructor ({ table, props = {}, relations = {}, }) {
     // Recebe o nome da entidade
     this.entity = this.constructor.name.toLowerCase()
 
@@ -17,11 +21,14 @@ class Default {
     this.table = table
 
     // Recebe propriedades
-    this.props = objectMap((props || {}), (i, k) => {
+    this.props = objectMap(props, (i, k) => {
       if (typeof i === 'object') return i
 
       return { type: i, }
     })
+
+    // Recebe relacionamentos
+    this.relations = relations
   }
 
   /**
@@ -41,11 +48,13 @@ class Default {
     const sqlWhere = _params.where ? `WHERE ${jsonToSqlWhere(_params.where)}` : ''
     const sql = `SELECT * FROM ${this.table} ${sqlWhere} ${sqlLimitOffset}`
 
-    const result = await Db.query(sql, _log).catch(e => {
-      console.error({ code: e.code, sqlMessage: e.sqlMessage, sql: e.sql, })
+    const result = await Db.query(sql, _log)
+      .then(result => this.getRelations(result, _params.deep))
+      .catch(e => {
+        console.error({ code: e.code, sqlMessage: e.sqlMessage, sql: e.sql, })
 
-      return Promise.reject(e)
-    })
+        return Promise.reject(e)
+      })
 
     return result
   }
@@ -53,11 +62,12 @@ class Default {
   /**
     * @description Retorna um registro dado um Id
     * @param {String} _id Id do registro a ser recuperado
+    * @param {Object} _params Parâmetros extras
     * @param {Boolean} _log Se deve imprimir o log
     * @returns {Object} O resultado
     */
-  async get (_id, _log) {
-    const result = await this.getBy({ id: _id, }, _log)
+  async get (_id, _params = {}, _log = false) {
+    const result = await this.getBy({ id: _id, }, _params, _log)
 
     return result[0]
   }
@@ -69,7 +79,7 @@ class Default {
     * @param {Boolean} _log Se deve imprimir o log
     * @returns {Object} O resultado
     */
-  async getBy (_where = {}, _params, _log) {
+  async getBy (_where = {}, _params = {}, _log = false) {
     return await this.list({ ..._params, where: _where, }, _log)
   }
 
@@ -284,6 +294,77 @@ class Default {
         column: error.split('(')[2].split(')')[0].slice(1, -1),
       }
     }
+  }
+
+  getRelations (_record, _deep = 0) {
+    // Se profundidade for 0, finaliza e retorna original
+    if (_deep === 0) return Promise.resolve(_record)
+
+    // Array onde ficarão todas as promessas a serem concluidas antes de retornar
+    const promises = []
+
+    // Se é um único registro
+    const unique = !isArray(_record)
+
+    // Captura registro(s)
+    const record = unique ? { ..._record, } : [ ..._record, ]
+
+    // Captura profundidade menos 1 para controle
+    const deep = _deep - 1
+
+    // Se não for registro úmico
+    if (!unique) {
+      // Percorre todos os registros
+      record.map((recordLine, k) => {
+        // Eexecuta getRelations em cada um deles, adicinando a promessa ao array de promessas
+        promises.push(
+          this.getRelations(recordLine, _deep).then(result => {
+            record[k] = result // Sobrescreve resultado na posição do array
+          })
+        )
+      })
+    }
+    // Se for registro único
+    else {
+      // Percorre todos os tipos de relacionamentos
+      objectMap(this.relations, (relations, type) => {
+        relations.map(relation => {
+          // Monta objeto de referencias do relacionamento
+          const Relation = isObject(relation) ? { ...relation, } : { entity: relation, }
+
+          // Importa objeto do relacionamento
+          Relation.obj = require(`./${Relation.entity}`)
+
+          // Seta FK e PK com valores passados ou padrões
+          Relation.fk = Relation.fk || this.entity
+          Relation.pk = Relation.pk || 'id'
+
+          // A partir daqui, lógica muda de acordo com o tipo de relacionamento
+          switch (type) {
+            case 'oneToOne': {
+              // Condições
+              const where = {}
+
+              // Seta condições
+              where[Relation.fk] = _record[Relation.pk]
+
+              // Executa a busca, adicionando promessa ao array de promesas
+              promises.push(
+                Relation.obj.getBy(where, deep).then(result => {
+                  // Adiciona posição ao objeto
+                  record[Relation.entity] = result
+                })
+              )
+            }
+              break
+          }
+        })
+      })
+    }
+
+    return Promise.all(promises).then(() => {
+      return record
+    })
   }
 }
 

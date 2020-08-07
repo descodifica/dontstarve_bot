@@ -10,6 +10,9 @@ class Profile extends DefaultEntity {
         birth: 'Date',
         genre: { type: 'Option', values: [ '0', '1', ], },
       },
+      relations: {
+        oneToOne: [ { entity: 'Experience', fk: 'user', }, ],
+      },
     })
   }
 }

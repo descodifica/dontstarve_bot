@@ -59,7 +59,7 @@ class Profile extends DefaultCommand {
       const profileAvatar = profile.displayAvatarURL()
 
       // Busca o perfil
-      profile = await ProfileService.get(profileId)
+      profile = await ProfileService.get(profileId, { deep: 1, })
 
       // Se não achou
       if (!profile) {
@@ -103,31 +103,25 @@ class Profile extends DefaultCommand {
         }
       }
 
-      // Adiciona posição de experiências
-      profile.experiences = {}
-
       // Versões do jogo
       const versions = [
         [ 'DS', 'Solo', ], [ 'SW', 'Shipwrecked', ], [ 'HAM', 'Hamlet', ], [ 'DST', 'Together', ],
       ]
 
-      // Busca experiências
-      const experiences = await ExperienceService.getBy({ user: profileId, })
-
       // Organiza experiências por versão do jogo
-      experiences.map(data => profile.experiences[data.version] = data)
+      profile.Experience.map(data => profile.Experience[data.version] = data)
 
       // Experiencias não encontradas viram objeto vazio
       versions.map(([ initials, ]) => {
-        profile.experiences[initials] = profile.experiences[initials] || {}
+        profile.Experience[initials] = profile.Experience[initials] || {}
       })
 
       // Armazena promessas para que possa aguardar todas concluidas
       const pendingPromises = []
 
       // Formata informações das experiências
-      objectMap(profile.experiences, (version, k) => {
-        objectMap(profile.experiences[k], (v, prop) => {
+      objectMap(profile.Experience, (version, k) => {
+        objectMap(profile.Experience[k], (v, prop) => {
           switch (prop) {
             case 'level': {
               let id
@@ -154,7 +148,7 @@ class Profile extends DefaultCommand {
                 default: return
               }
 
-              profile.experiences[k][prop] = `[ ${v} ] ` + Dictionary.getMessage(
+              profile.Experience[k][prop] = `[ ${v} ] ` + Dictionary.getMessage(
                 _config, 'profile', id + '_TEXT'
               )
             }
@@ -164,7 +158,7 @@ class Profile extends DefaultCommand {
               const promise = CharacterService.get(v)
 
               // Executa promessa e formata
-              promise.then(data => profile.experiences[k][prop] = (data || {}).name)
+              promise.then(data => profile.Experience[k][prop] = (data || {}).name)
 
               // Adiciona promessa na lista para que aguarde
               pendingPromises.push(promise)
@@ -203,19 +197,19 @@ class Profile extends DefaultCommand {
         content = content.concat([
           `\n***Don\'t Starve ${name}***\n`,
           `***${Dictionary.getMessage(_config, 'profile', 'PROFILE_HAVE')}:*** ` +
-          getValOrNotDefined(profile.experiences[initials].have, v => {
+          getValOrNotDefined(profile.Experience[initials].have, v => {
             return Dictionary.getMessage(_config, 'general', v === '1' ? 'YES' : 'NO')
           }),
           `***${Dictionary.getMessage(_config, 'profile', 'PROFILE_PLATFORM')}:*** ` +
-          getValOrNotDefined(profile.experiences[initials].platform),
+          getValOrNotDefined(profile.Experience[initials].platform),
           `***${Dictionary.getMessage(_config, 'profile', 'PROFILE_HOURS_PLAYED')}:*** ` +
-          getValOrNotDefined(profile.experiences[initials].hours),
-          `***Main?*** ${getValOrNotDefined(profile.experiences[initials].main)}`,
+          getValOrNotDefined(profile.Experience[initials].hours),
+          `***Main?*** ${getValOrNotDefined(profile.Experience[initials].main)}`,
           `***${Dictionary.getMessage(_config, 'profile', 'PROFILE_SURVIVED')}:*** ` +
-          getValOrNotDefined(profile.experiences[initials].survived) +
+          getValOrNotDefined(profile.Experience[initials].survived) +
           Dictionary.getMessage(_config, 'profile', 'DAYS'),
           `***${Dictionary.getMessage(_config, 'profile', 'PROFILE_LEVEL')}:*** ` +
-          getValOrNotDefined(profile.experiences[initials].level),
+          getValOrNotDefined(profile.Experience[initials].level),
         ])
       })
 
