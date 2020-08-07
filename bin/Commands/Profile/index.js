@@ -65,13 +65,15 @@ class Profile extends DefaultCommand {
       if (!profile) {
         // Se não tem menção, cria, informa e busca novamente
         if (!hasMention) {
-          await ProfileService.create({ id: profileId, })
-          await ExperienceService.create({ user: profileId, version: 'DS', })
-          await ExperienceService.create({ user: profileId, version: 'SW', })
-          await ExperienceService.create({ user: profileId, version: 'HAM', })
-          await ExperienceService.create({ user: profileId, version: 'DST', })
-
-          profile = await ProfileService.get(profileId)
+          profile = (await ProfileService.create({
+            id: profileId,
+            Experience: [
+              { user: profileId, version: 'DS', },
+              { user: profileId, version: 'SW', },
+              { user: profileId, version: 'HAM', },
+              { user: profileId, version: 'DST', },
+            ],
+          }))
 
           _Message.sendFromDictionary('profile', 'PROFILE_CREATE', {
             command: (

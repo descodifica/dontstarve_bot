@@ -11,7 +11,7 @@ class Profile extends DefaultEntity {
         genre: { type: 'Option', values: [ '0', '1', ], },
       },
       relations: {
-        oneToOne: [ { entity: 'Experience', fk: 'user', }, ],
+        oneToMany: [ { entity: 'Experience', fk: 'user', }, ],
       },
     })
   }

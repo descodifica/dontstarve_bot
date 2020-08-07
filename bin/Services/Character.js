@@ -6,7 +6,7 @@ class Character extends DefaultEntity {
     super({
       table: 'characters',
       relations: {
-        oneToOne: [ { entity: 'Experience', fk: 'user', }, ],
+        oneToMany: [ { entity: 'Experience', fk: 'user', }, ],
       },
     })
   }
