@@ -90,12 +90,15 @@ class Default {
     * @param {Boolean} _log Se deve imprimir o log
     * @returns {Object} O resultado
     */
-  create (_data, _serverConfig = {}, _log) {
+  async create (_data, _serverConfig = {}, _log) {
     const columns = Object.keys(_data).join(', ')
     const values = Object.values(_data).map(i => typeof i === 'string' ? `"${i}"` : i).join(', ')
 
-    // Executa SQL de criação e retorna o resultado
-    return Db.query(`INSERT INTO ${this.table} (${columns}) VALUES (${values})`, _log)
+    // Executa SQL de criação
+    const result = await Db.query(`INSERT INTO ${this.table} (${columns}) VALUES (${values})`, _log)
+
+    // Busca e retorna registro criado
+    return this.get(_data.id || result.insertId)
   }
 
   /**
