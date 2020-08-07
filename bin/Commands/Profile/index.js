@@ -65,15 +65,7 @@ class Profile extends DefaultCommand {
       if (!profile) {
         // Se não tem menção, cria, informa e busca novamente
         if (!hasMention) {
-          profile = (await ProfileService.create({
-            id: profileId,
-            Experience: [
-              { user: profileId, version: 'DS', },
-              { user: profileId, version: 'SW', },
-              { user: profileId, version: 'HAM', },
-              { user: profileId, version: 'DST', },
-            ],
-          }))
+          profile = (await ProfileService.create({ id: profileId, }))
 
           _Message.sendFromDictionary('profile', 'PROFILE_CREATE', {
             command: (
