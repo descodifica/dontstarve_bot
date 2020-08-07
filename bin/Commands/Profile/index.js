@@ -11,9 +11,9 @@ const { AgeFromDate, } = require('age-calculator')
 const birthRangeByAge = require('@desco/birth-range-by-age')
 
 // Serviços
-const ProfileService = require('../../services/Profile')
-const ExperienceService = require('../../services/Experience')
-const CharacterService = require('../../services/Character')
+const ProfileService = require('../../Services/Profile')
+const ExperienceService = require('../../Services/Experience')
+const CharacterService = require('../../Services/Character')
 
 // Importa comando padrão
 const DefaultCommand = require('../Default')

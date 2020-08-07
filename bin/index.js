@@ -48,7 +48,7 @@ class DontStarve {
    */
   async getServerConfig (_Message) {
     // Importa entidade de configuração
-    const ConfigEntity = require('./services/Config')
+    const ConfigEntity = require('./Services/Config')
 
     // Captura configurações
     let config = (await ConfigEntity.getBy({ server_id: _Message.serverId(), }))[0]
