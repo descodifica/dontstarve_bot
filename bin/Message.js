@@ -236,9 +236,11 @@ class Message {
    * @param {String} _msg A mensagem
    */
   send (_msg) {
-    // Se tem mensagem no parâmetro, envia ela
+    // Se tem mensagem no parâmetro, envia ela e finaliza
     if (_msg) {
       this.message.channel.send(_msg)
+
+      return
     }
 
     // Tamanho máximo das mensagens permitido pelo Discord
