@@ -4,6 +4,9 @@ class DefaultCommand {
     // Recebe o nome do comando
     this.command = this.constructor.name.toLowerCase()
 
+    // Recebe Menu
+    this.Menu = require('./' + this.constructor.name + '/Menu')(this)
+
     // Recebe documentação
     this.doc = require('./' + this.constructor.name + '/doc')
   }
@@ -14,8 +17,14 @@ class DefaultCommand {
    * @param {Object} _Message O objeto da mensagem
    * @param {Object} _config As configurações do servidor
    */
-  main (_args, _Message, _config) {
-    _Message.sendFromDictionary('general', 'COMMAND_METHOD_REQUIRED')
+  main (_Message, _config) {
+    // Se tem menu, exibe, se não, informa
+    if (this.Menu.main) {
+      this.Menu.main(_Message, _config)
+    }
+    else {
+      _Message.sendFromDictionary('general', 'COMMAND_METHOD_REQUIRED')
+    }
   }
 
   /**

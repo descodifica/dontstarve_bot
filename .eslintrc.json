@@ -11,7 +11,10 @@
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly",
         "resolveLangMessage": "readonly",
-        "Dictionary": "readonly"
+        "Dictionary": "readonly",
+        "Bot": "readonly",
+        "Client": "readonly",
+        "Emojis": "readonly"
     },
     "parserOptions": {
         "ecmaVersion": 2018

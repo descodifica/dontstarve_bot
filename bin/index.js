@@ -1,6 +1,9 @@
 // Importa dicionário
 require('./Dictionary')
 
+// Importa emojis
+require('./Emojis')
+
 // Importa API do discord
 const Discord = require('discord.js')
 
@@ -26,7 +29,7 @@ class DontStarve {
     console.log('Starting...')
 
     // Declara conexão com o cliente
-    this.client = new Discord.Client()
+    global.Client = new Discord.Client()
 
     // Executa ao iniciar
     this.onReady()
@@ -38,7 +41,7 @@ class DontStarve {
     this.onMessage()
 
     // Loga o cliente
-    this.client.login(token)
+    Client.login(token)
   }
 
   /**
@@ -67,8 +70,8 @@ class DontStarve {
    */
   onReady () {
     // Quando iniciar
-    this.client.on('ready', () => {
-      console.log(`Logged in as ${this.client.user.tag}!`)
+    Client.on('ready', () => {
+      console.log(`Logged in as ${Client.user.tag}!`)
     })
   }
 
@@ -76,7 +79,7 @@ class DontStarve {
    * @description Ao entrar em um novo servidor
    */
   onServerEnter () {
-    this.client.on('guildCreate', async _server => {
+    Client.on('guildCreate', async _server => {
       // Usuário dono do servidor
       const user = _server.owner
 
@@ -127,7 +130,7 @@ class DontStarve {
    */
   onMessage () {
     // Quando receber uma mensagem
-    this.client.on('message', async message => {
+    Client.on('message', async message => {
       // Recebe mensagem
       const Message = require('./Message')(message)
 

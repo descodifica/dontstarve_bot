@@ -1,8 +1,9 @@
 // Mensagem embutida
-const { MessageEmbed, } = require('discord.js')
+const { MessageEmbed, Emoji, } = require('discord.js')
 
 // Verifica se uma variável contém um inteiro
 const isArray = require('is-array')
+const objectMap = require('object.map')
 
 // Caracter invisivel
 const zeroWidthSpace = '​'
@@ -178,7 +179,7 @@ class Message {
    * @description Envia uma mensagem embutida
    * @param {Object} _embedData Dados da mensagem embtida
    */
-  sendEmbedMessage (_embedData) {
+  async sendEmbedMessage (_embedData) {
     const embed = new MessageEmbed()
 
     if (_embedData.title) {
@@ -193,7 +194,7 @@ class Message {
       embed.setThumbnail(_embedData.thumbnail)
     }
 
-    this.message.channel.send(embed)
+    return new Message(await this.message.channel.send(embed))
   }
 
   /**
@@ -234,17 +235,19 @@ class Message {
   /**
    * @description Envia uma mensagem ao servidor (se não definir mensagem, usa recebida com get)
    * @param {String} _msg A mensagem
+   * @returns {Promise}
    */
   send (_msg) {
     // Se tem mensagem no parâmetro, envia ela e finaliza
     if (_msg) {
-      this.message.channel.send(_msg)
-
-      return
+      return this.message.channel.send(_msg)
     }
 
     // Tamanho máximo das mensagens permitido pelo Discord
     const maxLength = 2000
+
+    // Promessas a serem resolvidas
+    const promises = []
 
     // Percorre infinitamente até que seja interrompido no corpo
     while (true) {
@@ -260,21 +263,74 @@ class Message {
         const msgLastBreak = this.text.slice(0, pos)
 
         // Envia
-        this.message.channel.send(msgLastBreak)
+        promises.push(this.message.channel.send(msgLastBreak))
 
         // Remove o conteúdo enviado damensagem da mensagem original
         this.text = this.text.slice(pos) + zeroWidthSpace + '\n'
       }
       else {
         // Envia resto da mensagem
-        this.message.channel.send(this.text)
+        promises.push(this.message.channel.send(this.text))
 
         // Finaliza o laço
         break
       }
     }
 
+    // Limpa mensagem em cache
     this.clean()
+
+    // Retorna ultima promessa resolvida
+    return Promise.all(promises).then(() => promises.pop())
+  }
+
+  /**
+   * @description Envia uma mensagem interagivel
+   * @params {String} A mensagem
+   * @params {Object} As opções
+   * @params {Function} A função a ser executado quando receber uma resposta
+   * @returns {Object} A mensagem enviada
+   */
+  async sendPrompt ({ title, description = '', options, callback, }) {
+    // Opções com os emojis corretos
+    options = Emojis.exchangeKeys(options)
+
+    // Emojis das reações
+    const emojis = Object.keys(options)
+
+    // Lista de opções formatadas
+    const list = []
+
+    // Percorre todas as opções e adiciona formatada a lista
+    objectMap(options, (desc, emoji) => {
+      list.push(`${emoji} ${desc}`)
+    })
+
+    // Envia mensagem
+    const MessageSent = await this.sendEmbedMessage({
+      title, description: description + '\n' + list.join('\n\n'),
+    })
+
+    // Adiciona reações a mensagem
+    await MessageSent.react(emojis)
+
+    // Filtro das reações
+    const reactionFilter = { emojis, user: this.authorId(), }
+
+    // Aguarda uma reação válida e executa o callback
+    MessageSent.awaitReactions(reactionFilter).then(collected => {
+      // Captura dados do emoji da reação
+      const emoji = collected.first().emoji
+
+      // Captura id (do bot) do emoji
+      emoji._id = Emojis.getId(emoji.name)
+
+      // Executa callback enviando dados do emoji da reação
+      return callback(emoji)
+    })
+
+    // Retorna
+    return MessageSent
   }
 
   /**
@@ -358,6 +414,101 @@ class Message {
    */
   createMention (_id) {
     return `<@${_id}>`
+  }
+
+  /**
+   * @description Reage a mensagem
+   * @param {Array|String} _reactions As reações
+   */
+  async react (_reactions = []) {
+    // Se não é array, vira
+    const reactions = isArray(_reactions) ? [ ..._reactions, ] : [ _reactions, ]
+
+    // Se não tem reações, ignora
+    if (reactions.length === 0) return Promise.resolve()
+
+    // Captura primeira reação
+    const reaction = reactions.shift()
+
+    // Reage
+    await this.message.react(reaction)
+
+    // Próximas reações (recursividade)
+    this.react(reactions)
+  }
+
+  /**
+   * @description Aguarda reações
+   * @params {Function} _filter
+   * @params {Object} _params
+   * @returns Promise
+  */
+  awaitReactions (_filter = () => true, _params = {}) {
+    return this.await('Reactions', _filter, _params)
+  }
+
+  /**
+   * @description Aguarda mensagens
+   * @params {Function} _filter
+   * @params {Object} _params
+   * @returns Promise
+  */
+  awaitMessages (_filter = () => true, _params = {}) {
+    return this.await('Messages', _filter, _params)
+  }
+
+  /**
+   * @description Aguarda algo
+   * @params {Function} _filter
+   * @params {Object} _params
+   * @returns Promise
+  */
+  await (_type, _filter = () => true, _params = {}) {
+    // Parâmetros padrões
+    const params = { time: 60000, max: 1, ..._params, }
+
+    // Filtro
+    const filter = typeof _filter === 'function' ? _filter : (reaction, user) => {
+      // Se validação de usuário é valida
+      let userOK = true
+
+      // Se validação de emoji é valida
+      let emojisOK = true
+
+      // Se passou filtro de usuário, adiciona resultado da condição ao userOK
+      if (_filter.user) {
+        userOK = user.id === _filter.user
+      }
+
+      // Se passou filtro de emoji, adiciona resultado da condição emojiOK
+      if (_filter.emojis) {
+        emojisOK = _filter.emojis.indexOf(reaction.emoji.name) > -1
+      }
+
+      // Retorna resultado
+      return userOK && emojisOK
+    }
+
+    if (_type === 'Reactions') {
+      return this.message.awaitReactions(filter, params)
+    }
+    else if (_type === 'Messages') {
+      return this.message.channel.awaitMessages(filter, params)
+    }
+  }
+
+  /**
+   * @description Envia uma pergunta e executa um callback ao receber a resposta
+   * @params {String} _ask A pergunta
+   * @params {Object} _params Parâmetros extras
+   * @returns Promise
+  */
+  async ask (_ask, _params = {}) {
+    // Envia pergunta
+    await this.send(_ask)
+
+    // Aguarda resposta e retorna
+    return this.awaitMessages({}, _params).then(response => response.first().content)
   }
 }
 

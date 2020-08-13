@@ -38,6 +38,10 @@
         {
             "name": "feature/PROTOCOL_CONNECTION_LOST",
             "base": "develop"
+        },
+        {
+            "name": "feature/more_interactive",
+            "base": "develop"
         }
     ]
 }

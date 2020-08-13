@@ -1,7 +1,9 @@
+const Emojis = require('../Emojis')
+
 // Adiciona sessão para portugês do brasil ao dicionário
 Dictionary.add('ptbr', {
   name: 'Portugês do Brasil',
-  flag: '🇧🇷',
+  flag: Emojis.get('brFlag'),
   dateFormat: { day: 0, month: 1, year: 2, sep: '/', },
   texts: {
     config: {

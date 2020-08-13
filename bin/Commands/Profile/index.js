@@ -482,7 +482,7 @@ class Profile extends DefaultCommand {
 
     // Se não mencionou ninguém, informa e finaliza
     if (mentions.length === 0) {
-      global.Bot.methodNotExists(_Message, _Message.originalMethod, _config)
+      Bot.methodNotExists(_Message, _Message.originalMethod, _config)
     }
 
     // Chama método de vizualização
