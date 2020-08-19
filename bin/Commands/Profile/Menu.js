@@ -105,53 +105,65 @@ class ProfileMenu extends Menu {
       {
         icon: 'ticket',
         name: Dictionary.get('profile.name', _config),
-        inline: true,
+        value: Dictionary.get('profile.nameResume', _config),
       },
       {
         icon: 'label',
         name: Dictionary.get('profile.nick', _config),
-        inline: true,
+        value: Dictionary.get('profile.nickResume', _config),
       },
       {
         icon: 'genre',
         name: Dictionary.get('profile.genre', _config),
-        inline: true,
+        value: Dictionary.get('profile.genreResume', _config),
       },
       {
         icon: 'cake',
         name: Dictionary.get('profile.age', _config),
-        inline: true,
+        value: Dictionary.get('profile.ageResume', _config),
       },
       {
         icon: 'city',
         name: Dictionary.get('profile.city', _config),
-        inline: true,
+        value: Dictionary.get('profile.cityResume', _config),
       },
       {
         icon: 'road',
         name: Dictionary.get('profile.state', _config),
-        inline: true,
+        value: Dictionary.get('profile.stateResume', _config),
       },
       {
         icon: 'country',
         name: Dictionary.get('profile.country', _config),
-        inline: true,
+        value: Dictionary.get('profile.countryResume', _config),
       },
       {
         icon: 'death',
         name: Dictionary.get('experience.experienceIn', _config, { version: versions.ds, }),
+        value: Dictionary.get(
+          'experience.experienceInResume', _config, { version: versions.ds, }
+        ),
       },
       {
         icon: 'island',
         name: Dictionary.get('experience.experienceIn', _config, { version: versions.sw, }),
+        value: Dictionary.get(
+          'experience.experienceInResume', _config, { version: versions.sw, }
+        ),
       },
       {
         icon: 'castle',
         name: Dictionary.get('experience.experienceIn', _config, { version: versions.ham, }),
+        value: Dictionary.get(
+          'experience.experienceInResume', _config, { version: versions.ham, }
+        ),
       },
       {
         icon: 'ghost',
         name: Dictionary.get('experience.experienceIn', _config, { version: versions.dst, }),
+        value: Dictionary.get(
+          'experience.experienceInResume', _config, { version: versions.dst, }
+        ),
       },
     ]
 
@@ -181,6 +193,8 @@ class ProfileMenu extends Menu {
         case 'island': prop = 'sw'
           break
         case 'castle': prop = 'ham'
+          break
+        case 'ghost': prop = 'dst'
           break
         case 'ghost': prop = 'dst'
           break

@@ -20,32 +20,42 @@ class ExperienceMenu extends Menu {
       {
         icon: 'cd',
         name: Dictionary.get('experience.have', _config),
-        inline: true,
+        value: Dictionary.get('experience.haveResume', _config, { version: versions[_version], }),
       },
       {
         icon: 'joystick',
         name: Dictionary.get('experience.platform', _config),
-        inline: true,
+        value: Dictionary.get(
+          'experience.platformResume', _config, { version: versions[_version], }
+        ),
       },
       {
         icon: 'clock',
         name: Dictionary.get('experience.hours', _config),
-        inline: true,
+        value: Dictionary.get(
+          'experience.hoursResume', _config, { version: versions[_version], }
+        ),
       },
       {
         icon: 'mage',
         name: Dictionary.get('experience.main', _config),
-        inline: true,
+        value: Dictionary.get(
+          'experience.mainResume', _config, { version: versions[_version], }
+        ),
       },
       {
         icon: 'calendarCheck',
         name: Dictionary.get('experience.survived', _config),
-        inline: true,
+        value: Dictionary.get(
+          'experience.survivedResume', _config, { version: versions[_version], }
+        ),
       },
       {
         icon: 'medal',
         name: Dictionary.get('experience.level', _config),
-        inline: true,
+        value: Dictionary.get(
+          'experience.levelResume', _config, { version: versions[_version], }
+        ),
       },
     ]
 

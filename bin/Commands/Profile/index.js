@@ -164,19 +164,19 @@ class Profile extends DefaultCommand {
       const options = [
         {
           icon: 'death',
-          name: Dictionary.get('experience.experiencein', _config, { version: versions.ds, }),
+          name: Dictionary.get('experience.experienceIn', _config, { version: versions.ds, }),
         },
         {
           icon: 'island',
-          name: Dictionary.get('experience.experiencein', _config, { version: versions.sw, }),
+          name: Dictionary.get('experience.experienceIn', _config, { version: versions.sw, }),
         },
         {
           icon: 'castle',
-          name: Dictionary.get('experience.experiencein', _config, { version: versions.ham, }),
+          name: Dictionary.get('experience.experienceIn', _config, { version: versions.ham, }),
         },
         {
           icon: 'ghost',
-          name: Dictionary.get('experience.experiencein', _config, { version: versions.dst, }),
+          name: Dictionary.get('experience.experienceIn', _config, { version: versions.dst, }),
         },
       ]
 
@@ -292,7 +292,7 @@ class Profile extends DefaultCommand {
    */
   edit (_Message, _config, _prop, _version) {
     return ProfileService.updateProp(
-      _prop, { id: _Message.authorId(), version: _version, }, _Message, _config
+      _prop, { id: _Message.authorId(), }, _Message, _config
     )
   }
 }

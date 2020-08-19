@@ -173,11 +173,11 @@ class Default {
    */
   async updatePropString (_prop, _where, _Message, _config, _log) {
     // Id básico do dicionário
-    const basicDictionaryId = `${this.entity}.${_prop}Update`
+    const basicDictionaryId = `${this.entity}.${_prop}`
 
     // Captura pergunta
     const ask = (
-      Dictionary.get(basicDictionaryId + 'Ask', _config) +
+      Dictionary.get(basicDictionaryId + 'Resume', _config) +
       '\n' +
       Dictionary.get('general.informFreeField', _config, {}, { italic: true, })
     )
@@ -194,12 +194,12 @@ class Default {
     // Atualiza e informa
     return this.update(data, _where, _log)
       .then(response => {
-        _Message.sendFromDictionary(basicDictionaryId + 'Success', _config)
+        _Message.sendFromDictionary(basicDictionaryId + 'UpdateSuccess', _config)
 
         return response
       })
       .catch(e => {
-        _Message.sendFromDictionary(basicDictionaryId + 'Error', _config)
+        _Message.sendFromDictionary(basicDictionaryId + 'UpdateError', _config)
 
         return Promise.reject(e)
       })
@@ -215,11 +215,11 @@ class Default {
    */
   async updatePropNumber (_prop, _where, _Message, _config, _log) {
     // Id básico do dicionário
-    const basicDictionaryId = `${this.entity}.${_prop}Update`
+    const basicDictionaryId = `${this.entity}.${_prop}`
 
     // Captura pergunta
     const ask = (
-      Dictionary.get(basicDictionaryId + 'Ask', _config) +
+      Dictionary.get(basicDictionaryId + 'Resume', _config) +
       '\n' +
       Dictionary.get('general.informNumberField', _config, {}, { italic: true, })
     )
@@ -236,12 +236,12 @@ class Default {
     // Atualiza e informa
     return this.update(data, _where, _log)
       .then(response => {
-        _Message.sendFromDictionary(basicDictionaryId + 'Success', _config)
+        _Message.sendFromDictionary(basicDictionaryId + 'UpdateSuccess', _config)
 
         return response
       })
       .catch(e => {
-        _Message.sendFromDictionary(basicDictionaryId + 'Error', _config)
+        _Message.sendFromDictionary(basicDictionaryId + 'UpdateError', _config)
 
         return Promise.reject(e)
       })
@@ -257,11 +257,11 @@ class Default {
    */
   async updatePropDate (_prop, _where, _Message, _config, _log) {
     // Id básico do dicionário
-    const basicDictionaryId = `${this.entity}.${_prop}Update`
+    const basicDictionaryId = `${this.entity}.${_prop}`
 
     // Captura pergunta
     const ask = (
-      Dictionary.get(basicDictionaryId + 'Ask', _config) +
+      Dictionary.get(basicDictionaryId + 'Resume', _config) +
       '\n' +
       Dictionary.get('general.infoDateField', _config, {}, { italic: true, })
     )
@@ -278,12 +278,12 @@ class Default {
     // Atualiza e informa
     return this.update(data, _where, _log)
       .then(response => {
-        _Message.sendFromDictionary(basicDictionaryId + 'Success', _config)
+        _Message.sendFromDictionary(basicDictionaryId + 'UpdateSuccess', _config)
 
         return response
       })
       .catch(e => {
-        _Message.sendFromDictionary(basicDictionaryId + 'Error', _config)
+        _Message.sendFromDictionary(basicDictionaryId + 'UpdateError', _config)
 
         return Promise.reject(e)
       })
@@ -299,7 +299,7 @@ class Default {
    */
   async updatePropOption (_prop, _where, _Message, _config, _log) {
     // Id básico do dicionário
-    const basicDictionaryId = `${this.entity}.${_prop}Update`
+    const basicDictionaryId = `${this.entity}.${_prop}`
 
     // Opções válidas
     const validOptions = (
@@ -316,7 +316,7 @@ class Default {
 
     // Captura pergunta
     const ask = (
-      Dictionary.get(basicDictionaryId + 'Ask', _config) +
+      Dictionary.get(basicDictionaryId + 'Resume', _config) +
       '\n' +
       Dictionary.get(
         'general.infoOptionField',
@@ -350,12 +350,12 @@ class Default {
     // Atualiza e informa
     return this.update(data, _where)
       .then(response => {
-        _Message.sendFromDictionary(basicDictionaryId + 'Success', _config)
+        _Message.sendFromDictionary(basicDictionaryId + 'UpdateSuccess', _config)
 
         return response
       })
       .catch(e => {
-        _Message.sendFromDictionary(basicDictionaryId + 'Error', _config)
+        _Message.sendFromDictionary(basicDictionaryId + 'UpdateError', _config)
 
         return Promise.reject(e)
       })
@@ -371,7 +371,7 @@ class Default {
    */
   async updatePropRelation (_prop, _where, _Message, _config, _log) {
     // Id básico do dicionário
-    const basicDictionaryId = `${this.entity}.${_prop}Update`
+    const basicDictionaryId = `${this.entity}.${_prop}`
 
     // Personagens
     const characters = await require(`./${this.props[_prop].entity}`).list()
@@ -380,7 +380,7 @@ class Default {
     const validOptions = characters.map(i => i.name)
     // Captura pergunta
     const ask = (
-      Dictionary.get(basicDictionaryId + 'Ask', _config) +
+      Dictionary.get(basicDictionaryId + 'Resume', _config) +
       '\n' +
       Dictionary.get(
         'general.infoRelationField',
@@ -414,12 +414,12 @@ class Default {
     // Atualiza e informa
     return this.update(data, _where)
       .then(response => {
-        _Message.sendFromDictionary(basicDictionaryId + 'Success', _config)
+        _Message.sendFromDictionary(basicDictionaryId + 'UpdateSuccess', _config)
 
         return response
       })
       .catch(e => {
-        _Message.sendFromDictionary(basicDictionaryId + 'Error', _config)
+        _Message.sendFromDictionary(basicDictionaryId + 'UpdateError', _config)
 
         return Promise.reject(e)
       })

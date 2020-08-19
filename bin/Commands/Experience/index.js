@@ -37,19 +37,19 @@ class Experience extends DefaultCommand {
     const options = [
       {
         icon: 'death',
-        name: Dictionary.get('experience.experiencein', _config, { version: versions.ds, }),
+        name: Dictionary.get('experience.experienceIn', _config, { version: versions.ds, }),
       },
       {
         icon: 'island',
-        name: Dictionary.get('experience.experiencein', _config, { version: versions.sw, }),
+        name: Dictionary.get('experience.experienceIn', _config, { version: versions.sw, }),
       },
       {
         icon: 'castle',
-        name: Dictionary.get('experience.experiencein', _config, { version: versions.ham, }),
+        name: Dictionary.get('experience.experienceIn', _config, { version: versions.ham, }),
       },
       {
         icon: 'ghost',
-        name: Dictionary.get('experience.experiencein', _config, { version: versions.dst, }),
+        name: Dictionary.get('experience.experienceIn', _config, { version: versions.dst, }),
       },
     ]
 
