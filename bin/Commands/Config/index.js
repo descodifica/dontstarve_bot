@@ -10,55 +10,16 @@ class Config extends DefaultCommand {
    * @description Método de configuração de idioma
    * @param {Object} _Message O objeto da mensagem
    * @param {Object} _config As configurações do servidor
+   * @param {String} _lang Idioma escolhido
    */
-  lang (_Message, _config) {
-    // Importa os idiomas
-    const langs = Object.keys(Dictionary.langs())
-
-    // O idioma pedido
-    const lang = _Message.args[0]
-
-    // Se idioma passado for inválido, informa e finalzia
-    if (langs.indexOf(lang) === -1) {
-      _Message.sendFromDictionary('config', 'INVALID_LANGUAGE', {
-        lang,
-        firstLangs: langs.slice(0, -1).join(', '),
-        lastLang: langs.reverse()[0],
-      })
-
-      return
-    }
-
+  lang (_Message, _config, _lang) {
     // Atualiza
-    this._config('lang', lang, _Message)
+    this._config('lang', _lang, _Message)
       .then(() => {
-        _Message.serverConfig.lang = _Message.args[0]
-
-        _Message.sendFromDictionary('config', 'UPDATED_LANGUAGE')
+        _Message.sendFromDictionary('config.updateLanguage', { ..._config, _lang, })
       })
       .catch(e => {
-        _Message.sendFromDictionary('config', 'UPDATE_LANGUAGE_ERROR')
-      })
-  }
-
-  /**
-   * @description Método de configuração de prefix
-   * @param {Object} _Message O objeto da mensagem
-   * @param {Object} _config As configurações do servidor
-   */
-  prefix (_Message, _config) {
-    // O prefixo pedido
-    const prefix = _Message.args[0]
-
-    // Atualiza
-    this._config('prefix', prefix, _Message)
-      .then(() => {
-        global.serverPrefix[_Message.serverId()] = _Message.args[0]
-
-        _Message.sendFromDictionary('config', 'UPDATED_PREFIX')
-      })
-      .catch(e => {
-        _Message.sendFromDictionary('config', 'UPDATE_PREFIX_ERROR')
+        _Message.sendFromDictionary('config.updateLanguageError', _config)
       })
   }
 

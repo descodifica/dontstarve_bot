@@ -110,19 +110,17 @@ class Default {
     * @description Atualiza um registro
     * @param {Object} _data Dados a serem gravados
     * @param {Object} _where Condições para gravar
-    * @param {String} _method Nome do método que possui os registros
-    * @param {Object} _serverConfig Configurações do servidor
     * @param {Boolean} _log Se deve imprimir o log
     * @returns {Promise} Promessa resolvida
     */
-  async update (_data, _where, _method, _serverConfig = {}, _log) {
+  async update (_data, _where, _log) {
     // Se não tem dados, finaliza
     if (Object.keys(_data).length === 0) return Promise.resolve()
 
     const data = []
 
     // Monta treixo de atualização da SQL
-    objectMap(await this.formatData(_data, _method, _serverConfig), (v, k) => {
+    objectMap(_data, (v, k) => {
       // Se valor for string, adiciona aspas
       if (typeof v === 'string') {
         v = `"${v}"`
@@ -141,167 +139,290 @@ class Default {
 
     // Executa SQL e retorna o resultado
     return Db.query(sql, _log)
-      .catch(async e => Promise.reject(await this.treatMySqlError(e, _method, _serverConfig)))
   }
 
   /**
-   * @description Formata os registros
-   * @param {String} _record Os registros a serem formatados
-   * @param {String} _method Nome do método que possui os registros
-   * @param {Object} _serverConfig Configurações do servidor
-   * @returns {Object} Registros formatados
+   * @description Atualiza uma dada propriedade
+   * @params {String} _prop Nome da propriedade
+   * @params {Object} _where Condições da atualização
+   * @params {Object} _Message Mensagem enviada
+   * @params {Object} _config Configurações do servidor
+   * @params {Boolean} _log Se deve exibir log
    */
-  formatData (_record, _method, _serverConfig = {}) {
-    const record = {}
-    const promises = []
+  updateProp (_prop, _where, _Message, _config, _log) {
+    // Captura propriedade
+    const prop = this.props[_prop] || {}
 
-    // Percorre todos os registros
-    objectMap({ ..._record, }, (val, prop) => {
-      // Se não consta na lista de propriedades, seta original
-      if (!this.props[prop]) {
-        record[prop] = val
+    // Se não tiver tipo, vira string
+    const type = prop.type || 'String'
 
-        return
-      }
+    // Método a ser usado de acordo com o tipo
+    const method = 'updateProp' + type
 
-      // Se for indefinido, seta string vazia
-      if (val === undefined) {
-        record[prop] = ''
-
-        return
-      }
-
-      // Formata de acordo com o tipo
-      switch (this.props[prop].type) {
-        case 'Date': record[prop] = Dictionary.dateToEn(_serverConfig.lang, val)
-          break
-        case 'Relation': {
-          promises.push(
-            require('./Character').getBy({ name: val, }).then(r => {
-              record[prop] = r.length > 0 ? r[0].id : -1
-            })
-          )
-        }
-          break
-        default: record[prop] = val
-      }
-    })
-
-    return Promise.all(promises).then(() => {
-      return record
-    })
+    // Chama método de atualização equivalente
+    return this[method](_prop, _where, _Message, _config, _log)
   }
 
   /**
-   * @description Trata um erro do MySql e retorna em padrão humano
-   * @param {Error} _error O erro
-   * @param {String} _error O método que invocou o erro
-   * @param {Object} _serverConfig Configurações do servidor
+   * @description Atualiza uma dada propriedade do tipo String
+   * @params {String} _prop Nome da propriedade
+   * @params {Object} _where Condições da atualização
+   * @params {Object} _Message Mensagem enviada
+   * @params {Object} _config Configurações do servidor
+   * @params {Boolean} _log Se deve exibir log
    */
-  async treatMySqlError (_error, _method, _serverConfig) {
-    // Nome da propriedade que deu erro e o erro
-    const { column: prop, type: typeError, } = this.getMySqlErrorType(_error)
+  async updatePropString (_prop, _where, _Message, _config, _log) {
+    // Id básico do dicionário
+    const basicDictionaryId = `${this.entity}.${_prop}Update`
 
-    // Nome traduzido da propriedade que deu erro
-    const translateProp = Dictionary.getTranslateMethodParam(
-      _serverConfig.lang, this.entity, _method, prop
+    // Captura pergunta
+    const ask = (
+      Dictionary.get(basicDictionaryId + 'Ask', _config) +
+      '\n' +
+      Dictionary.get('general.informFreeField', _config, {}, { italic: true, })
     )
 
-    // Tipo da propriedade que deu erro
-    const type = (this.props[prop] || {}).type || this.props[prop] || 'String'
+    // Pergunta e recebe  resposta
+    const response = await _Message.ask(ask)
 
-    // Retorna o erro adequado
+    // Dados a serem atualizados
+    const data = {}
 
-    if (type === 'Option' && typeError === 'WARN_DATA_TRUNCATED') {
-      return {
-        module: 'general',
-        error: 'INVALID_OPTION',
-        params: {
-          prop: translateProp,
-          options: this.props[prop].values.slice(0, -1).join(', '),
-          lastOption: this.props[prop].values.slice(-1).toString(),
-        },
-      }
-    }
+    // Insere dados no json
+    data[_prop] = response.message.content
 
-    if (typeError === 'INCORRECT_DATE') {
-      return { module: 'general', error: 'INVALID_DATE', params: { prop: translateProp, }, }
-    }
+    // Atualiza e informa
+    return this.update(data, _where, _log)
+      .then(response => {
+        _Message.sendFromDictionary(basicDictionaryId + 'Success', _config)
 
-    if (typeError === 'R_DATA_TOO_LONG') {
-      return { module: 'general', error: 'LONG_TEXT', params: { prop: translateProp, }, }
-    }
+        return response
+      })
+      .catch(e => {
+        _Message.sendFromDictionary(basicDictionaryId + 'Error', _config)
 
-    if (typeError === 'INVALID_INTEGER') {
-      return { module: 'general', error: 'INVALID_INTEGER', params: { prop: translateProp, }, }
-    }
-
-    if (typeError === 'INVALID_RELATION') {
-      const Relation = require(`./${this.props[prop].entity}`)
-      const options = (await Relation.list()).map(i => i.name)
-
-      return {
-        module: 'general',
-        error: 'INVALID_RELATION',
-        params: {
-          prop: translateProp,
-          options: options.slice(0, -1).join(', '),
-          lastOption: options.slice(-1).toString(),
-        },
-      }
-    }
+        return Promise.reject(e)
+      })
   }
 
   /**
-   * @description Retorna o tipo de erro do MySql e o nome da coluna que deu erro
-   * @param {Error} _error O erro
-   * @returns {String} O erro adequaddo
+   * @description Atualiza uma dada propriedade do tipo Number
+   * @params {String} _prop Nome da propriedade
+   * @params {Object} _where Condições da atualização
+   * @params {Object} _Message Mensagem enviada
+   * @params {Object} _config Configurações do servidor
+   * @params {Boolean} _log Se deve exibir log
    */
-  getMySqlErrorType (_error) {
-    const error = _error.sqlMessage
-    const errorCode = _error.code
+  async updatePropNumber (_prop, _where, _Message, _config, _log) {
+    // Id básico do dicionário
+    const basicDictionaryId = `${this.entity}.${_prop}Update`
 
-    if (errorCode === 'WARN_DATA_TRUNCATED') {
-      return {
-        type: 'WARN_DATA_TRUNCATED',
-        column: error.split(' ')[error.split(' ').indexOf('column') + 1].slice(1, -1),
-      }
+    // Captura pergunta
+    const ask = (
+      Dictionary.get(basicDictionaryId + 'Ask', _config) +
+      '\n' +
+      Dictionary.get('general.informNumberField', _config, {}, { italic: true, })
+    )
+
+    // Pergunta e recebe  resposta
+    const response = await _Message.ask(ask)
+
+    // Dados a serem atualizados
+    const data = {}
+
+    // Insere dados no json
+    data[_prop] = parseFloat(response.message.content)
+
+    // Atualiza e informa
+    return this.update(data, _where, _log)
+      .then(response => {
+        _Message.sendFromDictionary(basicDictionaryId + 'Success', _config)
+
+        return response
+      })
+      .catch(e => {
+        _Message.sendFromDictionary(basicDictionaryId + 'Error', _config)
+
+        return Promise.reject(e)
+      })
+  }
+
+  /**
+   * @description Atualiza uma dada propriedade do tipo Date
+   * @params {String} _prop Nome da propriedade
+   * @params {Object} _where Condições da atualização
+   * @params {Object} _Message Mensagem enviada
+   * @params {Object} _config Configurações do servidor
+   * @params {Boolean} _log Se deve exibir log
+   */
+  async updatePropDate (_prop, _where, _Message, _config, _log) {
+    // Id básico do dicionário
+    const basicDictionaryId = `${this.entity}.${_prop}Update`
+
+    // Captura pergunta
+    const ask = (
+      Dictionary.get(basicDictionaryId + 'Ask', _config) +
+      '\n' +
+      Dictionary.get('general.infoDateField', _config, {}, { italic: true, })
+    )
+
+    // Pergunta e recebe  resposta
+    const response = await _Message.ask(ask)
+
+    // Dados a serem atualizados
+    const data = {}
+
+    // Insere dados no json
+    data[_prop] = this.dateToEn(response.message.content, Dictionary.getDateFormat(_config.lang))
+
+    // Atualiza e informa
+    return this.update(data, _where, _log)
+      .then(response => {
+        _Message.sendFromDictionary(basicDictionaryId + 'Success', _config)
+
+        return response
+      })
+      .catch(e => {
+        _Message.sendFromDictionary(basicDictionaryId + 'Error', _config)
+
+        return Promise.reject(e)
+      })
+  }
+
+  /**
+   * @description Atualiza uma dada propriedade do tipo Option
+   * @params {String} _prop Nome da propriedade
+   * @params {Object} _where Condições da atualização
+   * @params {Object} _Message Mensagem enviada
+   * @params {Object} _config Configurações do servidor
+   * @params {Boolean} _log Se deve exibir log
+   */
+  async updatePropOption (_prop, _where, _Message, _config, _log) {
+    // Id básico do dicionário
+    const basicDictionaryId = `${this.entity}.${_prop}Update`
+
+    // Opções válidas
+    const validOptions = (
+      this.props[_prop].noTranslate
+        ? this.props[_prop].values
+        : this.props[_prop].values.map(v => {
+          if (v.split('.').length === 1) {
+            v = `${this.entity}.${v}`
+          }
+
+          return Dictionary.get(v, _config)
+        })
+    )
+
+    // Captura pergunta
+    const ask = (
+      Dictionary.get(basicDictionaryId + 'Ask', _config) +
+      '\n' +
+      Dictionary.get(
+        'general.infoOptionField',
+        _config,
+        {
+          options: validOptions.slice(0, -1).map(i => `"${i}"`),
+          lastOption: `"${validOptions.slice(-1)[0]}"`,
+        },
+        { italic: true, })
+    )
+
+    // Pergunta e recebe  resposta
+    const response = await _Message.ask(ask)
+
+    // Opção selecionada
+    const selectedOption = validOptions.indexOf(response.message.content)
+
+    // Se não deu uma resposta válida, informa e finaliza
+    if (selectedOption === -1) {
+      _Message.sendFromDictionary('general.optionNotValid', _config)
+
+      return Promise.reject(new Error())
     }
 
-    if (error.indexOf('Incorrect date value:') > -1) {
-      return {
-        type: 'INCORRECT_DATE',
-        column: error.split(' ')[error.split(' ').indexOf('column') + 1].slice(1, -1),
-      }
+    // Dados a serem atualizados
+    const data = {}
+
+    // Insere dados no json
+    data[_prop] = selectedOption.toString()
+
+    // Atualiza e informa
+    return this.update(data, _where)
+      .then(response => {
+        _Message.sendFromDictionary(basicDictionaryId + 'Success', _config)
+
+        return response
+      })
+      .catch(e => {
+        _Message.sendFromDictionary(basicDictionaryId + 'Error', _config)
+
+        return Promise.reject(e)
+      })
+  }
+
+  /**
+   * @description Atualiza uma dada propriedade do tipo Relation
+   * @params {String} _prop Nome da propriedade
+   * @params {Object} _where Condições da atualização
+   * @params {Object} _Message Mensagem enviada
+   * @params {Object} _config Configurações do servidor
+   * @params {Boolean} _log Se deve exibir log
+   */
+  async updatePropRelation (_prop, _where, _Message, _config, _log) {
+    // Id básico do dicionário
+    const basicDictionaryId = `${this.entity}.${_prop}Update`
+
+    // Personagens
+    const characters = await require(`./${this.props[_prop].entity}`).list()
+
+    // Opções válidas
+    const validOptions = characters.map(i => i.name)
+    // Captura pergunta
+    const ask = (
+      Dictionary.get(basicDictionaryId + 'Ask', _config) +
+      '\n' +
+      Dictionary.get(
+        'general.infoRelationField',
+        _config,
+        {
+          options: validOptions.slice(0, -1).map(i => `"${i}"`),
+          lastOption: `"${validOptions.slice(-1)[0]}"`,
+        },
+        { italic: true, })
+    )
+
+    // Pergunta e recebe  resposta
+    const response = await _Message.ask(ask)
+
+    // Opção selecionada
+    const selectedOption = (characters[validOptions.indexOf(response.message.content)] || {}).id
+
+    // Se não deu uma resposta válida, informa e finaliza
+    if (!selectedOption) {
+      _Message.sendFromDictionary('general.optionNotValid', _config)
+
+      return Promise.reject(new Error())
     }
 
-    if (errorCode === 'R_DATA_TOO_LONG') {
-      return {
-        type: 'R_DATA_TOO_LONG',
-        column: error.split(' ')[error.split(' ').indexOf('column') + 1].slice(1, -1),
-      }
-    }
+    // Dados a serem atualizados
+    const data = {}
 
-    if (errorCode === 'R_DATA_TOO_LONG') {
-      return {
-        type: 'R_DATA_TOO_LONG',
-        column: error.split(' ')[error.split(' ').indexOf('column') + 1].slice(1, -1),
-      }
-    }
+    // Insere dados no json
+    data[_prop] = selectedOption.toString()
 
-    if (error.indexOf('Incorrect integer value') > -1) {
-      return {
-        type: 'INVALID_INTEGER',
-        column: error.split(' ')[error.split(' ').indexOf('column') + 1].slice(1, -1),
-      }
-    }
+    // Atualiza e informa
+    return this.update(data, _where)
+      .then(response => {
+        _Message.sendFromDictionary(basicDictionaryId + 'Success', _config)
 
-    if (errorCode === 'ER_NO_REFERENCED_ROW_2') {
-      return {
-        type: 'INVALID_RELATION',
-        column: error.split('(')[2].split(')')[0].slice(1, -1),
-      }
-    }
+        return response
+      })
+      .catch(e => {
+        _Message.sendFromDictionary(basicDictionaryId + 'Error', _config)
+
+        return Promise.reject(e)
+      })
   }
 
   /**
@@ -486,6 +607,21 @@ class Default {
 
     // Retorna
     return Relation
+  }
+
+  /**
+   * @description Retorna a data informada no formato americano
+   * @param {String} _date A data informada
+   * @param {Object} _dateFormat Formato da data informada (de acordo com o idioma do bot)
+   */
+  dateToEn (_date, _dateFormat) {
+    const splitDate = _date.split(_dateFormat.sep)
+
+    const day = splitDate[_dateFormat.day]
+    const month = splitDate[_dateFormat.month]
+    const year = splitDate[_dateFormat.year]
+
+    return [ year, month, day, ].join('-')
   }
 }
 

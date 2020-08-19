@@ -11,20 +11,27 @@ class ConfigMenu extends Menu {
    * @param {Object} _config As configurações do servidor
    */
   main (_Message, _config) {
-    // Envia menu
-    _Message.sendPrompt(
+    // Opções do menu
+    const options = [
       {
-        title: 'O que deseja configurar?',
-        options: { inputLatinLetters: 'Idioma', raisedRand: 'Prefixo ', },
-        callback: emoji => {
-          switch (emoji._id) {
-            case 'inputLatinLetters': this.lang(_Message, _config)
-              break
-            case 'raisedRand': this.prefix(_Message, _config)
-          }
-        },
+        icon: 'inputLatinLetters',
+        name: Dictionary.get('config.language', _config),
+        value: Dictionary.get('config.language_resume', _config),
+      },
+    ]
+
+    // Defnições do menu
+    const defs = {
+      title: Dictionary.get('config.index', _config),
+      options,
+    }
+
+    // Envia menu e executa comando desejado
+    _Message.sendPrompt(defs).then(emoji => {
+      switch (emoji._id) {
+        case 'inputLatinLetters': this.lang(_Message, _config)
       }
-    )
+    })
   }
 
   /**
@@ -33,37 +40,32 @@ class ConfigMenu extends Menu {
    * @param {Object} _config As configurações do servidor
    */
   lang (_Message, _config) {
-    // Envia menu
-    _Message.sendPrompt(
+    // Opções do menu
+    const options = [
       {
-        title: 'Qual idoma deseja?',
-        options: { brFlag: 'Portugês Brasil', },
-        callback: emoji => {
-          switch (emoji._id) {
-            case 'brFlag': _Message.args[0] = 'ptbr'
-              break
-          }
+        icon: 'brFlag',
+        name: Dictionary.getLangName('ptbr'),
+      },
+    ]
 
-          this.module.lang(_Message, _config)
-        },
+    // Definições do menu
+    const defs = {
+      title: Dictionary.get('config.whatAge', _config),
+      options,
+    }
+
+    // Onde guardar idioma escolhido
+    let lang
+
+    // Envia menu
+    _Message.sendPrompt(defs).then(emoji => {
+      switch (emoji._id) {
+        case 'brFlag': lang = 'ptbr'
+          break
       }
-    )
-  }
 
-  /**
-   * @description Configuração de prefixo
-   * @param {Object} _Message O objeto da mensagem
-   * @param {Object} _config As configurações do servidor
-   */
-  async prefix (_Message, _config) {
-    // Envia pergunta e recebe resposta
-    const prefix = await _Message.ask('Qual prefixo deseja usar?')
-
-    // Adiciona mensagem nos argumentos
-    _Message.args[0] = prefix
-
-    // Chama método de configuração de prefixo
-    this.module.prefix(_Message, _config)
+      this.module.lang(_Message, _config, lang)
+    })
   }
 }
 

@@ -7,11 +7,9 @@ require('./Emojis')
 // Importa API do discord
 const Discord = require('discord.js')
 
-// Importa todos os módulos
-const Commands = require('./Commands')
-
 // Importa configurações
 const { token, environment, } = require('./config')
+const Dictionary = require('./Dictionary')
 
 // Lista de prefixo por servidor
 global.serverPrefix = {}
@@ -42,6 +40,30 @@ class DontStarve {
 
     // Loga o cliente
     Client.login(token)
+  }
+
+  /**
+   * @description Retorna dados do Bot
+   * @returns {Object}
+   */
+  bot () {
+    return Client.user
+  }
+
+  /**
+   * @description Retorna o nome do Bot
+   * @returns {String}
+   */
+  botName () {
+    return this.bot().name
+  }
+
+  /**
+   * @description Retorna o id do Bot
+   * @returns {String}
+   */
+  botId () {
+    return this.bot().id
   }
 
   /**
@@ -93,36 +115,27 @@ class DontStarve {
       const msgs = []
 
       // Percorre todos os idiomas
-      Object.keys(Dictionary.langs()).map(lang => {
+      Dictionary.langs().map(lang => {
         // Adiciona mensagem de boas vindas no idioma
         msgs.push(
-          Dictionary.getMessageInLang(
-            lang, 'general', 'WELCOME', { userName, serverName, }, { prefix: 'ds:', }
-          )
+          Dictionary.flag(lang) +
+          ' ' +
+          Dictionary.get(
+            'general.welcome',
+            { lang, },
+            { userName: `**${userName}**`, serverName: `**${serverName}**`, }
+          ) +
+          '\n\n' +
+          Dictionary.get('general.welcome_use', { lang, }) +
+          '\n\n' +
+          '**' + Dictionary.get('general.example', { lang, }) + '**:' +
+          `${require('./Message')().mention(this.botId())}`
         )
       })
 
       // Envia mensagens
-      await user.send(msgs.join('\n\n'))
+      await user.send(msgs.join('\n\n\n'))
     })
-  }
-
-  /**
-   * @description Retorna o prefixo do servidor
-   * @param {Object} _Message A mensagem enviada
-   * @returns {String} O prefixo
-   */
-  async getServerPrefix (_Message) {
-    // Id do servidor da mensagem
-    const serverId = _Message.serverId()
-
-    // Se não tem o ID na lista "quente" em código, busca e armazena nela
-    if (!global.serverPrefix[serverId]) {
-      global.serverPrefix[serverId] = (await this.getServerConfig(_Message)).prefix
-    }
-
-    // Retorna da lista quente
-    return global.serverPrefix[serverId]
   }
 
   /**
@@ -136,50 +149,53 @@ class DontStarve {
 
       // Finaliza se mensagem foi enviada por um bot
       if (Message.fromBot()) return
-      // Prefixo a ser usado
-      const prefix = await this.getServerPrefix(Message)
 
       // Se não for mensagem para o bot, finaliza
-      if (!Message.forBot(prefix)) return {}
+      if (!Message.forBot(this.bot())) return {}
 
       // Configurações do servidor
-      const serverConfig = Message.serverConfig = await this.getServerConfig(Message)
+      const serverConfig = await this.getServerConfig(Message)
 
-      // Trata os argumentos da mensagem
-      Message.parserArgs()
+      // Opções a serem exibidas
+      const options = [
+        {
+          icon: 'profile',
+          name: Dictionary.get('profile.profile', serverConfig),
+          value: Dictionary.get('profile.resume', serverConfig),
+        },
+        {
+          icon: 'stream',
+          name: Dictionary.get('stream.stream', serverConfig),
+          value: Dictionary.get('stream.resume', serverConfig),
+        },
+      ]
 
-      // Se não possui o comando, informa e finaliza
-      if (!Commands[Message.realCommand]) {
-        Message.sendFromDictionary('general', 'COMMAND_NOT_FOUND', { command: Message.command, })
-
-        return
+      // Se for dono do servidor, adiciona opção de configurações
+      if (Message.authorId() === Message.serverOwnerID()) {
+        options.push({
+          icon: 'config',
+          name: Dictionary.get('config.config', serverConfig),
+          value: Dictionary.get('config.resume', serverConfig),
+        })
       }
-      // Se método não existe
-      if (!Message.realMethod) {
-        // Se não tem método de redirecionar inválido, informa e finaliza
-        if (!Commands[Message.realCommand].invalidRedir) {
-          this.methodNotExists(Message, Message.method, serverConfig)
 
-          return
+      // Definições do menu
+      const defs = { title: Dictionary.get('general.index', serverConfig), options, }
+
+      // Envia um prompt e chama o comando solicitado
+      Message.sendPrompt(defs).then(emoji => {
+        // Importa comando
+        const command = require('./Commands')[emoji._id]
+
+        // Executa comando
+        if (command.main) {
+          command.main(Message, serverConfig)
         }
         else {
-          Message.realMethod = 'invalidRedir'
+          command.Menu.main(Message, serverConfig)
         }
-      }
-
-      // Executa comando
-      Commands[Message.realCommand].exec(Message)
+      })
     })
-  }
-
-  /**
-   * @description Informa que um método não existe
-   * @params {Object} A mensagm
-   * @params {String} _originalMethod Nome original do método pedido
-   * @params {Object} _serverConfig Configurações do servidor
-   */
-  methodNotExists (_Message, _originalMethod, _serverConfig) {
-    _Message.sendFromDictionary('general', 'METHOD_NOT_EXISTS', { method: _originalMethod, })
   }
 }
 

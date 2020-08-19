@@ -1,9 +1,8 @@
 // Mensagem embutida
-const { MessageEmbed, Emoji, } = require('discord.js')
+const { MessageEmbed, } = require('discord.js')
 
 // Verifica se uma variável contém um inteiro
 const isArray = require('is-array')
-const objectMap = require('object.map')
 
 // Caracter invisivel
 const zeroWidthSpace = '​'
@@ -18,113 +17,6 @@ class Message {
   constructor (_message) {
     this.message = _message
     this.text = ''
-  }
-
-  /**
-   * @description Trata argumentos da mensagem
-   * @returns {Array} Array contendo todos os argumentos
-   */
-  parserArgs () {
-    // Recebe argumentos
-    this.args = this.message.content
-
-    // Pelo que trocar espaço dentro das aspas duplas
-    const signal = '|_|'
-
-    // Troca espaços entre aspas simples e duplas por |_|
-    this.args = this.parserQuoteArgs(this.args, '\'', signal)
-    this.args = this.parserQuoteArgs(this.args, '"', signal)
-
-    this.args = this.args
-      .slice(this.serverConfig.prefix.length) // Remove o prefixo
-      .split(' ') // Separa pelo espaço
-      .filter(i => i.trim() !== '') // Remove argumento em branco (espaço extra no comando)
-      .map(i => i.split(signal).join(' ')) // Volta espaço das aspas
-
-    // Separa comando e método
-    this.command = this.originalCommand = this.args.shift()
-    this.method = this.originalMethod = this.args.shift() || 'main'
-
-    // Nome real do comando
-    this.realCommand = Dictionary.getModuleName(
-      this.serverConfig.lang, this.command
-    )
-
-    // Nome real do método
-    this.realMethod = Dictionary.getMethodName(
-      this.serverConfig.lang, this.realCommand, this.method
-    )
-  }
-
-  /**
-   * @description Retorna se a mensagem foi enviada para o Bot
-   * @params {String} Prefixo do servidor
-   * @returns {Boolean}
-   */
-  forBot (_prefix) {
-    // Prefixo é o informado ou o presente em serverConfig
-    const prefix = _prefix || (this.serverConfig || {}).prefix
-
-    return (
-      this.message.content.startsWith(prefix) && // Se começa com o prefixo e
-      !this.fromBot() // Se não é mensagem de outro Bot
-    )
-  }
-
-  /**
-   * @description Retorna se a mensagem foi enviada por um Bot
-   * @returns {Boolean}
-   */
-  fromBot () {
-    return this.message.author.bot
-  }
-
-  /**
-   * @description Retorna se existem argumentos
-   * @returns {Boolean}
-   */
-  hasArgs () {
-    return this.args.length > 0
-  }
-
-  /**
-   * @description Retorna as mensões
-   * @returns {Object}
-   */
-  mentions () {
-    return this.message.mentions
-  }
-
-  /**
-   * @description Retorna e mencionou alguém
-   * @returns Boolean
-   */
-  hasMention () {
-    return this.hasUserMention() || this.hasRoleMention()
-  }
-
-  /**
-   * @description Retorna e mencionou alguma pessoa
-   * @returns Boolean
-   */
-  hasUserMention () {
-    return this.mentions().users.array().length > 0
-  }
-
-  /**
-   * @description Retorna e mencionou algum cargo
-   * @returns Boolean
-   */
-  hasRoleMention () {
-    return this.mentions().roles.array().length > 0
-  }
-
-  /**
-   * @description Retorna o ID do servidor
-   * @returns {String}
-   */
-  serverId () {
-    return (this.message.guild || {}).id
   }
 
   /**
@@ -152,11 +44,11 @@ class Message {
   }
 
   /**
-    * @description Retorna o ID do dono do servidor
+    * @description Retorna o avatar do autor da mensagem da mensagem
     * @returns {String}
     */
-  serverOwnerID () {
-    return this.message.guild.ownerID
+  authorAvatar (_message) {
+    return this.message.author.displayAvatarURL()
   }
 
   /**
@@ -168,11 +60,105 @@ class Message {
   }
 
   /**
-    * @description Retorna o avatar do autor da mensagem da mensagem
+   * @description Retorna o ID do servidor
+   * @returns {String}
+   */
+  serverId () {
+    return (this.message.guild || {}).id
+  }
+
+  /**
+    * @description Retorna o ID do dono do servidor
     * @returns {String}
     */
-  authorAvatar (_message) {
-    return this.message.author.displayAvatarURL()
+  serverOwnerID () {
+    return this.message.guild.ownerID
+  }
+
+  /**
+   * @description Retorna os dados do servidor
+   * @returns {Object}
+   */
+  server () {
+    return this.message.channel.guild
+  }
+
+  /**
+   * @description Retorna os membros do servidor
+   * @returns {Object}
+   */
+  serverMembers () {
+    return this.server().members.cache
+  }
+
+  /**
+   * @description Retorna se a mensagem foi enviada para o Bot
+   * @params {Object} Dados do bot
+   * @returns {Boolean}
+   */
+  forBot (_bot) {
+    return this.mentions().has(_bot)
+  }
+
+  /**
+   * @description Retorna se a mensagem foi enviada por um Bot
+   * @returns {Boolean}
+   */
+  fromBot () {
+    return this.message.author.bot
+  }
+
+  /**
+   * @description Retorna as mensões
+   * @returns {Object}
+   */
+  mentions () {
+    return this.message.mentions
+  }
+
+  /**
+   * @description Retorna se mencionou alguém
+   * @returns Boolean
+   */
+  hasMention () {
+    return this.hasAnyUserMention() || this.hasAnyRoleMention()
+  }
+
+  /**
+   * @description Retorna se mencionou alguma pessoa
+   * @returns Boolean
+   */
+  hasAnyUserMention () {
+    return this.mentions().users.array().length > 0
+  }
+
+  /**
+   * @description Retorna se mencionou algum cargo
+   * @returns Boolean
+   */
+  hasAnyRoleMention () {
+    return this.mentions().roles.array().length > 0
+  }
+
+  /**
+   * @description Envia uma mensagem para o canal
+   * @returns {Object} A mensagem enviada
+   */
+  send (_msg) {
+    return this.message.channel.send(_msg)
+  }
+
+  /**
+   * @description Envia uma mensagem para o canal a partir do dicionário
+   * @params {String} _id Id da mensagem no dicionário
+   * @params {Object} _config Configurações do servidor
+   * @params {Object} _params Parâmetros da mensagem
+   * @returns {Object} A mensagem enviada
+   */
+  sendFromDictionary (_id, _config, _params) {
+    return this.send(
+      Dictionary.get(_id, _config, _params)
+    )
   }
 
   /**
@@ -190,6 +176,15 @@ class Message {
       embed.setDescription(_embedData.description)
     }
 
+    if (_embedData.fields) {
+      _embedData.fields.map(field => {
+        field.name = field.name || zeroWidthSpace
+        field.value = field.value || zeroWidthSpace
+
+        embed.addFields(field)
+      })
+    }
+
     if (_embedData.thumbnail) {
       embed.setThumbnail(_embedData.thumbnail)
     }
@@ -198,117 +193,30 @@ class Message {
   }
 
   /**
-   * @description Envia uma mensagem ao servidor de acordo com a tradução do dicionário
-   * @param {String} _msg Id da mensagem
-   * @param {String} _module Módulo da mensagem
-   * @param {Object} _params Parâmetros extras da mensagem
-   */
-  sendFromDictionary (_module, _msg, _params = {}) {
-    this.message.channel.send(this.getFromDictionary(_module, _msg, _params))
-  }
-
-  /**
-   * @description Retorna uma mensagem ao servidor de acordo com a tradução do dicionário
-   * @param {String} _msg Id da mensagem
-   * @param {String} _module Módulo da mensagem
-   * @param {Object} _params Parâmetros extras da mensagem
-   * @returns {String}
-   */
-  getFromDictionary (_module, _msg, _params = {}) {
-    return Dictionary.getMessage(
-      this.serverConfig, _module, _msg, _params
-    )
-  }
-
-  /**
-   * @description Recebe um texto a ser enviado de acordo com a tradução do dicionário
-   *                (concatena com o anterior)
-   * @param {String} _msg Id da mensagem
-   * @param {String} _module Módulo da mensagem
-   * @param {Object} _params Parâmetros extras da mensagem
-   * @param {Object} _config Configurações extras
-   */
-  setFromDictionary (_module, _msg, _params = {}, _config = {}) {
-    this.set(Dictionary.getMessage(this.serverConfig, _module, _msg, _params), _config)
-  }
-
-  /**
-   * @description Envia uma mensagem ao servidor (se não definir mensagem, usa recebida com get)
-   * @param {String} _msg A mensagem
-   * @returns {Promise}
-   */
-  send (_msg) {
-    // Se tem mensagem no parâmetro, envia ela e finaliza
-    if (_msg) {
-      return this.message.channel.send(_msg)
-    }
-
-    // Tamanho máximo das mensagens permitido pelo Discord
-    const maxLength = 2000
-
-    // Promessas a serem resolvidas
-    const promises = []
-
-    // Percorre infinitamente até que seja interrompido no corpo
-    while (true) {
-      // Se a mensagem é maior que o permitido
-      if (this.text.length > maxLength) {
-        // Pega do início oq é permitido
-        const msg2000 = this.text.slice(0, maxLength)
-
-        // Encontra posição da última quebra de linha
-        const pos = msg2000.lastIndexOf('\n')
-
-        // Pega mensagem até a última quebra de linha dentro do máximo permitido
-        const msgLastBreak = this.text.slice(0, pos)
-
-        // Envia
-        promises.push(this.message.channel.send(msgLastBreak))
-
-        // Remove o conteúdo enviado damensagem da mensagem original
-        this.text = this.text.slice(pos) + zeroWidthSpace + '\n'
-      }
-      else {
-        // Envia resto da mensagem
-        promises.push(this.message.channel.send(this.text))
-
-        // Finaliza o laço
-        break
-      }
-    }
-
-    // Limpa mensagem em cache
-    this.clean()
-
-    // Retorna ultima promessa resolvida
-    return Promise.all(promises).then(() => promises.pop())
-  }
-
-  /**
    * @description Envia uma mensagem interagivel
    * @params {String} A mensagem
    * @params {Object} As opções
    * @params {Function} A função a ser executado quando receber uma resposta
-   * @returns {Object} A mensagem enviada
+   * @returns {Promise}
    */
-  async sendPrompt ({ title, description = '', options, callback, }) {
-    // Opções com os emojis corretos
-    options = Emojis.exchangeKeys(options)
+  async sendPrompt (_data) {
+    // Opções formatadas
+    const options = _data.options.map(option => {
+      option.icon = Emojis.get(option.icon)
+      option.name = option.icon + ' ' + option.name
+
+      return option
+    })
 
     // Emojis das reações
-    const emojis = Object.keys(options)
-
-    // Lista de opções formatadas
-    const list = []
-
-    // Percorre todas as opções e adiciona formatada a lista
-    objectMap(options, (desc, emoji) => {
-      list.push(`${emoji} ${desc}`)
-    })
+    const emojis = options.map(option => option.icon)
 
     // Envia mensagem
     const MessageSent = await this.sendEmbedMessage({
-      title, description: description + '\n' + list.join('\n\n'),
+      title: _data.title,
+      description: _data.description,
+      fields: options,
+      thumbnail: _data.thumbnail,
     })
 
     // Adiciona reações a mensagem
@@ -318,93 +226,16 @@ class Message {
     const reactionFilter = { emojis, user: this.authorId(), }
 
     // Aguarda uma reação válida e executa o callback
-    MessageSent.awaitReactions(reactionFilter).then(collected => {
+    return MessageSent.awaitReactions(reactionFilter).then(collected => {
       // Captura dados do emoji da reação
       const emoji = collected.first().emoji
 
       // Captura id (do bot) do emoji
       emoji._id = Emojis.getId(emoji.name)
 
-      // Executa callback enviando dados do emoji da reação
-      return callback(emoji)
+      // Retorna o emoji
+      return Promise.resolve(emoji)
     })
-
-    // Retorna
-    return MessageSent
-  }
-
-  /**
-   * @description Retorna os argumentos com os espaços das aspas trocados
-   * @param {Array} _args Os argumentos
-   * @param {String} _quote As aspas usadas
-   * @param {String} _signal O que por no lugar do espaço
-   * @returns {Array} os argumentos com os espaços das aspas trocados
-   */
-  parserQuoteArgs (_args, _quote, _signal) {
-    // Separa pelas aspas
-    const args = _args.split(_quote)
-
-    // Percorre todas as posições, começando pela primeira e pulando de 2 em em dois
-    // Posição par é sempre com aspas
-    for (let c = 1, max = args.length; c < max; c += 2) {
-      // Troca espaço
-      args[c] = args[c].split(' ').join(_signal)
-    }
-
-    // Une em string pelas aspas e retorna
-    return args.join('')
-  }
-
-  /**
-   * @description Recebe um texto a ser enviado (concatena com o anterior)
-   * @param {String} _text O texto
-   * @param {Object} _config Configurações extras
-   */
-  set (_text, _config = {}) {
-    this.text += _text
-
-    if (_config.breakLine) {
-      this.break(_config.breakLine)
-    }
-  }
-
-  /**
-   * @description Recebe um texto a ser enviado (concatena com o anterior)
-   * @param {String} _text O texto
-   * @param {Object} _params Parâmetros extras
-   */
-  setExampleAndExplanation (_example, _explanation, _params = {}) {
-    if (_params.breakTop) {
-      this.break()
-    }
-
-    // Se explicação não for array, vira
-    const explanation = (!isArray(_explanation) ? [ _explanation, ] : _explanation).map(e => {
-      return `> *${e}*`
-    }).join('\n> \n')
-
-    this.text += `\`${_example}\`\n${explanation}`
-
-    if (_params.breakBottom) {
-      this.break(_params.breakBottom)
-    }
-  }
-
-  /**
-   * @description Recebe uma quebra de linha no texto a ser enviado
-   * @params {Number} Tamanho da quebra
-   */
-  break (_length) {
-    for (let c = 0; c < _length; c++) {
-      this.text += zeroWidthSpace + '\n'
-    }
-  }
-
-  /**
-   * @description Limpa  o texto a ser enviado
-   */
-  clean () {
-    this.text = ''
   }
 
   /**
@@ -412,7 +243,7 @@ class Message {
    * @params {String} _id o Id do usuário mensionado
    * @returns {String} A mensão
    */
-  createMention (_id) {
+  mention (_id) {
     return `<@${_id}>`
   }
 
@@ -508,7 +339,7 @@ class Message {
     await this.send(_ask)
 
     // Aguarda resposta e retorna
-    return this.awaitMessages({}, _params).then(response => response.first().content)
+    return this.awaitMessages({}, _params).then(response => new Message(response.first()))
   }
 }
 

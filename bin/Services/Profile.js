@@ -7,8 +7,8 @@ class Profile extends DefaultEntity {
     super({
       table: 'profiles',
       props: {
-        birth: 'Date',
-        genre: { type: 'Option', values: [ '0', '1', ], },
+        birth: { type: 'Date', },
+        genre: { type: 'Option', values: [ 'female', 'male', ], },
       },
       relations: {
         oneToMany: [ { entity: 'Experience', fk: 'user', }, ],
