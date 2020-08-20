@@ -12,41 +12,49 @@ class Config extends DefaultCommand {
    * @param {Object} _config As configurações do servidor
    * @param {String} _lang Idioma escolhido
    */
-  lang (_Message, _config, _lang) {
-    // Atualiza
-    this._config('lang', _lang, _Message)
-      .then(() => {
-        _Message.sendFromDictionary('config.updateLanguage', { ..._config, _lang, })
-      })
-      .catch(e => {
-        _Message.sendFromDictionary('config.updateLanguageError', _config)
-      })
-  }
-
-  /**
-   * @description Atualiza uma configuração
-   * @param {String} _prop Propriedade a ser atualizada
-   * @param {String} _val Valor da propriedade
-   * @param {Object} _Message O objeto da mensagem
-   * @param {Object} _config As configurações do servidor
-   */
-  _config (_prop, _val, _Message) {
-    // Impede uso se não for por usuário do servidor
-    if (!_Message.authorOwnerServer()) {
-      _Message.sendFromDictionary('general', 'OWNER_CONTROL_ONLY')
-
-      return false
-    }
-
-    // Dados da atualização
+  async lang (_Message, _config, _lang) {
     const data = {}
-    data[_prop] = _val
 
-    // Condições
-    const where = { server_id: _Message.serverId(), }
+    // Dados a serem atualizados
+    data.lang = _lang
+
+    // Opções
+    const options = [
+      {
+        icon: 'home',
+        name: Dictionary.get('general.init', _config),
+        value: Dictionary.get('general.backStart', _config),
+      },
+      {
+        icon: 'gear',
+        name: Dictionary.get('config.config', _config),
+        value: Dictionary.get('config.backConfig', _config),
+      },
+    ]
 
     // Atualiza e responde
-    return ConfigService.update(data, where, _prop, _Message.serverConfig)
+    return ConfigService.update(data, { server_id: _Message.serverId(), })
+      .then(() => {
+        return _Message.sendPrompt({
+          title: Dictionary.get('config.updateLanguage', _config),
+          options,
+        })
+      })
+      .catch(e => {
+        return _Message.sendPrompt({
+          title: Dictionary.get('config.updateLanguageError', _config),
+          options,
+        })
+      })
+      .then(emoji => {
+        // Executa o comando pedido
+        switch (emoji._id) {
+          case 'home': require('../Init').main(_Message, _config)
+            break
+          case 'gear': this.Menu.main(_Message, _config)
+            break
+        }
+      })
   }
 }
 

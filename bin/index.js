@@ -1,3 +1,13 @@
+// TODO:Mensagens sumirem depois de reagir
+// TODO: Mensagens trocadas por informação de timeout quando der timeout
+// TODO: Rever menus
+// TODO: Refatorar updateProp e afns
+// TODO: Você possui Don't Starve undefined?
+// TODO: Boolean com react
+// TODO: Command.edit virar genérico
+// TODO: Biblioteca de opções/reações
+// TODO: Prompt executar callback ao inves de promessa com swich
+
 // Importa dicionário
 require('./Dictionary')
 
@@ -156,45 +166,8 @@ class DontStarve {
       // Configurações do servidor
       const serverConfig = await this.getServerConfig(Message)
 
-      // Opções a serem exibidas
-      const options = [
-        {
-          icon: 'profile',
-          name: Dictionary.get('profile.profile', serverConfig),
-          value: Dictionary.get('profile.resume', serverConfig),
-        },
-        {
-          icon: 'stream',
-          name: Dictionary.get('stream.stream', serverConfig),
-          value: Dictionary.get('stream.resume', serverConfig),
-        },
-      ]
-
-      // Se for dono do servidor, adiciona opção de configurações
-      if (Message.authorId() === Message.serverOwnerID()) {
-        options.push({
-          icon: 'config',
-          name: Dictionary.get('config.config', serverConfig),
-          value: Dictionary.get('config.resume', serverConfig),
-        })
-      }
-
-      // Definições do menu
-      const defs = { title: Dictionary.get('general.index', serverConfig), options, }
-
-      // Envia um prompt e chama o comando solicitado
-      Message.sendPrompt(defs).then(emoji => {
-        // Importa comando
-        const command = require('./Commands')[emoji._id]
-
-        // Executa comando
-        if (command.main) {
-          command.main(Message, serverConfig)
-        }
-        else {
-          command.Menu.main(Message, serverConfig)
-        }
-      })
+      // Executa início
+      require('./Commands/Init').main(Message, serverConfig)
     })
   }
 }

@@ -164,15 +164,42 @@ class Experience extends DefaultCommand {
    * @param {String} _version Versão a ser atualizada
    */
   edit (_Message, _config, _prop, _version) {
-    return ExperienceService.updateProp(
-      _prop,
-      {
-        user: _Message.authorId(),
-        version: _version,
-      },
-      _Message,
-      _config
-    )
+    // Dados a serem atualizados
+    const data = { id: _Message.authorId(), }
+
+    // Atualiza
+    return ExperienceService.updateProp(_prop, data, _Message, _config)
+      .then(response => {
+        return Dictionary.get(`experience.${_prop}UpdateSuccess`, _config)
+      })
+      .catch(e => {
+        return Dictionary.get(`experience.${_prop}UpdateError`, _config)
+      })
+      .then(async title => { // Menu
+        const defs = {
+          title: title,
+          options: [
+            {
+              icon: 'home',
+              name: Dictionary.get('general.init', _config),
+              value: Dictionary.get('general.backStart', _config),
+            },
+            {
+              icon: 'theaterMasks',
+              name: Dictionary.get('profile.profile', _config),
+              value: Dictionary.get('profile.backProfile', _config),
+            },
+          ],
+        }
+
+        const emoji = await _Message.sendPrompt(defs, _config)
+
+        switch (emoji._id) {
+          case 'home': require('../Init').main(_Message, _config)
+            break
+          case 'theaterMasks': require('../Profile').Menu.main(_Message, _config)
+        }
+      })
   }
 }
 

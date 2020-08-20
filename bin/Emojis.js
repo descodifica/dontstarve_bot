@@ -17,8 +17,8 @@ const emojis = {
   inputLatinLetters: '🔤',
   new: '🆕',
   brFlag: '🇧🇷',
-  config: '⚙️',
-  profile: '🎭',
+  gear: '⚙️',
+  theaterMasks: '🎭',
   stream: '🖥️',
   smile: '😃',
   user: '👤',
@@ -44,6 +44,7 @@ const emojis = {
   mage: '🧙‍♂️',
   calendarCheck: '🗓️',
   medal: '🏅',
+  home: '🏠',
 }
 
 /**

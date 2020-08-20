@@ -1,5 +1,4 @@
 const Emojis = require('../Emojis')
-const { version, } = require('discord.js')
 
 // Adiciona sessão para portugês do brasil ao dicionário
 Dictionary.add('ptbr', {
@@ -18,6 +17,7 @@ Dictionary.add('ptbr', {
       whatPrix: 'Qual prefixo deseja usar?',
       updateLanguage: 'Idioma atualizado',
       updateLanguageError: 'Ocorreu algum problema ao atualizar o idioma',
+      backConfig: 'Volte para configurações',
     },
     experience: {
       experience: 'Experiência',
@@ -99,6 +99,8 @@ Dictionary.add('ptbr', {
         lastOption + ' (sem as aspas)',
       infoRelationField: (c, { options, lastOption, }) => `Opções válidas são: ${options} e ` +
         lastOption + ' (sem as aspas)',
+      init: 'Início',
+      backStart: 'Volte para o início',
     },
     profile: {
       profile: 'Perfil',
@@ -157,6 +159,7 @@ Dictionary.add('ptbr', {
       genreUpdateSuccess: 'Gênero atualizado',
       genreUpdateError: 'Ocorreu um erro ao atualizar o gênero',
       createSuccess: 'Perfil criado',
+      backProfile: 'Volte para o perfil',
     },
     stream: {
       stream: 'Stream',

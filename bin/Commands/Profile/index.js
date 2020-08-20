@@ -20,7 +20,33 @@ class Profile extends DefaultCommand {
   async create (_Message, _config) {
     await ProfileService.create({ id: _Message.authorId(), })
 
-    _Message.sendFromDictionary('profile.createSuccess', _config)
+    // Definições da mensagem
+    const defs = {
+      title: Dictionary.get('profile.createSuccess', _config),
+      options: [
+        {
+          icon: 'home',
+          name: Dictionary.get('general.init', _config),
+          value: Dictionary.get('general.backStart', _config),
+        },
+        {
+          icon: 'theaterMasks',
+          name: Dictionary.get('profile.profile', _config),
+          value: Dictionary.get('profile.backProfile', _config),
+        },
+      ],
+    }
+
+    // Pergunta e trata resposta
+    _Message.sendPrompt(defs).then(emoji => {
+      // Age de acordo com o pedido
+      switch (emoji._id) {
+        case 'home': require('../Init').main(_Message, _config)
+          break
+        case 'theaterMasks': this.Menu.main(_Message, _config)
+          break
+      }
+    })
   }
 
   /**
@@ -291,9 +317,42 @@ class Profile extends DefaultCommand {
    * @param {String} _version Versão a ser atualizada
    */
   edit (_Message, _config, _prop, _version) {
-    return ProfileService.updateProp(
-      _prop, { id: _Message.authorId(), }, _Message, _config
-    )
+    // Dados a serem atualizados
+    const data = { id: _Message.authorId(), }
+
+    // Atualiza
+    return ProfileService.updateProp(_prop, data, _Message, _config)
+      .then(response => {
+        return Dictionary.get(`profile.${_prop}UpdateSuccess`, _config)
+      })
+      .catch(e => {
+        return Dictionary.get(`profile.${_prop}UpdateError`, _config)
+      })
+      .then(async title => { // Menu
+        const defs = {
+          title: title,
+          options: [
+            {
+              icon: 'home',
+              name: Dictionary.get('general.init', _config),
+              value: Dictionary.get('general.backStart', _config),
+            },
+            {
+              icon: 'theaterMasks',
+              name: Dictionary.get('profile.profile', _config),
+              value: Dictionary.get('profile.backProfile', _config),
+            },
+          ],
+        }
+
+        const emoji = await _Message.sendPrompt(defs, _config)
+
+        switch (emoji._id) {
+          case 'home': require('../Init').main(_Message, _config)
+            break
+          case 'theaterMasks': this.Menu.main(_Message, _config)
+        }
+      })
   }
 }
 

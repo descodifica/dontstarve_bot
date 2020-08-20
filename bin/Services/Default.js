@@ -193,16 +193,6 @@ class Default {
 
     // Atualiza e informa
     return this.update(data, _where, _log)
-      .then(response => {
-        _Message.sendFromDictionary(basicDictionaryId + 'UpdateSuccess', _config)
-
-        return response
-      })
-      .catch(e => {
-        _Message.sendFromDictionary(basicDictionaryId + 'UpdateError', _config)
-
-        return Promise.reject(e)
-      })
   }
 
   /**
@@ -235,16 +225,6 @@ class Default {
 
     // Atualiza e informa
     return this.update(data, _where, _log)
-      .then(response => {
-        _Message.sendFromDictionary(basicDictionaryId + 'UpdateSuccess', _config)
-
-        return response
-      })
-      .catch(e => {
-        _Message.sendFromDictionary(basicDictionaryId + 'UpdateError', _config)
-
-        return Promise.reject(e)
-      })
   }
 
   /**
@@ -277,16 +257,6 @@ class Default {
 
     // Atualiza e informa
     return this.update(data, _where, _log)
-      .then(response => {
-        _Message.sendFromDictionary(basicDictionaryId + 'UpdateSuccess', _config)
-
-        return response
-      })
-      .catch(e => {
-        _Message.sendFromDictionary(basicDictionaryId + 'UpdateError', _config)
-
-        return Promise.reject(e)
-      })
   }
 
   /**
@@ -349,16 +319,6 @@ class Default {
 
     // Atualiza e informa
     return this.update(data, _where)
-      .then(response => {
-        _Message.sendFromDictionary(basicDictionaryId + 'UpdateSuccess', _config)
-
-        return response
-      })
-      .catch(e => {
-        _Message.sendFromDictionary(basicDictionaryId + 'UpdateError', _config)
-
-        return Promise.reject(e)
-      })
   }
 
   /**
@@ -413,16 +373,6 @@ class Default {
 
     // Atualiza e informa
     return this.update(data, _where)
-      .then(response => {
-        _Message.sendFromDictionary(basicDictionaryId + 'UpdateSuccess', _config)
-
-        return response
-      })
-      .catch(e => {
-        _Message.sendFromDictionary(basicDictionaryId + 'UpdateError', _config)
-
-        return Promise.reject(e)
-      })
   }
 
   /**
