@@ -196,53 +196,46 @@ class Experience extends DefaultCommand {
    * @param {String} _version Versão a ser atualizada
    */
   async edit (_Message, _config, _version) {
+    // Parâmetros da mensagem
+    const versionParams = { version: versions[_version], }
+
     // Opções do menu
     const propOptions = [
       {
         icon: 'cd',
         name: Dictionary.get('experience.have', _config),
-        value: Dictionary.get('experience.haveResume', _config, { version: versions[_version], }),
+        value: Dictionary.get('experience.haveResume', _config, versionParams),
       },
       {
         icon: 'joystick',
         name: Dictionary.get('experience.platform', _config),
-        value: Dictionary.get(
-          'experience.platformResume', _config, { version: versions[_version], }
-        ),
+        value: Dictionary.get('experience.platformResume', _config, versionParams),
       },
       {
         icon: 'clock',
         name: Dictionary.get('experience.hours', _config),
-        value: Dictionary.get(
-          'experience.hoursResume', _config, { version: versions[_version], }
-        ),
+        value: Dictionary.get('experience.hoursResume', _config, versionParams),
       },
       {
         icon: 'mage',
         name: Dictionary.get('experience.main', _config),
-        value: Dictionary.get(
-          'experience.mainResume', _config, { version: versions[_version], }
-        ),
+        value: Dictionary.get('experience.mainResume', _config, versionParams),
       },
       {
         icon: 'calendarCheck',
         name: Dictionary.get('experience.survived', _config),
-        value: Dictionary.get(
-          'experience.survivedResume', _config, { version: versions[_version], }
-        ),
+        value: Dictionary.get('experience.survivedResume', _config, versionParams),
       },
       {
         icon: 'medal',
         name: Dictionary.get('experience.level', _config),
-        value: Dictionary.get(
-          'experience.levelResume', _config, { version: versions[_version], }
-        ),
+        value: Dictionary.get('experience.levelResume', _config, versionParams),
       },
     ]
 
     // Defnições do menu
     const defs = {
-      title: Dictionary.get('experience.editAsk', _config, { version: versions[_version], }),
+      title: Dictionary.get('experience.editAsk', _config, versionParams),
       options: propOptions,
     }
 
@@ -271,7 +264,7 @@ class Experience extends DefaultCommand {
     const data = { id: _Message.authorId(), }
 
     // Atualiza
-    return ExperienceService.updateProp(prop, data, _Message, _config)
+    return ExperienceService.updateProp(prop, data, _Message, _config, versionParams)
       .then(response => {
         return Dictionary.get(`experience.${prop}UpdateSuccess`, _config)
       })

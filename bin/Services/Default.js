@@ -147,9 +147,10 @@ class Default {
    * @params {Object} _where Condições da atualização
    * @params {Object} _Message Mensagem enviada
    * @params {Object} _config Configurações do servidor
+   * @params {Object} _messageParams Parâmetros das mensagens
    * @params {Boolean} _log Se deve exibir log
    */
-  updateProp (_prop, _where, _Message, _config, _log) {
+  updateProp (_prop, _where, _Message, _config, _messageParams = {}, _log) {
     // Captura propriedade
     const prop = this.props[_prop] || {}
 
@@ -160,7 +161,7 @@ class Default {
     const method = 'updateProp' + type
 
     // Chama método de atualização equivalente
-    return this[method](_prop, _where, _Message, _config, _log)
+    return this[method](_prop, _where, _Message, _config, _messageParams, _log)
   }
 
   /**
@@ -169,15 +170,16 @@ class Default {
    * @params {Object} _where Condições da atualização
    * @params {Object} _Message Mensagem enviada
    * @params {Object} _config Configurações do servidor
+   * @params {Object} _messageParams Parâmetros das mensagens
    * @params {Boolean} _log Se deve exibir log
    */
-  async updatePropString (_prop, _where, _Message, _config, _log) {
+  async updatePropString (_prop, _where, _Message, _config, _messageParams = {}, _log) {
     // Id básico do dicionário
     const basicDictionaryId = `${this.entity}.${_prop}`
 
     // Captura pergunta
     const ask = (
-      Dictionary.get(basicDictionaryId + 'Resume', _config) +
+      Dictionary.get(basicDictionaryId + 'Resume', _config, _messageParams) +
       '\n' +
       Dictionary.get('general.informFreeField', _config, {}, { italic: true, })
     )
@@ -201,15 +203,16 @@ class Default {
    * @params {Object} _where Condições da atualização
    * @params {Object} _Message Mensagem enviada
    * @params {Object} _config Configurações do servidor
+   * @params {Object} _messageParams Parâmetros das mensagens
    * @params {Boolean} _log Se deve exibir log
    */
-  async updatePropNumber (_prop, _where, _Message, _config, _log) {
+  async updatePropNumber (_prop, _where, _Message, _config, _messageParams = {}, _log) {
     // Id básico do dicionário
     const basicDictionaryId = `${this.entity}.${_prop}`
 
     // Captura pergunta
     const ask = (
-      Dictionary.get(basicDictionaryId + 'Resume', _config) +
+      Dictionary.get(basicDictionaryId + 'Resume', _config, _messageParams) +
       '\n' +
       Dictionary.get('general.informNumberField', _config, {}, { italic: true, })
     )
@@ -233,15 +236,16 @@ class Default {
    * @params {Object} _where Condições da atualização
    * @params {Object} _Message Mensagem enviada
    * @params {Object} _config Configurações do servidor
+   * @params {Object} _messageParams Parâmetros das mensagens
    * @params {Boolean} _log Se deve exibir log
    */
-  async updatePropDate (_prop, _where, _Message, _config, _log) {
+  async updatePropDate (_prop, _where, _Message, _config, _messageParams = {}, _log) {
     // Id básico do dicionário
     const basicDictionaryId = `${this.entity}.${_prop}`
 
     // Captura pergunta
     const ask = (
-      Dictionary.get(basicDictionaryId + 'Resume', _config) +
+      Dictionary.get(basicDictionaryId + 'Resume', _config, _messageParams) +
       '\n' +
       Dictionary.get('general.infoDateField', _config, {}, { italic: true, })
     )
@@ -265,9 +269,10 @@ class Default {
    * @params {Object} _where Condições da atualização
    * @params {Object} _Message Mensagem enviada
    * @params {Object} _config Configurações do servidor
+   * @params {Object} _messageParams Parâmetros das mensagens
    * @params {Boolean} _log Se deve exibir log
    */
-  async updatePropOption (_prop, _where, _Message, _config, _log) {
+  async updatePropOption (_prop, _where, _Message, _config, _messageParams = {}, _log) {
     // Id básico do dicionário
     const basicDictionaryId = `${this.entity}.${_prop}`
 
@@ -286,7 +291,7 @@ class Default {
 
     // Captura pergunta
     const ask = (
-      Dictionary.get(basicDictionaryId + 'Resume', _config) +
+      Dictionary.get(basicDictionaryId + 'Resume', _config, _messageParams) +
       '\n' +
       Dictionary.get(
         'general.infoOptionField',
@@ -327,9 +332,10 @@ class Default {
    * @params {Object} _where Condições da atualização
    * @params {Object} _Message Mensagem enviada
    * @params {Object} _config Configurações do servidor
+   * @params {Object} _messageParams Parâmetros das mensagens
    * @params {Boolean} _log Se deve exibir log
    */
-  async updatePropRelation (_prop, _where, _Message, _config, _log) {
+  async updatePropRelation (_prop, _where, _Message, _config, _messageParams = {}, _log) {
     // Id básico do dicionário
     const basicDictionaryId = `${this.entity}.${_prop}`
 
@@ -340,7 +346,7 @@ class Default {
     const validOptions = characters.map(i => i.name)
     // Captura pergunta
     const ask = (
-      Dictionary.get(basicDictionaryId + 'Resume', _config) +
+      Dictionary.get(basicDictionaryId + 'Resume', _config, _messageParams) +
       '\n' +
       Dictionary.get(
         'general.infoRelationField',

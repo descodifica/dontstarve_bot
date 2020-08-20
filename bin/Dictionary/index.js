@@ -64,6 +64,7 @@ class Dictionary {
     }
 
     // Se  mensagem não for string, executa com parametros e configurações do servidor
+
     msg = typeof msg === 'string' ? msg : msg(_serverConfig, _params)
 
     // Formata e retorna
