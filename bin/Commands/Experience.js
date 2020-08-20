@@ -51,6 +51,21 @@ class Experience extends DefaultCommand {
         icon: 'ghost',
         name: Dictionary.get('experience.experienceIn', _config, { version: versions.dst, }),
       },
+      {
+        icon: 'eye',
+        name: Dictionary.get('profile.profile', _config),
+        value: Dictionary.get('profile.backProfile', _config),
+      },
+      {
+        icon: 'theaterMasks',
+        name: Dictionary.get('profile.profile', _config),
+        value: Dictionary.get('profile.backProfileModule', _config),
+      },
+      {
+        icon: 'home',
+        name: Dictionary.get('general.init', _config),
+        value: Dictionary.get('general.backStart', _config),
+      },
     ]
 
     // Definições
@@ -77,6 +92,24 @@ class Experience extends DefaultCommand {
         case 'castle': version = 'ham'
           break
         case 'ghost': version = 'dst'
+          break
+        case 'home': {
+          require('./Init').main(_Message, _config)
+
+          return
+        }
+        case 'theaterMasks': {
+          require('./Profile').main(_Message, _config)
+
+          return
+        }
+        case 'eye': {
+          require('./Profile').view(
+            _Message, _config, [ _Message.serverMembers().get(experience.user).user, ]
+          )
+
+          return
+        }
       }
 
       this.view(_Message, _config, version, _user)
@@ -257,7 +290,7 @@ class Experience extends DefaultCommand {
             {
               icon: 'theaterMasks',
               name: Dictionary.get('profile.profile', _config),
-              value: Dictionary.get('profile.backProfile', _config),
+              value: Dictionary.get('profile.backProfileModule', _config),
             },
           ],
         }

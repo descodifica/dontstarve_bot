@@ -19,6 +19,11 @@ class Config extends DefaultCommand {
         name: Dictionary.get('config.language', _config),
         value: Dictionary.get('config.language_resume', _config),
       },
+      {
+        icon: 'home',
+        name: Dictionary.get('general.init', _config),
+        value: Dictionary.get('general.backStart', _config),
+      },
     ]
 
     // Defnições do menu
@@ -31,6 +36,8 @@ class Config extends DefaultCommand {
     _Message.sendPrompt(defs).then(emoji => {
       switch (emoji._id) {
         case 'inputLatinLetters': this.lang(_Message, _config)
+          break
+        case 'home': require('./Init').main(_Message, _config)
       }
     })
   }
@@ -47,6 +54,16 @@ class Config extends DefaultCommand {
       {
         icon: 'brFlag',
         name: Dictionary.getLangName('ptbr'),
+      },
+      {
+        icon: 'gear',
+        name: Dictionary.get('config.config', _config),
+        value: Dictionary.get('config.backConfig', _config),
+      },
+      {
+        icon: 'home',
+        name: Dictionary.get('general.init', _config),
+        value: Dictionary.get('general.backStart', _config),
       },
     ]
 
@@ -66,6 +83,16 @@ class Config extends DefaultCommand {
     switch (emoji._id) {
       case 'brFlag': data.lang = 'ptbr'
         break
+      case 'home': {
+        require('./Init').main(_Message, _config)
+
+        return
+      }
+      case 'gear': {
+        this.main(_Message, _config)
+
+        return
+      }
     }
 
     // Opções

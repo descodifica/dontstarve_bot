@@ -159,6 +159,7 @@ Dictionary.add('ptbr', {
       genreUpdateSuccess: 'Gênero atualizado',
       genreUpdateError: 'Ocorreu um erro ao atualizar o gênero',
       createSuccess: 'Perfil criado',
+      backProfileModule: 'Volte para o módulo de perfil',
       backProfile: 'Volte para o perfil',
     },
     stream: {

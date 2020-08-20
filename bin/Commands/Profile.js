@@ -99,7 +99,7 @@ class Profile extends DefaultCommand {
         {
           icon: 'theaterMasks',
           name: Dictionary.get('profile.profile', _config),
-          value: Dictionary.get('profile.backProfile', _config),
+          value: Dictionary.get('profile.backProfileModule', _config),
         },
       ],
     }
@@ -175,6 +175,20 @@ class Profile extends DefaultCommand {
       inline: true,
     })
 
+    // Adiciona opção de voltar ao perfil
+    options.push({
+      icon: 'theaterMasks',
+      name: Dictionary.get('profile.profile', _config),
+      value: Dictionary.get('profile.backProfileModule', _config),
+    })
+
+    // Adiciona opção de voltar ao inicio
+    options.push({
+      icon: 'home',
+      name: Dictionary.get('general.init', _config),
+      value: Dictionary.get('general.backStart', _config),
+    })
+
     // Definições
     const defs = {
       title: Dictionary.get('profile.frofilesFound', _config),
@@ -212,6 +226,17 @@ class Profile extends DefaultCommand {
         case 'next': _params.page += 1
           break
         case 'preview': _params.page -= 1
+          break
+        case 'home': {
+          require('./Init').main(_Message, _config)
+
+          return
+        }
+        case 'theaterMasks': {
+          require('./Profile').main(_Message, _config)
+
+          return
+        }
       }
 
       // Busca com novos parâmetros
@@ -268,6 +293,16 @@ class Profile extends DefaultCommand {
           icon: 'ghost',
           name: Dictionary.get('experience.experienceIn', _config, { version: versions.dst, }),
         },
+        {
+          icon: 'theaterMasks',
+          name: Dictionary.get('profile.profile', _config),
+          value: Dictionary.get('profile.backProfileModule', _config),
+        },
+        {
+          icon: 'home',
+          name: Dictionary.get('general.init', _config),
+          value: Dictionary.get('general.backStart', _config),
+        },
       ]
 
       // Definições
@@ -292,6 +327,17 @@ class Profile extends DefaultCommand {
           case 'castle': version = 'ham'
             break
           case 'ghost': version = 'dst'
+            break
+          case 'home': {
+            require('./Init').main(_Message, _config)
+
+            return
+          }
+          case 'theaterMasks': {
+            require('./Profile').main(_Message, _config)
+
+            return
+          }
         }
 
         // Exibe
@@ -541,7 +587,7 @@ class Profile extends DefaultCommand {
             {
               icon: 'theaterMasks',
               name: Dictionary.get('profile.profile', _config),
-              value: Dictionary.get('profile.backProfile', _config),
+              value: Dictionary.get('profile.backProfileModule', _config),
             },
           ],
         }

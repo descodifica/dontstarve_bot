@@ -1,4 +1,3 @@
-// TODO: Rever menus
 // TODO: Mensagens sumirem depois de reagir
 // TODO: Mensagens trocadas por informação de timeout quando der timeout
 // TODO: Refatorar updateProp e afns
@@ -7,7 +6,7 @@
 // TODO: Command.edit virar genérico
 // TODO: Biblioteca de opções/reações
 // TODO: Prompt executar callback ao inves de promessa com swich
-// TODO: Navegação em todos os prompts
+// TODO: Grupos de opções no prompt
 
 // Importa dicionário
 require('./Dictionary')
