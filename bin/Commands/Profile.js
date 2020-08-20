@@ -2,16 +2,83 @@
 const { AgeFromDate, } = require('age-calculator')
 
 // Importa versões
-const versions = require('../../versions')
+const versions = require('../versions')
 
 // Importa comando padrão
-const DefaultCommand = require('../Default')
+const DefaultCommand = require('./Default')
 
 // Importa serviço padrão de perfil
-const ProfileService = require('../../Services/Profile')
+const ProfileService = require('../Services/Profile')
 
 // O comando de perfis
 class Profile extends DefaultCommand {
+  /**
+   * @description Método principal
+   * @param {Object} _Message O objeto da mensagem
+   * @param {Object} _config As configurações do servidor
+   */
+  async main (_Message, _config) {
+    // Se usuário possui perfil
+    const profileExists = await ProfileService.get(_Message.authorId())
+
+    // Opções do menu
+    const options = []
+
+    if (profileExists) {
+      options.push({
+        icon: 'user',
+        name: Dictionary.get('profile.mainViewMenu', _config),
+        value: Dictionary.get('profile.mainViewMenuResume', _config),
+      })
+
+      options.push({
+        icon: 'pencil',
+        name: Dictionary.get('profile.editMenu', _config),
+        value: Dictionary.get('profile.editMenuResume', _config),
+      })
+    }
+    else {
+      options.push({
+        icon: 'new',
+        name: Dictionary.get('profile.mainCreateMenu', _config),
+        value: Dictionary.get('profile.mainCreateMenuResume', _config),
+      })
+    }
+
+    options.push({
+      icon: 'magnifyingGlass',
+      name: Dictionary.get('profile.listMenu', _config),
+      value: Dictionary.get('profile.listMenuResume', _config),
+    })
+
+    options.push({
+      icon: 'eye',
+      name: Dictionary.get('profile.viewMenu', _config),
+      value: Dictionary.get('profile.viewMenuResume', _config),
+    })
+
+    // Defnições do menu
+    const defs = {
+      title: Dictionary.get('profile.index', _config),
+      options,
+    }
+
+    // Envia menu e executa comando desejado
+    _Message.sendPrompt(defs).then(emoji => {
+      switch (emoji._id) {
+        case 'new': this.create(_Message, _config)
+          break
+        case 'user': this.viewMain(_Message, _config, _Message.author())
+          break
+        case 'pencil': this.edit(_Message, _config)
+          break
+        case 'magnifyingGlass': this.list(_Message, _config)
+          break
+        case 'eye': this.viewOther(_Message, _config)
+      }
+    })
+  }
+
   /**
    * @description Cria perfil do usário
    * @param {Object} _Message O objeto da mensagem
@@ -41,9 +108,9 @@ class Profile extends DefaultCommand {
     _Message.sendPrompt(defs).then(emoji => {
       // Age de acordo com o pedido
       switch (emoji._id) {
-        case 'home': require('../Init').main(_Message, _config)
+        case 'home': require('./Init').main(_Message, _config)
           break
-        case 'theaterMasks': this.Menu.main(_Message, _config)
+        case 'theaterMasks': this.main(_Message, _config)
           break
       }
     })
@@ -135,7 +202,7 @@ class Profile extends DefaultCommand {
         const user = _Message.serverMembers().get(profiles[orderNumber].id).user
 
         // Exibe perfil
-        this.view(_Message, _config, user)
+        this.view(_Message, _config, [ user, ])
 
         return
       }
@@ -153,17 +220,14 @@ class Profile extends DefaultCommand {
   }
 
   /**
-   * @description Ver perfil de alguem
+   * @description Ver perfis
    * @param {Object} _Message O objeto da mensagem
    * @param {Object} _config As configurações do servidor
    * @param {Array} _users Usuários a terem perfil exibido
    */
   async view (_Message, _config, _users) {
-    // Lista de usuários
-    const usersList = _users.array ? _users.array() : [ _users, ]
-
     // Id de todos os usuários
-    const ids = usersList.map(i => i.id)
+    const ids = _users.map(i => i.id)
 
     // Busca perfis
     const profiles = await ProfileService.list({ where: { id: { type: 'IN', value: ids, }, }, })
@@ -177,7 +241,7 @@ class Profile extends DefaultCommand {
     // Exibe perfis
     profiles.map(profile => {
       // Captura dados do usuário
-      const user = _users.get ? _users.get(profile.id) : _users
+      const user = _users.get ? _users.get(profile.id) : _users[0]
 
       // Monta conteúdo do perfil
       const content = (
@@ -231,13 +295,13 @@ class Profile extends DefaultCommand {
         }
 
         // Exibe
-        require('../Experience').view(_Message, _config, version, user)
+        require('./Experience').view(_Message, _config, version, user)
       })
     })
 
     // Informa perfis não encontrados
     unfoundIds.map(id => {
-      const user = _users.get ? _users.get(id) : _users
+      const user = _Message.serverMembers().get(id).user
 
       _Message.sendEmbedMessage({
         title: user.username,
@@ -245,6 +309,33 @@ class Profile extends DefaultCommand {
         description: Dictionary.get('profile.profileNotCreated', _config),
       })
     })
+  }
+
+  /**
+   * @description Ver perfil de alguem
+   * @param {Object} _Message O objeto da mensagem
+   * @param {Object} _config As configurações do servidor
+   */
+  async viewOther (_Message, _config) {
+    // Pergunta e trata resposta
+    const response = await _Message.ask(Dictionary.get('profile.whichProfileSee', _config))
+
+    // Captura usuários mencionados
+    const users = response.mentions().users
+
+    // Lista de usuários
+    const usersList = users.array ? users.array() : [ users, ]
+
+    this.view(_Message, _config, usersList)
+  }
+
+  /**
+   * @description Ver perfil próprio
+   * @param {Object} _Message O objeto da mensagem
+   * @param {Object} _config As configurações do servidor
+   */
+  viewMain (_Message, _config, _users) {
+    this.view(_Message, _config, [ _Message.author(), ])
   }
 
   /**
@@ -316,17 +407,127 @@ class Profile extends DefaultCommand {
    * @param {Array} _prop Propriedade a ser atualizada
    * @param {String} _version Versão a ser atualizada
    */
-  edit (_Message, _config, _prop, _version) {
+  async edit (_Message, _config, _prop) {
+    // Opções do menu
+    const propOptions = [
+      {
+        icon: 'ticket',
+        name: Dictionary.get('profile.name', _config),
+        value: Dictionary.get('profile.nameResume', _config),
+      },
+      {
+        icon: 'label',
+        name: Dictionary.get('profile.nick', _config),
+        value: Dictionary.get('profile.nickResume', _config),
+      },
+      {
+        icon: 'genre',
+        name: Dictionary.get('profile.genre', _config),
+        value: Dictionary.get('profile.genreResume', _config),
+      },
+      {
+        icon: 'cake',
+        name: Dictionary.get('profile.age', _config),
+        value: Dictionary.get('profile.ageResume', _config),
+      },
+      {
+        icon: 'city',
+        name: Dictionary.get('profile.city', _config),
+        value: Dictionary.get('profile.cityResume', _config),
+      },
+      {
+        icon: 'road',
+        name: Dictionary.get('profile.state', _config),
+        value: Dictionary.get('profile.stateResume', _config),
+      },
+      {
+        icon: 'country',
+        name: Dictionary.get('profile.country', _config),
+        value: Dictionary.get('profile.countryResume', _config),
+      },
+      {
+        icon: 'death',
+        name: Dictionary.get('experience.experienceIn', _config, { version: versions.ds, }),
+        value: Dictionary.get(
+          'experience.experienceInResume', _config, { version: versions.ds, }
+        ),
+      },
+      {
+        icon: 'island',
+        name: Dictionary.get('experience.experienceIn', _config, { version: versions.sw, }),
+        value: Dictionary.get(
+          'experience.experienceInResume', _config, { version: versions.sw, }
+        ),
+      },
+      {
+        icon: 'castle',
+        name: Dictionary.get('experience.experienceIn', _config, { version: versions.ham, }),
+        value: Dictionary.get(
+          'experience.experienceInResume', _config, { version: versions.ham, }
+        ),
+      },
+      {
+        icon: 'ghost',
+        name: Dictionary.get('experience.experienceIn', _config, { version: versions.dst, }),
+        value: Dictionary.get(
+          'experience.experienceInResume', _config, { version: versions.dst, }
+        ),
+      },
+    ]
+
+    // Defnições do menu
+    const defs = {
+      title: Dictionary.get('profile.editAsk', _config),
+      options: propOptions,
+    }
+
+    // Envia menu e executa comando desejado
+    const emoji = await _Message.sendPrompt(defs)
+
+    // Propriedade a ser atualizada
+    let prop
+
+    // Converte nome do emoji para nome da propriedade
+    // Se não estiver na lista é porque nomes são iguais
+    switch (emoji._id) {
+      case 'ticket': prop = 'name'
+        break
+      case 'label': prop = 'nick'
+        break
+      case 'cake': prop = 'birth'
+        break
+      case 'road': prop = 'state'
+        break
+      case 'death': prop = 'ds'
+        break
+      case 'island': prop = 'sw'
+        break
+      case 'castle': prop = 'ham'
+        break
+      case 'ghost': prop = 'dst'
+        break
+      case 'ghost': prop = 'dst'
+        break
+      default: prop = emoji._id
+    }
+
+    // Se propriedade é uma versão, envia pra atualização de experiência e finaliza
+    if (Object.keys(versions).indexOf(prop) >= 0) {
+      require('./Experience').edit(_Message, _config, prop)
+
+      return
+    }
+
     // Dados a serem atualizados
     const data = { id: _Message.authorId(), }
 
     // Atualiza
-    return ProfileService.updateProp(_prop, data, _Message, _config)
+    return ProfileService.updateProp(prop, data, _Message, _config)
       .then(response => {
-        return Dictionary.get(`profile.${_prop}UpdateSuccess`, _config)
+        return Dictionary.get(`profile.${prop}UpdateSuccess`, _config)
       })
       .catch(e => {
-        return Dictionary.get(`profile.${_prop}UpdateError`, _config)
+        return Dictionary.get(`profile.${prop}UpdateError`, _config)
       })
       .then(async title => { // Menu
         const defs = {
@@ -348,9 +549,9 @@ class Profile extends DefaultCommand {
         const emoji = await _Message.sendPrompt(defs, _config)
 
         switch (emoji._id) {
-          case 'home': require('../Init').main(_Message, _config)
+          case 'home': require('./Init').main(_Message, _config)
             break
-          case 'theaterMasks': this.Menu.main(_Message, _config)
+          case 'theaterMasks': this.main(_Message, _config)
         }
       })
   }

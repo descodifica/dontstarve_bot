@@ -1,11 +1,11 @@
 // Importa comando padrão
-const DefaultCommand = require('../Default')
+const DefaultCommand = require('./Default')
 
 // Importa entidade padrão de experienca
-const ExperienceService = require('../../Services/Experience')
+const ExperienceService = require('../Services/Experience')
 
 // Importa versões
-const versions = require('../../versions')
+const versions = require('../versions')
 
 // Níveis de rank
 const levels = [
@@ -160,20 +160,90 @@ class Experience extends DefaultCommand {
    * @description Atualiza uma propriedade
    * @param {Object} _Message O objeto da mensagem
    * @param {Object} _config As configurações do servidor
-   * @param {Array} _prop Propriedade a ser atualizada
    * @param {String} _version Versão a ser atualizada
    */
-  edit (_Message, _config, _prop, _version) {
+  async edit (_Message, _config, _version) {
+    // Opções do menu
+    const propOptions = [
+      {
+        icon: 'cd',
+        name: Dictionary.get('experience.have', _config),
+        value: Dictionary.get('experience.haveResume', _config, { version: versions[_version], }),
+      },
+      {
+        icon: 'joystick',
+        name: Dictionary.get('experience.platform', _config),
+        value: Dictionary.get(
+          'experience.platformResume', _config, { version: versions[_version], }
+        ),
+      },
+      {
+        icon: 'clock',
+        name: Dictionary.get('experience.hours', _config),
+        value: Dictionary.get(
+          'experience.hoursResume', _config, { version: versions[_version], }
+        ),
+      },
+      {
+        icon: 'mage',
+        name: Dictionary.get('experience.main', _config),
+        value: Dictionary.get(
+          'experience.mainResume', _config, { version: versions[_version], }
+        ),
+      },
+      {
+        icon: 'calendarCheck',
+        name: Dictionary.get('experience.survived', _config),
+        value: Dictionary.get(
+          'experience.survivedResume', _config, { version: versions[_version], }
+        ),
+      },
+      {
+        icon: 'medal',
+        name: Dictionary.get('experience.level', _config),
+        value: Dictionary.get(
+          'experience.levelResume', _config, { version: versions[_version], }
+        ),
+      },
+    ]
+
+    // Defnições do menu
+    const defs = {
+      title: Dictionary.get('experience.editAsk', _config, { version: versions[_version], }),
+      options: propOptions,
+    }
+
+    // Envia menu e executa comando desejado
+    const emoji = await _Message.sendPrompt(defs)
+
+    // Propriedade pedida
+    let prop
+
+    // Converte nome do emoji para nome da propriedade
+    switch (emoji._id) {
+      case 'cd': prop = 'have'
+        break
+      case 'joystick': prop = 'platform'
+        break
+      case 'clock': prop = 'hours'
+        break
+      case 'mage': prop = 'main'
+        break
+      case 'calendarCheck': prop = 'survived'
+        break
+      case 'medal': prop = 'level'
+    }
+
     // Dados a serem atualizados
     const data = { id: _Message.authorId(), }
 
     // Atualiza
-    return ExperienceService.updateProp(_prop, data, _Message, _config)
+    return ExperienceService.updateProp(prop, data, _Message, _config)
       .then(response => {
-        return Dictionary.get(`experience.${_prop}UpdateSuccess`, _config)
+        return Dictionary.get(`experience.${prop}UpdateSuccess`, _config)
       })
       .catch(e => {
-        return Dictionary.get(`experience.${_prop}UpdateError`, _config)
+        return Dictionary.get(`experience.${prop}UpdateError`, _config)
       })
       .then(async title => { // Menu
         const defs = {
@@ -195,9 +265,9 @@ class Experience extends DefaultCommand {
         const emoji = await _Message.sendPrompt(defs, _config)
 
         switch (emoji._id) {
-          case 'home': require('../Init').main(_Message, _config)
+          case 'home': require('./Init').main(_Message, _config)
             break
-          case 'theaterMasks': require('../Profile').Menu.main(_Message, _config)
+          case 'theaterMasks': require('./Profile').main(_Message, _config)
         }
       })
   }

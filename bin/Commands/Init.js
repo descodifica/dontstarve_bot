@@ -1,5 +1,5 @@
 // Importa comando padrão
-const DefaultCommand = require('../Default')
+const DefaultCommand = require('./Default')
 
 // O comando inicial
 class Init extends DefaultCommand {
@@ -50,15 +50,10 @@ class Init extends DefaultCommand {
       }
 
       // Importa comando
-      const command = require('../' + moduleName)
+      const command = require('./' + moduleName)
 
       // Executa comando
-      if (command.main) {
-        command.main(_Message, _config)
-      }
-      else {
-        command.Menu.main(_Message, _config)
-      }
+      command.main(_Message, _config)
     })
   }
 }
