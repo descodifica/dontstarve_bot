@@ -1,1 +1,1 @@
-module.exports = [ 'ds', 'sw', 'ham', 'dst', ]
+module.exports = { ds: 'Solo', sw: 'Shipwrecked', ham: 'Hamlet', dst: 'Together', }

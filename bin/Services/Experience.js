@@ -6,9 +6,22 @@ class Experience extends DefaultEntity {
     super({
       table: 'experiences',
       props: {
-        platform: { type: 'Option', values: [ 'Steam', 'PS', 'Xbox', 'Android', 'Iphone', ], },
+        have: { type: 'Option', values: [ 'general.no', 'general.yes', ], },
+        platform: {
+          type: 'Option',
+          noTranslate: true,
+          values: [ 'Steam', 'PS', 'Xbox', 'Android', 'Iphone', ],
+        },
+        hours: { type: 'Number', },
+        survived: { type: 'Number', },
         main: { type: 'Relation', entity: 'Character', },
-        rank: { type: 'Option', values: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, ], },
+        level: {
+          type: 'Option',
+          values: [
+            'abductedName', 'hungryName', 'explorerName', 'survivorName', 'backpackerName',
+            'constantianName', 'charliesFriendName', 'kingOfConstantName', 'allyOfThemName',
+          ],
+        },
       },
       relations: {
         belongsTo: [ 'Character', 'Profile', ],

@@ -1,6 +1,3 @@
-const objectMap = require('object.map')
-const objectFilter = require('object-filter')
-
 // Classe de dicionário
 class Dictionary {
   constructor () {
@@ -21,6 +18,14 @@ class Dictionary {
   }
 
   /**
+   * @description Retorna os idiomas disponíveis
+   * @returns {Array}
+   */
+  langs () {
+    return Object.keys(this.sessions)
+  }
+
+  /**
    * @description Adiciona uma sessão do dicionário
    * @param {String} _lang O idioma
    * @param {Object} _session A sessão do dicionário
@@ -30,194 +35,84 @@ class Dictionary {
   }
 
   /**
-   * @description Recupera uma mensagem
+   * @description Retorna o nome de um idioma
+   * @param {String} _lang O idioma
+   * @returns {String}
+   */
+  getLangName (_lang) {
+    return this.sessions[_lang].name
+  }
+
+  /**
+   * @description Retorna um texto no idioma pedido
+   * @param {String} _id ID do texto
    * @param {String} _serverConfig Configurações do servidor
-   * @param {String} _module O módulo
-   * @param {String} _id O Id da mensagem
-   * @param {Object} _params Os parâmetros da mensagem
-   * @returns {String} A mensagem
+   * @param {Object} _params Parâmetros do texto
+   * @param {Object} _format Formatação do texto
+   * @returns {String}
    */
-  getMessage (_serverConfig, _module, _id, _params = {}) {
-    const message = this.sessions[_serverConfig.lang].texts[_module].messages[_id]
+  get (_id, _serverConfig, _params = {}, _format = {}) {
+    // Identificador e módulo da mensagem
+    const [ module, id, ] = _id.split('.')
 
-    return typeof message !== 'function' ? message : message(_params, _serverConfig)
+    // Recebe a mensagem
+    let msg = this.sessions[_serverConfig.lang].text[module][id]
+
+    // Se não achou, informa no console
+    if (!msg) {
+      console.log(_id + ' não encontrado no dicionário ' + _serverConfig.lang)
+    }
+
+    // Se  mensagem não for string, executa com parametros e configurações do servidor
+
+    msg = typeof msg === 'string' ? msg : msg(_serverConfig, _params)
+
+    // Formata e retorna
+    return this.format(msg, _format)
   }
 
   /**
-   * @description Recupera uma mensagem no idioma pedido
+   * @description Retorna a bandeira de um idioma
    * @param {String} _lang O idioma
-   * @param {String} _module O módulo
-   * @param {String} _id O Id da mensagem
-   * @param {Object} _params Os parâmetros da mensagem
-   * @param {Object} _config Configurações do servidor
-   * @returns {String} A mensagem
+   * @returns {String}
    */
-  getMessageInLang (_lang, _module, _id, _params = {}, _config = {}) {
-    return this.getMessage({ lang: _lang, ..._config, }, _module, _id, _params)
+  flag (_lang) {
+    return this.sessions[_lang].flag
   }
 
   /**
-   * @description Recupera um resumo do ódulo
+   * @description Formata e retorna uma mensagem
+   * @param {String} _msg A mensagem
+   * @param {Object} _format A formatação
+   * @returns {String}
+   */
+  format (_msg, _format) {
+    if (_format.label) {
+      _msg = `**${_msg}**: `
+    }
+
+    if (_format.bold) {
+      _msg = `**${_msg}** `
+    }
+
+    if (_format.italic) {
+      _msg = `*${_msg}* `
+    }
+
+    if (_format.underline) {
+      _msg = `__${_msg}__ `
+    }
+
+    return _msg
+  }
+
+  /**
+   * @description Retorna formato de data de um dado idioma
    * @param {String} _lang O idioma
-   * @param {String} _module O módulo
-   * @returns {String} O resumo
+   * @returns {Object}
    */
-  getResume (_lang, _module) {
-    return this.sessions[_lang].texts[_module].resume
-  }
-
-  /**
-   * @description Recupera nome real de um módulo
-   * @param {String} _lang O idioma
-   * @param {String} _module O módulo passado pelo usuário
-   * @returns {String} O nome do módulo
-   */
-  getModuleName (_lang, _module) {
-    let module
-
-    objectMap(this.sessions[_lang].texts, (v, k) => {
-      if (v.name === _module) {
-        module = k
-      }
-    })
-
-    return module
-  }
-
-  /**
-   * @description Recupera nome de um módulo no idioma do servidor
-   * @param {String} _lang O idioma
-   * @param {String} _module O módulo desejado
-   * @returns {String} O nome do módulo
-   */
-  getTranslateModule (_lang, _module) {
-    return this.sessions[_lang].texts[_module].name
-  }
-
-  /**
-   * @description Recupera nome de um método no idioma do servidor
-   * @param {String} _lang O idioma
-   * @param {String} _module O módulo desejado
-   * @param {String} _method O método desejado
-   * @returns {String} O nome traduzido
-   */
-  getTranslateMethod (_lang, _module, _method) {
-    return this.sessions[_lang].texts[_module].methods[_method].name
-  }
-
-  /**
-   * @description Recupera informações um módulo de acordo com o idioma do servidor
-   * @param {String} _lang O idioma
-   * @param {String} _module O módulo desejado
-   * @returns {Object} O módulo
-   */
-  getModuleInfo (_lang, _module) {
-    return this.sessions[_lang].texts[this.getModuleName(_lang, _module)]
-  }
-
-  /**
-   * @description Recupera nome real de um método
-   * @param {String} _lang O idioma
-   * @param {String} _module O módulo do método
-   * @param {String} _method O método passado pelo usuário
-   * @returns {String} O nome do método
-   */
-  getMethodName (_lang, _module, _method) {
-    if ([ 'main', 'invalidRedir', ].indexOf(_method) > -1) return _method
-
-    const module = this.sessions[_lang].texts[_module] || {}
-    let method
-
-    objectMap(module.methods || {}, (methodData, methodName) => {
-      if (_method !== methodData.name) return
-
-      method = methodName
-    })
-
-    return method
-  }
-
-  /**
-   * @description Recupera nome de um parâmetro de um método
-   * @param {String} _lang O idioma
-   * @param {String} _module O módulo do método
-   * @param {String} _method O método passado pelo usuário
-   * @param {String} _params O parâmetro
-   * @returns {String} O parâmetro com nome real
-   */
-  getMethodParam (_lang, _module, _method, _param) {
-    // Recebe parâmetros da sessão do dicionário
-    const dictionaryParams = this.sessions[_lang].texts[_module].methods[_method].params
-
-    let param
-
-    // Compara parâmetro informado com os traduzidos do dicioário
-    // Se forem iguais, retorna igual do dicionário
-    objectMap(dictionaryParams, (translate, real) => {
-      if (translate !== _param) return
-
-      param = real
-    })
-
-    return param
-  }
-
-  /**
-   * @description Recupera nome traduzido de um parâmetro de um método
-   * @param {String} _lang O idioma
-   * @param {String} _module O módulo do método
-   * @param {String} _method O método desejado
-   * @param {String} _params O parâmetro
-   * @returns {String} O parâmetro com nome traduzido
-   */
-  getTranslateMethodParam (_lang, _module, _method, _param) {
-    // Retorna
-    return this.sessions[_lang].texts[_module].methods[_method].params[_param]
-  }
-
-  /**
-   * @description Recupera nomes dos parâmetros de um método
-   * @param {String} _lang O idioma
-   * @param {String} _module O módulo do método
-   * @param {String} _method O método desejado
-   * @returns {Object} Os parâmetros com nome traduzido
-   */
-  getMethodParams (_lang, _module, _method) {
-    // Retorna
-    return { ...this.sessions[_lang].texts[_module].methods[_method].params, }
-  }
-
-  /**
-   * @description Formata uma data para o inglês
-   * @param {String} _lang O idioma
-   * @param {String} _date A data em padrão do uduina
-   * @returns {String} A no formato do idioma
-   */
-  dateToEn (_lang, _date) {
-    // Formato da data no idioma
-    const format = this.sessions[_lang].dateFormat
-
-    // Separa a data pelo separador
-    const translateDate = _date.split(format.sep)
-
-    // Une no formato americano
-    return [
-      translateDate[format.year], translateDate[format.month], translateDate[format.day],
-    ].join('-')
-  }
-
-  /**
-   * @description Retorna todos os idiomas suportados
-   * @returns {Object} Objeto contendo nome, sigla e bandeira
-   */
-  langs () {
-    return objectMap(this.sessions, (lang, initials) => {
-      lang.initials = initials
-
-      return objectFilter(lang, (v, k) => {
-        return k !== 'texts'
-      })
-    })
+  getDateFormat (_lang) {
+    return this.sessions[_lang].dateFormat
   }
 }
 

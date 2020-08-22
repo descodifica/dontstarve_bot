@@ -20,113 +20,6 @@ class Message {
   }
 
   /**
-   * @description Trata argumentos da mensagem
-   * @returns {Array} Array contendo todos os argumentos
-   */
-  parserArgs () {
-    // Recebe argumentos
-    this.args = this.message.content
-
-    // Pelo que trocar espaço dentro das aspas duplas
-    const signal = '|_|'
-
-    // Troca espaços entre aspas simples e duplas por |_|
-    this.args = this.parserQuoteArgs(this.args, '\'', signal)
-    this.args = this.parserQuoteArgs(this.args, '"', signal)
-
-    this.args = this.args
-      .slice(this.serverConfig.prefix.length) // Remove o prefixo
-      .split(' ') // Separa pelo espaço
-      .filter(i => i.trim() !== '') // Remove argumento em branco (espaço extra no comando)
-      .map(i => i.split(signal).join(' ')) // Volta espaço das aspas
-
-    // Separa comando e método
-    this.command = this.originalCommand = this.args.shift()
-    this.method = this.originalMethod = this.args.shift() || 'main'
-
-    // Nome real do comando
-    this.realCommand = Dictionary.getModuleName(
-      this.serverConfig.lang, this.command
-    )
-
-    // Nome real do método
-    this.realMethod = Dictionary.getMethodName(
-      this.serverConfig.lang, this.realCommand, this.method
-    )
-  }
-
-  /**
-   * @description Retorna se a mensagem foi enviada para o Bot
-   * @params {String} Prefixo do servidor
-   * @returns {Boolean}
-   */
-  forBot (_prefix) {
-    // Prefixo é o informado ou o presente em serverConfig
-    const prefix = _prefix || (this.serverConfig || {}).prefix
-
-    return (
-      this.message.content.startsWith(prefix) && // Se começa com o prefixo e
-      !this.fromBot() // Se não é mensagem de outro Bot
-    )
-  }
-
-  /**
-   * @description Retorna se a mensagem foi enviada por um Bot
-   * @returns {Boolean}
-   */
-  fromBot () {
-    return this.message.author.bot
-  }
-
-  /**
-   * @description Retorna se existem argumentos
-   * @returns {Boolean}
-   */
-  hasArgs () {
-    return this.args.length > 0
-  }
-
-  /**
-   * @description Retorna as mensões
-   * @returns {Object}
-   */
-  mentions () {
-    return this.message.mentions
-  }
-
-  /**
-   * @description Retorna e mencionou alguém
-   * @returns Boolean
-   */
-  hasMention () {
-    return this.hasUserMention() || this.hasRoleMention()
-  }
-
-  /**
-   * @description Retorna e mencionou alguma pessoa
-   * @returns Boolean
-   */
-  hasUserMention () {
-    return this.mentions().users.array().length > 0
-  }
-
-  /**
-   * @description Retorna e mencionou algum cargo
-   * @returns Boolean
-   */
-  hasRoleMention () {
-    return this.mentions().roles.array().length > 0
-  }
-
-  /**
-   * @description Retorna o ID do servidor
-   * @returns {String}
-   */
-  serverId () {
-    return (this.message.guild || {}).id
-  }
-
-  /**
     * @description Retorna o autor da mensagem
     * @returns {String}
     */
@@ -151,11 +44,11 @@ class Message {
   }
 
   /**
-    * @description Retorna o ID do dono do servidor
+    * @description Retorna o avatar do autor da mensagem da mensagem
     * @returns {String}
     */
-  serverOwnerID () {
-    return this.message.guild.ownerID
+  authorAvatar (_message) {
+    return this.message.author.displayAvatarURL()
   }
 
   /**
@@ -167,18 +60,112 @@ class Message {
   }
 
   /**
-    * @description Retorna o avatar do autor da mensagem da mensagem
+   * @description Retorna o ID do servidor
+   * @returns {String}
+   */
+  serverId () {
+    return (this.message.guild || {}).id
+  }
+
+  /**
+    * @description Retorna o ID do dono do servidor
     * @returns {String}
     */
-  authorAvatar (_message) {
-    return this.message.author.displayAvatarURL()
+  serverOwnerID () {
+    return this.message.guild.ownerID
+  }
+
+  /**
+   * @description Retorna os dados do servidor
+   * @returns {Object}
+   */
+  server () {
+    return this.message.channel.guild
+  }
+
+  /**
+   * @description Retorna os membros do servidor
+   * @returns {Object}
+   */
+  serverMembers () {
+    return this.server().members.cache
+  }
+
+  /**
+   * @description Retorna se a mensagem foi enviada para o Bot
+   * @params {Object} Dados do bot
+   * @returns {Boolean}
+   */
+  forBot (_bot) {
+    return this.mentions().has(_bot)
+  }
+
+  /**
+   * @description Retorna se a mensagem foi enviada por um Bot
+   * @returns {Boolean}
+   */
+  fromBot () {
+    return this.message.author.bot
+  }
+
+  /**
+   * @description Retorna as mensões
+   * @returns {Object}
+   */
+  mentions () {
+    return this.message.mentions
+  }
+
+  /**
+   * @description Retorna se mencionou alguém
+   * @returns Boolean
+   */
+  hasMention () {
+    return this.hasAnyUserMention() || this.hasAnyRoleMention()
+  }
+
+  /**
+   * @description Retorna se mencionou alguma pessoa
+   * @returns Boolean
+   */
+  hasAnyUserMention () {
+    return this.mentions().users.array().length > 0
+  }
+
+  /**
+   * @description Retorna se mencionou algum cargo
+   * @returns Boolean
+   */
+  hasAnyRoleMention () {
+    return this.mentions().roles.array().length > 0
+  }
+
+  /**
+   * @description Envia uma mensagem para o canal
+   * @returns {Object} A mensagem enviada
+   */
+  send (_msg) {
+    return this.message.channel.send(_msg)
+  }
+
+  /**
+   * @description Envia uma mensagem para o canal a partir do dicionário
+   * @params {String} _id Id da mensagem no dicionário
+   * @params {Object} _config Configurações do servidor
+   * @params {Object} _params Parâmetros da mensagem
+   * @returns {Object} A mensagem enviada
+   */
+  sendFromDictionary (_id, _config, _params) {
+    return this.send(
+      Dictionary.get(_id, _config, _params)
+    )
   }
 
   /**
    * @description Envia uma mensagem embutida
    * @param {Object} _embedData Dados da mensagem embtida
    */
-  sendEmbedMessage (_embedData) {
+  async sendEmbedMessage (_embedData) {
     const embed = new MessageEmbed()
 
     if (_embedData.title) {
@@ -189,164 +176,65 @@ class Message {
       embed.setDescription(_embedData.description)
     }
 
+    if (_embedData.fields) {
+      _embedData.fields.map(field => {
+        field.name = field.name || zeroWidthSpace
+        field.value = field.value || zeroWidthSpace
+
+        embed.addFields(field)
+      })
+    }
+
     if (_embedData.thumbnail) {
       embed.setThumbnail(_embedData.thumbnail)
     }
 
-    this.message.channel.send(embed)
+    return new Message(await this.message.channel.send(embed))
   }
 
   /**
-   * @description Envia uma mensagem ao servidor de acordo com a tradução do dicionário
-   * @param {String} _msg Id da mensagem
-   * @param {String} _module Módulo da mensagem
-   * @param {Object} _params Parâmetros extras da mensagem
+   * @description Envia uma mensagem interagivel
+   * @params {String} A mensagem
+   * @params {Object} As opções
+   * @params {Function} A função a ser executado quando receber uma resposta
    */
-  sendFromDictionary (_module, _msg, _params = {}) {
-    this.message.channel.send(this.getFromDictionary(_module, _msg, _params))
-  }
+  async sendPrompt (_data) {
+    // Opções formatadas
+    const options = _data.options.map(option => {
+      option.icon = Emojis.get(option.icon)
+      option.name = option.icon + ' ' + option.name
 
-  /**
-   * @description Retorna uma mensagem ao servidor de acordo com a tradução do dicionário
-   * @param {String} _msg Id da mensagem
-   * @param {String} _module Módulo da mensagem
-   * @param {Object} _params Parâmetros extras da mensagem
-   * @returns {String}
-   */
-  getFromDictionary (_module, _msg, _params = {}) {
-    return Dictionary.getMessage(
-      this.serverConfig, _module, _msg, _params
-    )
-  }
+      return option
+    })
 
-  /**
-   * @description Recebe um texto a ser enviado de acordo com a tradução do dicionário
-   *                (concatena com o anterior)
-   * @param {String} _msg Id da mensagem
-   * @param {String} _module Módulo da mensagem
-   * @param {Object} _params Parâmetros extras da mensagem
-   * @param {Object} _config Configurações extras
-   */
-  setFromDictionary (_module, _msg, _params = {}, _config = {}) {
-    this.set(Dictionary.getMessage(this.serverConfig, _module, _msg, _params), _config)
-  }
+    // Emojis das reações
+    const emojis = options.map(option => option.icon)
 
-  /**
-   * @description Envia uma mensagem ao servidor (se não definir mensagem, usa recebida com get)
-   * @param {String} _msg A mensagem
-   */
-  send (_msg) {
-    // Se tem mensagem no parâmetro, envia ela
-    if (_msg) {
-      this.message.channel.send(_msg)
-    }
+    // Envia mensagem
+    const MessageSent = await this.sendEmbedMessage({
+      title: _data.title,
+      description: _data.description,
+      fields: options,
+      thumbnail: _data.thumbnail,
+    })
 
-    // Tamanho máximo das mensagens permitido pelo Discord
-    const maxLength = 2000
+    // Adiciona reações a mensagem
+    await MessageSent.react(emojis)
 
-    // Percorre infinitamente até que seja interrompido no corpo
-    while (true) {
-      // Se a mensagem é maior que o permitido
-      if (this.text.length > maxLength) {
-        // Pega do início oq é permitido
-        const msg2000 = this.text.slice(0, maxLength)
+    // Filtro das reações
+    const reactionFilter = { emojis, user: this.authorId(), }
 
-        // Encontra posição da última quebra de linha
-        const pos = msg2000.lastIndexOf('\n')
+    // Aguarda uma reação válida e executa o callback
+    return MessageSent.awaitReactions(reactionFilter).then(collected => {
+      // Captura dados do emoji da reação
+      const emoji = collected.first().emoji
 
-        // Pega mensagem até a última quebra de linha dentro do máximo permitido
-        const msgLastBreak = this.text.slice(0, pos)
+      // Opção pedida
+      const option = options[emojis.indexOf(emoji.name)]
 
-        // Envia
-        this.message.channel.send(msgLastBreak)
-
-        // Remove o conteúdo enviado damensagem da mensagem original
-        this.text = this.text.slice(pos) + zeroWidthSpace + '\n'
-      }
-      else {
-        // Envia resto da mensagem
-        this.message.channel.send(this.text)
-
-        // Finaliza o laço
-        break
-      }
-    }
-
-    this.clean()
-  }
-
-  /**
-   * @description Retorna os argumentos com os espaços das aspas trocados
-   * @param {Array} _args Os argumentos
-   * @param {String} _quote As aspas usadas
-   * @param {String} _signal O que por no lugar do espaço
-   * @returns {Array} os argumentos com os espaços das aspas trocados
-   */
-  parserQuoteArgs (_args, _quote, _signal) {
-    // Separa pelas aspas
-    const args = _args.split(_quote)
-
-    // Percorre todas as posições, começando pela primeira e pulando de 2 em em dois
-    // Posição par é sempre com aspas
-    for (let c = 1, max = args.length; c < max; c += 2) {
-      // Troca espaço
-      args[c] = args[c].split(' ').join(_signal)
-    }
-
-    // Une em string pelas aspas e retorna
-    return args.join('')
-  }
-
-  /**
-   * @description Recebe um texto a ser enviado (concatena com o anterior)
-   * @param {String} _text O texto
-   * @param {Object} _config Configurações extras
-   */
-  set (_text, _config = {}) {
-    this.text += _text
-
-    if (_config.breakLine) {
-      this.break(_config.breakLine)
-    }
-  }
-
-  /**
-   * @description Recebe um texto a ser enviado (concatena com o anterior)
-   * @param {String} _text O texto
-   * @param {Object} _params Parâmetros extras
-   */
-  setExampleAndExplanation (_example, _explanation, _params = {}) {
-    if (_params.breakTop) {
-      this.break()
-    }
-
-    // Se explicação não for array, vira
-    const explanation = (!isArray(_explanation) ? [ _explanation, ] : _explanation).map(e => {
-      return `> *${e}*`
-    }).join('\n> \n')
-
-    this.text += `\`${_example}\`\n${explanation}`
-
-    if (_params.breakBottom) {
-      this.break(_params.breakBottom)
-    }
-  }
-
-  /**
-   * @description Recebe uma quebra de linha no texto a ser enviado
-   * @params {Number} Tamanho da quebra
-   */
-  break (_length) {
-    for (let c = 0; c < _length; c++) {
-      this.text += zeroWidthSpace + '\n'
-    }
-  }
-
-  /**
-   * @description Limpa  o texto a ser enviado
-   */
-  clean () {
-    this.text = ''
+      // Executa callback
+      option.callback()
+    })
   }
 
   /**
@@ -354,8 +242,103 @@ class Message {
    * @params {String} _id o Id do usuário mensionado
    * @returns {String} A mensão
    */
-  createMention (_id) {
+  mention (_id) {
     return `<@${_id}>`
+  }
+
+  /**
+   * @description Reage a mensagem
+   * @param {Array|String} _reactions As reações
+   */
+  async react (_reactions = []) {
+    // Se não é array, vira
+    const reactions = isArray(_reactions) ? [ ..._reactions, ] : [ _reactions, ]
+
+    // Se não tem reações, ignora
+    if (reactions.length === 0) return Promise.resolve()
+
+    // Captura primeira reação
+    const reaction = reactions.shift()
+
+    // Reage
+    await this.message.react(reaction)
+
+    // Próximas reações (recursividade)
+    this.react(reactions)
+  }
+
+  /**
+   * @description Aguarda reações
+   * @params {Function} _filter
+   * @params {Object} _params
+   * @returns Promise
+  */
+  awaitReactions (_filter = () => true, _params = {}) {
+    return this.await('Reactions', _filter, _params)
+  }
+
+  /**
+   * @description Aguarda mensagens
+   * @params {Function} _filter
+   * @params {Object} _params
+   * @returns Promise
+  */
+  awaitMessages (_filter = () => true, _params = {}) {
+    return this.await('Messages', _filter, _params)
+  }
+
+  /**
+   * @description Aguarda algo
+   * @params {Function} _filter
+   * @params {Object} _params
+   * @returns Promise
+  */
+  await (_type, _filter = () => true, _params = {}) {
+    // Parâmetros padrões
+    const params = { time: 60000, max: 1, ..._params, }
+
+    // Filtro
+    const filter = typeof _filter === 'function' ? _filter : (reaction, user) => {
+      // Se validação de usuário é valida
+      let userOK = true
+
+      // Se validação de emoji é valida
+      let emojisOK = true
+
+      // Se passou filtro de usuário, adiciona resultado da condição ao userOK
+      if (_filter.user) {
+        userOK = user.id === _filter.user
+      }
+
+      // Se passou filtro de emoji, adiciona resultado da condição emojiOK
+      if (_filter.emojis) {
+        emojisOK = _filter.emojis.indexOf(reaction.emoji.name) > -1
+      }
+
+      // Retorna resultado
+      return userOK && emojisOK
+    }
+
+    if (_type === 'Reactions') {
+      return this.message.awaitReactions(filter, params)
+    }
+    else if (_type === 'Messages') {
+      return this.message.channel.awaitMessages(filter, params)
+    }
+  }
+
+  /**
+   * @description Envia uma pergunta e executa um callback ao receber a resposta
+   * @params {String} _ask A pergunta
+   * @params {Object} _params Parâmetros extras
+   * @returns Promise
+  */
+  async ask (_ask, _params = {}) {
+    // Envia pergunta
+    await this.send(_ask)
+
+    // Aguarda resposta e retorna
+    return this.awaitMessages({}, _params).then(response => new Message(response.first()))
   }
 }
 

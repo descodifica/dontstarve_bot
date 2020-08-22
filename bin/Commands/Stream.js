@@ -2,7 +2,7 @@
 const objectMap = require('object.map')
 
 // Importa comando padrão
-const DefaultCommand = require('../Default')
+const DefaultCommand = require('./Default')
 
 // Lista de links de canais
 const list = {
@@ -77,11 +77,20 @@ const list = {
 // O comando dos Streamers
 class Stream extends DefaultCommand {
   /**
-   * @description Lista todos
+   * @description Principal
    * @param {Object} _Message O objeto da mensagem
    * @param {Object} _config As configurações do servidor
    */
   main (_Message, _config) {
+    this.list(_Message, _config)
+  }
+
+  /**
+   * @description Lista todos
+   * @param {Object} _Message O objeto da mensagem
+   * @param {Object} _config As configurações do servidor
+   */
+  list (_Message, _config) {
     objectMap(list, (v, k) => {
       _Message.sendEmbedMessage({
         title: k,
