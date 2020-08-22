@@ -3,7 +3,6 @@
 // TODO: Refatorar updateProp e afns
 // TODO: Boolean com react
 // TODO: Command.edit virar genérico
-// TODO: Biblioteca de opções/reações
 // TODO: Grupos de opções no prompt
 
 // Importa dicionário

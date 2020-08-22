@@ -33,86 +33,41 @@ class Experience extends DefaultCommand {
       Dictionary.get('experience.moreInformation', _config, {}, { bold: true, })
     )
 
-    // Opções
-    const options = [
-      {
-        icon: 'death',
-        name: Dictionary.get('experience.experienceIn', _config, { version: versions.ds, }),
-      },
-      {
-        icon: 'island',
-        name: Dictionary.get('experience.experienceIn', _config, { version: versions.sw, }),
-      },
-      {
-        icon: 'castle',
-        name: Dictionary.get('experience.experienceIn', _config, { version: versions.ham, }),
-      },
-      {
-        icon: 'ghost',
-        name: Dictionary.get('experience.experienceIn', _config, { version: versions.dst, }),
-      },
-      {
-        icon: 'eye',
-        name: Dictionary.get('profile.profile', _config),
-        value: Dictionary.get('profile.backProfile', _config),
-      },
-      {
-        icon: 'dramaMasks',
-        name: Dictionary.get('profile.profile', _config),
-        value: Dictionary.get('profile.backProfileModule', _config),
-      },
-      {
-        icon: 'home',
-        name: Dictionary.get('general.init', _config),
-        value: Dictionary.get('general.backStart', _config),
-      },
-    ]
-
-    // Definições
-    const defs = {
+    // Envia perfil básico com opções
+    // Se pediu mais detalhes de uma experiência
+    _Message.sendPrompt({
       title: Dictionary.get(
         'experience.title', _config, { name: _user.username, version: versions[_version], }
       ),
       thumbnail: _user.displayAvatarURL(),
       description: content,
-      options,
-    }
-
-    // Envia perfil básico com opções
-    // Se pediu mais detalhes de uma experiência
-    _Message.sendPrompt(defs).then(emoji => {
-      let version
-
-      // Detecta a versão
-      switch (emoji._id) {
-        case 'death': version = 'ds'
-          break
-        case 'island': version = 'sw'
-          break
-        case 'castle': version = 'ham'
-          break
-        case 'ghost': version = 'dst'
-          break
-        case 'home': {
-          require('./Init').main(_Message, _config)
-
-          return
-        }
-        case 'dramaMasks': {
-          require('./Profile').main(_Message, _config)
-
-          return
-        }
-        case 'eye': {
-          require('./Profile').view(
-            _Message, _config, [ _Message.serverMembers().get(experience.user).user, ]
-          )
-
-          return
-        }
-      }
-
-      this.view(_Message, _config, version, _user)
+      options: [
+        {
+          icon: 'death',
+          name: Dictionary.get('experience.experienceIn', _config, { version: versions.ds, }),
+          callback: () => this.view(_Message, _config, 'ds', _user),
+        },
+        {
+          icon: 'island',
+          name: Dictionary.get('experience.experienceIn', _config, { version: versions.sw, }),
+          callback: () => this.view(_Message, _config, 'sw', _user),
+        },
+        {
+          icon: 'castle',
+          name: Dictionary.get('experience.experienceIn', _config, { version: versions.ham, }),
+          callback: () => this.view(_Message, _config, 'ham', _user),
+        },
+        {
+          icon: 'ghost',
+          name: Dictionary.get('experience.experienceIn', _config, { version: versions.dst, }),
+          callback: () => this.view(_Message, _config, 'dst', _user),
+        },
+        require('./Profile').options.backProfile(
+          _Message, _config, _Message.serverMembers().get(experience.user).user
+        ),
+        require('./Profile').options.backProfileModule(_Message, _config),
+        require('./Init').options.backStart(_Message, _config),
+      ],
     })
   }
 
@@ -209,7 +164,7 @@ class Experience extends DefaultCommand {
           return Dictionary.get(`experience.${_prop}UpdateError`, _config)
         })
         .then(title => { // Menu
-          const defs = {
+          _Message.sendPrompt({
             title: title,
             options: [
               {
@@ -225,9 +180,7 @@ class Experience extends DefaultCommand {
                 callback: () => require('./Init').main(_Message, _config),
               },
             ],
-          }
-
-          _Message.sendPrompt(defs, _config)
+          }, _config)
         })
     }
 
@@ -273,18 +226,8 @@ class Experience extends DefaultCommand {
           value: Dictionary.get('experience.levelResume', _config, versionParams),
           callback: () => update('level'),
         },
-        {
-          icon: 'dramaMasks',
-          name: Dictionary.get('profile.profile', _config),
-          value: Dictionary.get('profile.backProfileModule', _config),
-          callback: () => require('./Profile').main(_Message, _config),
-        },
-        {
-          icon: 'home',
-          name: Dictionary.get('general.init', _config),
-          value: Dictionary.get('general.backStart', _config),
-          callback: () => require('./Init').main(_Message, _config),
-        },
+        require('./Profile').options.backProfileModule(_Message, _config),
+        require('./Init').options.backStart(_Message, _config),
       ],
     })
   }

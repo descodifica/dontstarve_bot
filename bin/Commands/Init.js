@@ -3,6 +3,21 @@ const DefaultCommand = require('./Default')
 
 // O comando inicial
 class Init extends DefaultCommand {
+  constructor () {
+    super({
+      options: {
+        backStart (_Message, _config) {
+          return {
+            icon: 'home',
+            name: Dictionary.get('general.init', _config),
+            value: Dictionary.get('general.backStart', _config),
+            callback: () => require('./Init').main(_Message, _config),
+          }
+        },
+      },
+    })
+  }
+
   /**
    * @description Método principal
    * @param {Object} __Message O objeto da mensagem

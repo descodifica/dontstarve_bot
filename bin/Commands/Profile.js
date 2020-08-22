@@ -12,6 +12,29 @@ const ProfileService = require('../Services/Profile')
 
 // O comando de perfis
 class Profile extends DefaultCommand {
+  constructor () {
+    super({
+      options: {
+        backProfileModule: (_Message, _config) => {
+          return {
+            icon: 'dramaMasks',
+            name: Dictionary.get('profile.profile', _config),
+            value: Dictionary.get('profile.backProfileModule', _config),
+            callback: () => require('./Profile').main(_Message, _config),
+          }
+        },
+        backProfile: (_Message, _config, _user) => {
+          return {
+            icon: 'eye',
+            name: Dictionary.get('profile.profile', _config),
+            value: Dictionary.get('profile.backProfile', _config),
+            callback: () => require('./Profile').view(_Message, _config, [ _user, ]),
+          }
+        },
+      },
+    })
+  }
+
   /**
    * @description Método principal
    * @param {Object} _Message O objeto da mensagem
@@ -61,6 +84,7 @@ class Profile extends DefaultCommand {
           value: Dictionary.get('profile.viewMenuResume', _config),
           callback: () => this.viewOther(_Message, _config),
         },
+        require('./Init').options.backStart(_Message, _config),
       ],
     })
   }
@@ -76,18 +100,8 @@ class Profile extends DefaultCommand {
     _Message.sendPrompt({
       title: Dictionary.get('profile.createSuccess', _config),
       options: [
-        {
-          icon: 'dramaMasks',
-          name: Dictionary.get('profile.profile', _config),
-          value: Dictionary.get('profile.backProfileModule', _config),
-          callback: () => this.main(_Message, _config),
-        },
-        {
-          icon: 'home',
-          name: Dictionary.get('general.init', _config),
-          value: Dictionary.get('general.backStart', _config),
-          callback: () => require('./Init').main(_Message, _config),
-        },
+        require('./Profile').options.backProfile(_Message, _config),
+        require('./Init').options.backStart(_Message, _config),
       ],
     })
   }
@@ -119,18 +133,8 @@ class Profile extends DefaultCommand {
           inline: true,
           callback: () => this.list(_Message, _config, { ..._params, page: _params.page + 1, }),
         },
-        {
-          icon: 'dramaMasks',
-          name: Dictionary.get('profile.profile', _config),
-          value: Dictionary.get('profile.backProfileModule', _config),
-          callback: () => require('./Profile').main(_Message, _config),
-        },
-        {
-          icon: 'home',
-          name: Dictionary.get('general.init', _config),
-          value: Dictionary.get('general.backStart', _config),
-          callback: () => require('./Init').main(_Message, _config),
-        },
+        require('./Profile').options.backProfileModule(_Message, _config),
+        require('./Init').options.backStart(_Message, _config),
       ],
     }
 
@@ -225,18 +229,8 @@ class Profile extends DefaultCommand {
             name: Dictionary.get('experience.experienceIn', _config, { version: versions.dst, }),
             callback: () => require('./Experience').view(_Message, _config, 'dst', user),
           },
-          {
-            icon: 'dramaMasks',
-            name: Dictionary.get('profile.profile', _config),
-            value: Dictionary.get('profile.backProfileModule', _config),
-            callback: () => require('./Profile').main(_Message, _config),
-          },
-          {
-            icon: 'home',
-            name: Dictionary.get('general.init', _config),
-            value: Dictionary.get('general.backStart', _config),
-            callback: () => require('./Init').main(_Message, _config),
-          },
+          this.options.backProfileModule(_Message, _config),
+          require('./Init').options.backStart(_Message, _config),
         ],
       })
     })
@@ -366,18 +360,8 @@ class Profile extends DefaultCommand {
           _Message.sendPrompt({
             title: title,
             options: [
-              {
-                icon: 'dramaMasks',
-                name: Dictionary.get('profile.profile', _config),
-                value: Dictionary.get('profile.backProfileModule', _config),
-                callback: () => this.main(_Message, _config),
-              },
-              {
-                icon: 'home',
-                name: Dictionary.get('general.init', _config),
-                value: Dictionary.get('general.backStart', _config),
-                callback: () => require('./Init').main(_Message, _config),
-              },
+              require('./Profile').options.backProfileModule(_Message, _config),
+              require('./Init').options.backStart(_Message, _config),
             ],
           }, _config)
         })
@@ -461,18 +445,8 @@ class Profile extends DefaultCommand {
           ),
           callback: () => require('./Experience').edit(_Message, _config, 'dst'),
         },
-        {
-          icon: 'dramaMasks',
-          name: Dictionary.get('profile.profile', _config),
-          value: Dictionary.get('profile.backProfileModule', _config),
-          callback: () => require('./Profile').main(_Message, _config),
-        },
-        {
-          icon: 'home',
-          name: Dictionary.get('general.init', _config),
-          value: Dictionary.get('general.backStart', _config),
-          callback: () => require('./Init').main(_Message, _config),
-        },
+        require('./Profile').options.backProfileModule(_Message, _config),
+        require('./Init').options.backStart(_Message, _config),
       ],
     })
   }
