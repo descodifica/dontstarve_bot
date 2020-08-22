@@ -57,7 +57,7 @@ class Experience extends DefaultCommand {
         value: Dictionary.get('profile.backProfile', _config),
       },
       {
-        icon: 'theaterMasks',
+        icon: 'dramaMasks',
         name: Dictionary.get('profile.profile', _config),
         value: Dictionary.get('profile.backProfileModule', _config),
       },
@@ -98,7 +98,7 @@ class Experience extends DefaultCommand {
 
           return
         }
-        case 'theaterMasks': {
+        case 'dramaMasks': {
           require('./Profile').main(_Message, _config)
 
           return
@@ -195,107 +195,98 @@ class Experience extends DefaultCommand {
    * @param {Object} _config As configurações do servidor
    * @param {String} _version Versão a ser atualizada
    */
-  async edit (_Message, _config, _version) {
+  edit (_Message, _config, _version) {
+    const update = _prop => {
+      // Dados a serem atualizados
+      const data = { id: _Message.authorId(), }
+
+      // Atualiza
+      return ExperienceService.updateProp(_prop, data, _Message, _config, versionParams)
+        .then(response => {
+          return Dictionary.get(`experience.${_prop}UpdateSuccess`, _config)
+        })
+        .catch(e => {
+          return Dictionary.get(`experience.${_prop}UpdateError`, _config)
+        })
+        .then(title => { // Menu
+          const defs = {
+            title: title,
+            options: [
+              {
+                icon: 'dramaMasks',
+                name: Dictionary.get('profile.profile', _config),
+                value: Dictionary.get('profile.backProfileModule', _config),
+                callback: () => require('./Profile').main(_Message, _config),
+              },
+              {
+                icon: 'home',
+                name: Dictionary.get('general.init', _config),
+                value: Dictionary.get('general.backStart', _config),
+                callback: () => require('./Init').main(_Message, _config),
+              },
+            ],
+          }
+
+          _Message.sendPrompt(defs, _config)
+        })
+    }
+
     // Parâmetros da mensagem
     const versionParams = { version: versions[_version], }
 
-    // Opções do menu
-    const propOptions = [
-      {
-        icon: 'cd',
-        name: Dictionary.get('experience.have', _config),
-        value: Dictionary.get('experience.haveResume', _config, versionParams),
-      },
-      {
-        icon: 'joystick',
-        name: Dictionary.get('experience.platform', _config),
-        value: Dictionary.get('experience.platformResume', _config, versionParams),
-      },
-      {
-        icon: 'clock',
-        name: Dictionary.get('experience.hours', _config),
-        value: Dictionary.get('experience.hoursResume', _config, versionParams),
-      },
-      {
-        icon: 'mage',
-        name: Dictionary.get('experience.main', _config),
-        value: Dictionary.get('experience.mainResume', _config, versionParams),
-      },
-      {
-        icon: 'calendarCheck',
-        name: Dictionary.get('experience.survived', _config),
-        value: Dictionary.get('experience.survivedResume', _config, versionParams),
-      },
-      {
-        icon: 'medal',
-        name: Dictionary.get('experience.level', _config),
-        value: Dictionary.get('experience.levelResume', _config, versionParams),
-      },
-    ]
-
-    // Defnições do menu
-    const defs = {
+    _Message.sendPrompt({
       title: Dictionary.get('experience.editAsk', _config, versionParams),
-      options: propOptions,
-    }
-
-    // Envia menu e executa comando desejado
-    const emoji = await _Message.sendPrompt(defs)
-
-    // Propriedade pedida
-    let prop
-
-    // Converte nome do emoji para nome da propriedade
-    switch (emoji._id) {
-      case 'cd': prop = 'have'
-        break
-      case 'joystick': prop = 'platform'
-        break
-      case 'clock': prop = 'hours'
-        break
-      case 'mage': prop = 'main'
-        break
-      case 'calendarCheck': prop = 'survived'
-        break
-      case 'medal': prop = 'level'
-    }
-
-    // Dados a serem atualizados
-    const data = { id: _Message.authorId(), }
-
-    // Atualiza
-    return ExperienceService.updateProp(prop, data, _Message, _config, versionParams)
-      .then(response => {
-        return Dictionary.get(`experience.${prop}UpdateSuccess`, _config)
-      })
-      .catch(e => {
-        return Dictionary.get(`experience.${prop}UpdateError`, _config)
-      })
-      .then(async title => { // Menu
-        const defs = {
-          title: title,
-          options: [
-            {
-              icon: 'home',
-              name: Dictionary.get('general.init', _config),
-              value: Dictionary.get('general.backStart', _config),
-            },
-            {
-              icon: 'theaterMasks',
-              name: Dictionary.get('profile.profile', _config),
-              value: Dictionary.get('profile.backProfileModule', _config),
-            },
-          ],
-        }
-
-        const emoji = await _Message.sendPrompt(defs, _config)
-
-        switch (emoji._id) {
-          case 'home': require('./Init').main(_Message, _config)
-            break
-          case 'theaterMasks': require('./Profile').main(_Message, _config)
-        }
-      })
+      options: [
+        {
+          icon: 'cd',
+          name: Dictionary.get('experience.have', _config),
+          value: Dictionary.get('experience.haveResume', _config, versionParams),
+          callback: () => update('have'),
+        },
+        {
+          icon: 'joystick',
+          name: Dictionary.get('experience.platform', _config),
+          value: Dictionary.get('experience.platformResume', _config, versionParams),
+          callback: () => update('platform'),
+        },
+        {
+          icon: 'clock',
+          name: Dictionary.get('experience.hours', _config),
+          value: Dictionary.get('experience.hoursResume', _config, versionParams),
+          callback: () => update('hours'),
+        },
+        {
+          icon: 'mage',
+          name: Dictionary.get('experience.main', _config),
+          value: Dictionary.get('experience.mainResume', _config, versionParams),
+          callback: () => update('main'),
+        },
+        {
+          icon: 'calendarCheck',
+          name: Dictionary.get('experience.survived', _config),
+          value: Dictionary.get('experience.survivedResume', _config, versionParams),
+          callback: () => update('survived'),
+        },
+        {
+          icon: 'medal',
+          name: Dictionary.get('experience.level', _config),
+          value: Dictionary.get('experience.levelResume', _config, versionParams),
+          callback: () => update('level'),
+        },
+        {
+          icon: 'dramaMasks',
+          name: Dictionary.get('profile.profile', _config),
+          value: Dictionary.get('profile.backProfileModule', _config),
+          callback: () => require('./Profile').main(_Message, _config),
+        },
+        {
+          icon: 'home',
+          name: Dictionary.get('general.init', _config),
+          value: Dictionary.get('general.backStart', _config),
+          callback: () => require('./Init').main(_Message, _config),
+        },
+      ],
+    })
   }
 }
 

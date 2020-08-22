@@ -197,7 +197,6 @@ class Message {
    * @params {String} A mensagem
    * @params {Object} As opções
    * @params {Function} A função a ser executado quando receber uma resposta
-   * @returns {Promise}
    */
   async sendPrompt (_data) {
     // Opções formatadas
@@ -230,11 +229,11 @@ class Message {
       // Captura dados do emoji da reação
       const emoji = collected.first().emoji
 
-      // Captura id (do bot) do emoji
-      emoji._id = Emojis.getId(emoji.name)
+      // Opção pedida
+      const option = options[emojis.indexOf(emoji.name)]
 
-      // Retorna o emoji
-      return Promise.resolve(emoji)
+      // Executa callback
+      option.callback()
     })
   }
 

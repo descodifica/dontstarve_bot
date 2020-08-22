@@ -12,14 +12,16 @@ class Init extends DefaultCommand {
     // Opções a serem exibidas
     const options = [
       {
-        icon: 'theaterMasks',
+        icon: 'dramaMasks',
         name: Dictionary.get('profile.profile', _config),
         value: Dictionary.get('profile.resume', _config),
+        callback: () => require('./Profile').main(_Message, _config),
       },
       {
         icon: 'stream',
         name: Dictionary.get('stream.stream', _config),
         value: Dictionary.get('stream.resume', _config),
+        callback: () => require('./Stream').main(_Message, _config),
       },
     ]
 
@@ -29,31 +31,14 @@ class Init extends DefaultCommand {
         icon: 'gear',
         name: Dictionary.get('config.config', _config),
         value: Dictionary.get('config.resume', _config),
+        callback: () => require('./Config').main(_Message, _config),
       })
     }
 
-    // Definições do menu
-    const defs = { title: Dictionary.get('general.index', _config), options, }
-
     // Envia um prompt e chama o comando solicitado
-    _Message.sendPrompt(defs).then(emoji => {
-      let moduleName
-
-      // Detecta nome do módulo
-      switch (emoji._id) {
-        case 'theaterMasks': moduleName = 'profile'
-          break
-        case 'gear': moduleName = 'config'
-          break
-        default: moduleName = emoji._id
-          break
-      }
-
-      // Importa comando
-      const command = require('./' + moduleName)
-
-      // Executa comando
-      command.main(_Message, _config)
+    _Message.sendPrompt({
+      itle: Dictionary.get('general.index', _config),
+      options,
     })
   }
 }

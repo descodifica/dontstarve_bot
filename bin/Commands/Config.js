@@ -3,6 +3,7 @@ const DefaultCommand = require('./Default')
 
 // Importa entidade padrão de configuração
 const ConfigService = require('../Services/Config')
+const { update, } = require('../Services/Config')
 
 // O comando de configurações
 class Config extends DefaultCommand {
@@ -12,33 +13,22 @@ class Config extends DefaultCommand {
    * @param {Object} _config As configurações do servidor
    */
   main (_Message, _config) {
-    // Opções do menu
-    const options = [
-      {
-        icon: 'inputLatinLetters',
-        name: Dictionary.get('config.language', _config),
-        value: Dictionary.get('config.language_resume', _config),
-      },
-      {
-        icon: 'home',
-        name: Dictionary.get('general.init', _config),
-        value: Dictionary.get('general.backStart', _config),
-      },
-    ]
-
-    // Defnições do menu
-    const defs = {
+    _Message.sendPrompt({
       title: Dictionary.get('config.index', _config),
-      options,
-    }
-
-    // Envia menu e executa comando desejado
-    _Message.sendPrompt(defs).then(emoji => {
-      switch (emoji._id) {
-        case 'inputLatinLetters': this.lang(_Message, _config)
-          break
-        case 'home': require('./Init').main(_Message, _config)
-      }
+      options: [
+        {
+          icon: 'inputLatinLetters',
+          name: Dictionary.get('config.language', _config),
+          value: Dictionary.get('config.language_resume', _config),
+          callback: () => this.lang(_Message, _config),
+        },
+        {
+          icon: 'home',
+          name: Dictionary.get('general.init', _config),
+          value: Dictionary.get('general.backStart', _config),
+          callback: () => require('./Init').main(_Message, _config),
+        },
+      ],
     })
   }
 
@@ -49,85 +39,59 @@ class Config extends DefaultCommand {
    * @param {String} _lang Idioma escolhido
    */
   async lang (_Message, _config, _lang) {
-    // Opções do menu
-    const langOptions = [
-      {
-        icon: 'brFlag',
-        name: Dictionary.getLangName('ptbr'),
-      },
-      {
-        icon: 'gear',
-        name: Dictionary.get('config.config', _config),
-        value: Dictionary.get('config.backConfig', _config),
-      },
-      {
-        icon: 'home',
-        name: Dictionary.get('general.init', _config),
-        value: Dictionary.get('general.backStart', _config),
-      },
-    ]
-
-    // Definições do menu
-    const defs = {
+    _Message.sendPrompt({
       title: Dictionary.get('config.whatAge', _config),
-      options: langOptions,
+      options: [
+        {
+          icon: 'brFlag',
+          name: Dictionary.getLangName('ptbr'),
+          callback: () => update('ptbr'),
+        },
+        {
+          icon: 'gear',
+          name: Dictionary.get('config.config', _config),
+          value: Dictionary.get('config.backConfig', _config),
+          callback: () => this.main(_Message, _config),
+        },
+        {
+          icon: 'home',
+          name: Dictionary.get('general.init', _config),
+          value: Dictionary.get('general.backStart', _config),
+          callback: () => require('./Init').main(_Message, _config),
+        },
+      ],
+    })
+
+    const update = _lang => {
+      const data = { lang: _lang, }
+
+      ConfigService.update(data, { server_id: _Message.serverId(), })
+        .then(() => {
+          return Dictionary.get('config.updateLanguage', _config)
+        })
+        .catch(e => {
+          return Dictionary.get('config.updateLanguageError', _config)
+        })
+        .then(async title => {
+          _Message.sendPrompt({
+            title,
+            options: [
+              {
+                icon: 'gear',
+                name: Dictionary.get('config.config', _config),
+                value: Dictionary.get('config.backConfig', _config),
+                callback: () => this.main(_Message, _config),
+              },
+              {
+                icon: 'home',
+                name: Dictionary.get('general.init', _config),
+                value: Dictionary.get('general.backStart', _config),
+                callback: () => require('./Init').main(_Message, _config),
+              },
+            ],
+          })
+        })
     }
-
-    // Dados a serem atualizados
-    const data = {}
-
-    // Envia menu
-    const emoji = await _Message.sendPrompt(defs)
-
-    // Detecta idioma
-    switch (emoji._id) {
-      case 'brFlag': data.lang = 'ptbr'
-        break
-      case 'home': {
-        require('./Init').main(_Message, _config)
-
-        return
-      }
-      case 'gear': {
-        this.main(_Message, _config)
-
-        return
-      }
-    }
-
-    // Opções
-    const options = [
-      {
-        icon: 'home',
-        name: Dictionary.get('general.init', _config),
-        value: Dictionary.get('general.backStart', _config),
-      },
-      {
-        icon: 'gear',
-        name: Dictionary.get('config.config', _config),
-        value: Dictionary.get('config.backConfig', _config),
-      },
-    ]
-
-    // Atualiza e responde
-    return ConfigService.update(data, { server_id: _Message.serverId(), })
-      .then(() => {
-        return Dictionary.get('config.updateLanguage', _config)
-      })
-      .catch(e => {
-        return Dictionary.get('config.updateLanguageError', _config)
-      })
-      .then(async title => {
-        const emoji = await _Message.sendPrompt({ title, options, })
-
-        // Executa o comando pedido
-        switch (emoji._id) {
-          case 'home': require('./Init').main(_Message, _config)
-            break
-          case 'gear': this.main(_Message, _config)
-            break
-        }
-      })
   }
 }
 
