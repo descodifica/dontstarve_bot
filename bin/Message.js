@@ -277,6 +277,10 @@ class Message {
         // Remove mensagem reagida
         MessageSent.message.delete()
       })
+      .catch(e => {
+        // Remove mensagem
+        MessageSent.message.delete()
+      })
   }
 
   /**
