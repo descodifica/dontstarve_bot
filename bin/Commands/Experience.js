@@ -33,42 +33,48 @@ class Experience extends DefaultCommand {
       Dictionary.get('experience.moreInformation', _config, {}, { bold: true, })
     )
 
-    // Envia perfil básico com opções
-    // Se pediu mais detalhes de uma experiência
-    _Message.sendPrompt({
+    const defs = {
       title: Dictionary.get(
         'experience.title', _config, { name: _user.username, version: versions[_version], }
       ),
       thumbnail: _user.displayAvatarURL(),
       description: content,
-      options: [
-        {
-          icon: 'death',
-          name: Dictionary.get('experience.experienceIn', _config, { version: versions.ds, }),
-          callback: () => this.view(_Message, _config, 'ds', _user),
-        },
-        {
-          icon: 'island',
-          name: Dictionary.get('experience.experienceIn', _config, { version: versions.sw, }),
-          callback: () => this.view(_Message, _config, 'sw', _user),
-        },
-        {
-          icon: 'castle',
-          name: Dictionary.get('experience.experienceIn', _config, { version: versions.ham, }),
-          callback: () => this.view(_Message, _config, 'ham', _user),
-        },
-        {
-          icon: 'ghost',
-          name: Dictionary.get('experience.experienceIn', _config, { version: versions.dst, }),
-          callback: () => this.view(_Message, _config, 'dst', _user),
-        },
-        require('./Profile').options.backProfile(
-          _Message, _config, _Message.serverMembers().get(experience.user).user
-        ),
-        require('./Profile').options.backProfileModule(_Message, _config),
-        require('./Init').options.backStart(_Message, _config),
-      ],
-    })
+      options: {
+        main: [
+          {
+            icon: 'death',
+            name: Dictionary.get('experience.experienceIn', _config, { version: versions.ds, }),
+            callback: () => this.view(_Message, _config, 'ds', _user),
+          },
+          {
+            icon: 'island',
+            name: Dictionary.get('experience.experienceIn', _config, { version: versions.sw, }),
+            callback: () => this.view(_Message, _config, 'sw', _user),
+          },
+          {
+            icon: 'castle',
+            name: Dictionary.get('experience.experienceIn', _config, { version: versions.ham, }),
+            callback: () => this.view(_Message, _config, 'ham', _user),
+          },
+          {
+            icon: 'ghost',
+            name: Dictionary.get('experience.experienceIn', _config, { version: versions.dst, }),
+            callback: () => this.view(_Message, _config, 'dst', _user),
+          },
+        ],
+        'general.navegateGroupOptions': [
+          require('./Profile').options.backProfile(
+            _Message, _config, _Message.serverMembers().get(experience.user).user
+          ),
+          require('./Profile').options.backProfileModule(_Message, _config),
+          require('./Init').options.backStart(_Message, _config),
+        ],
+      },
+    }
+
+    // Envia perfil básico com opções
+    // Se pediu mais detalhes de uma experiência
+    _Message.sendPrompt(defs, _config)
   }
 
   /**
@@ -164,72 +170,70 @@ class Experience extends DefaultCommand {
           return Dictionary.get(`experience.${_prop}UpdateError`, _config)
         })
         .then(title => { // Menu
-          _Message.sendPrompt({
+          const defs = {
             title: title,
             options: [
-              {
-                icon: 'dramaMasks',
-                name: Dictionary.get('profile.profile', _config),
-                value: Dictionary.get('profile.backProfileModule', _config),
-                callback: () => require('./Profile').main(_Message, _config),
-              },
-              {
-                icon: 'home',
-                name: Dictionary.get('general.init', _config),
-                value: Dictionary.get('general.backStart', _config),
-                callback: () => require('./Init').main(_Message, _config),
-              },
+              require('./Profile').options.backProfileModule(_Message, _config),
+              require('./Init').options.backStart(_Message, _config),
             ],
-          }, _config)
+          }
+
+          _Message.sendPrompt(defs, _config)
         })
     }
 
     // Parâmetros da mensagem
     const versionParams = { version: versions[_version], }
 
-    _Message.sendPrompt({
+    const defs = {
       title: Dictionary.get('experience.editAsk', _config, versionParams),
-      options: [
-        {
-          icon: 'cd',
-          name: Dictionary.get('experience.have', _config),
-          value: Dictionary.get('experience.haveResume', _config, versionParams),
-          callback: () => update('have'),
-        },
-        {
-          icon: 'joystick',
-          name: Dictionary.get('experience.platform', _config),
-          value: Dictionary.get('experience.platformResume', _config, versionParams),
-          callback: () => update('platform'),
-        },
-        {
-          icon: 'clock',
-          name: Dictionary.get('experience.hours', _config),
-          value: Dictionary.get('experience.hoursResume', _config, versionParams),
-          callback: () => update('hours'),
-        },
-        {
-          icon: 'mage',
-          name: Dictionary.get('experience.main', _config),
-          value: Dictionary.get('experience.mainResume', _config, versionParams),
-          callback: () => update('main'),
-        },
-        {
-          icon: 'calendarCheck',
-          name: Dictionary.get('experience.survived', _config),
-          value: Dictionary.get('experience.survivedResume', _config, versionParams),
-          callback: () => update('survived'),
-        },
-        {
-          icon: 'medal',
-          name: Dictionary.get('experience.level', _config),
-          value: Dictionary.get('experience.levelResume', _config, versionParams),
-          callback: () => update('level'),
-        },
-        require('./Profile').options.backProfileModule(_Message, _config),
-        require('./Init').options.backStart(_Message, _config),
-      ],
-    })
+      options: {
+        main: [
+          {
+            icon: 'cd',
+            name: Dictionary.get('experience.have', _config),
+            value: Dictionary.get('experience.haveResume', _config, versionParams),
+            callback: () => update('have'),
+          },
+          {
+            icon: 'joystick',
+            name: Dictionary.get('experience.platform', _config),
+            value: Dictionary.get('experience.platformResume', _config, versionParams),
+            callback: () => update('platform'),
+          },
+          {
+            icon: 'clock',
+            name: Dictionary.get('experience.hours', _config),
+            value: Dictionary.get('experience.hoursResume', _config, versionParams),
+            callback: () => update('hours'),
+          },
+          {
+            icon: 'mage',
+            name: Dictionary.get('experience.main', _config),
+            value: Dictionary.get('experience.mainResume', _config, versionParams),
+            callback: () => update('main'),
+          },
+          {
+            icon: 'calendarCheck',
+            name: Dictionary.get('experience.survived', _config),
+            value: Dictionary.get('experience.survivedResume', _config, versionParams),
+            callback: () => update('survived'),
+          },
+          {
+            icon: 'medal',
+            name: Dictionary.get('experience.level', _config),
+            value: Dictionary.get('experience.levelResume', _config, versionParams),
+            callback: () => update('level'),
+          },
+        ],
+        'general.navegateGroupOptions': [
+          require('./Profile').options.backProfileModule(_Message, _config),
+          require('./Init').options.backStart(_Message, _config),
+        ],
+      },
+    }
+
+    _Message.sendPrompt(defs, _config)
   }
 }
 

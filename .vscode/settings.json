@@ -40,7 +40,7 @@
             "base": "develop"
         },
         {
-            "name": "feature/more_interactive",
+            "name": "feature/group_options",
             "base": "develop"
         }
     ]

@@ -101,6 +101,7 @@ Dictionary.add('ptbr', {
         lastOption + ' (sem as aspas)',
       init: 'Início',
       backStart: 'Volte para o início',
+      navegateGroupOptions: 'Navegação',
     },
     profile: {
       profile: 'Perfil',

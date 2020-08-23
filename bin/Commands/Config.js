@@ -27,18 +27,24 @@ class Config extends DefaultCommand {
    * @param {Object} _config As configurações do servidor
    */
   main (_Message, _config) {
-    _Message.sendPrompt({
+    const defs = {
       title: Dictionary.get('config.index', _config),
-      options: [
-        {
-          icon: 'inputLatinLetters',
-          name: Dictionary.get('config.language', _config),
-          value: Dictionary.get('config.language_resume', _config),
-          callback: () => this.lang(_Message, _config),
-        },
-        require('./Init').options.backStart(_Message, _config),
-      ],
-    })
+      options: {
+        main: [
+          {
+            icon: 'inputLatinLetters',
+            name: Dictionary.get('config.language', _config),
+            value: Dictionary.get('config.language_resume', _config),
+            callback: () => this.lang(_Message, _config),
+          },
+        ],
+        'general.navegateGroupOptions': [
+          require('./Init').options.backStart(_Message, _config),
+        ],
+      },
+    }
+
+    _Message.sendPrompt(defs, _config)
   }
 
   /**
@@ -59,28 +65,36 @@ class Config extends DefaultCommand {
           return Dictionary.get('config.updateLanguageError', _config)
         })
         .then(async title => {
-          _Message.sendPrompt({
+          const defs = {
             title,
             options: [
               this.options.backConfigModule(_Message, _config),
               require('./Init').options.backStart(_Message, _config),
             ],
-          })
+          }
+
+          _Message.sendPrompt(defs, _config)
         })
     }
 
-    _Message.sendPrompt({
+    const defs = {
       title: Dictionary.get('config.whatAge', _config),
-      options: [
-        {
-          icon: 'brFlag',
-          name: Dictionary.getLangName('ptbr'),
-          callback: () => update('ptbr'),
-        },
-        this.options.backConfigModule(_Message, _config),
-        require('./Init').options.backStart(_Message, _config),
-      ],
-    })
+      options: {
+        main: [
+          {
+            icon: 'brFlag',
+            name: Dictionary.getLangName('ptbr'),
+            callback: () => update('ptbr'),
+          },
+        ],
+        'general.navegateGroupOptions': [
+          this.options.backConfigModule(_Message, _config),
+          require('./Init').options.backStart(_Message, _config),
+        ],
+      },
+    }
+
+    _Message.sendPrompt(defs, _config)
   }
 }
 

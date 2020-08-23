@@ -50,11 +50,13 @@ class Init extends DefaultCommand {
       })
     }
 
-    // Envia um prompt e chama o comando solicitado
-    _Message.sendPrompt({
-      itle: Dictionary.get('general.index', _config),
+    const defs = {
+      title: Dictionary.get('general.index', _config),
       options,
-    })
+    }
+
+    // Envia um prompt e chama o comando solicitado
+    _Message.sendPrompt(defs, _config)
   }
 }
 

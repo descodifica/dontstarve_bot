@@ -4,6 +4,9 @@ const { MessageEmbed, } = require('discord.js')
 // Verifica se uma variável contém um inteiro
 const isArray = require('is-array')
 
+// Faz um laço em um objeto
+const objectMap = require('object.map')
+
 // Caracter invisivel
 const zeroWidthSpace = '​'
 
@@ -168,6 +171,11 @@ class Message {
   async sendEmbedMessage (_embedData) {
     const embed = new MessageEmbed()
 
+    // Se opções estiver em array, vira objeto
+    _embedData.fields = isArray(_embedData.fields)
+      ? { main: _embedData.fields, }
+      : _embedData.fields
+
     if (_embedData.title) {
       embed.setTitle(_embedData.title)
     }
@@ -177,11 +185,18 @@ class Message {
     }
 
     if (_embedData.fields) {
-      _embedData.fields.map(field => {
-        field.name = field.name || zeroWidthSpace
-        field.value = field.value || zeroWidthSpace
+      objectMap(_embedData.fields, (fields, fieldsTitle) => {
+        if (fieldsTitle !== 'main') {
+          embed.addFields({ name: '> ' + fieldsTitle, value: zeroWidthSpace, })
+          console.log(fieldsTitle)
+        }
 
-        embed.addFields(field)
+        fields.map(field => {
+          field.name = field.name || zeroWidthSpace
+          field.value = field.value || zeroWidthSpace
+
+          embed.addFields(field)
+        })
       })
     }
 
@@ -194,29 +209,55 @@ class Message {
 
   /**
    * @description Envia uma mensagem interagivel
-   * @params {String} A mensagem
-   * @params {Object} As opções
+   * @params {String} _data Dados
+   * @params {Object} _config Configurações do bot
    * @params {Function} A função a ser executado quando receber uma resposta
    */
-  async sendPrompt (_data) {
-    // Opções formatadas
-    const options = _data.options.map(option => {
-      option.icon = Emojis.get(option.icon)
-      option.name = option.icon + ' ' + option.name
+  async sendPrompt (_data, _config) {
+    // Recebe dados
+    const data = { ..._data, }
 
-      return option
+    // Opções
+    const optionsList = {}
+
+    // Se opções estiver em array, vira objeto
+    data.options = isArray(data.options) ? { main: data.options, } : data.options
+
+    data.description = data.description || ''
+
+    // Formata opções
+    data.options = objectMap(data.options, (options, optionsName) => {
+      // Se passou nome do grupo diferente de main, exibe o nome
+      if (optionsName !== 'main') {
+        const name = Dictionary.get(optionsName, _config)
+
+        data.description += `\n\n> **${name}**`
+      }
+
+      return options.map(option => {
+        option.icon = Emojis.get(option.icon)
+
+        optionsList[option.icon] = option.callback
+
+        data.description += (
+          `\n\n${option.icon} **${option.name}**` +
+          `\n${option.value || ''}`
+        )
+
+        return option
+      })
     })
-
-    // Emojis das reações
-    const emojis = options.map(option => option.icon)
 
     // Envia mensagem
     const MessageSent = await this.sendEmbedMessage({
-      title: _data.title,
-      description: _data.description,
-      fields: options,
-      thumbnail: _data.thumbnail,
+      title: data.title,
+      description: data.description,
+      // fields: data.options,
+      thumbnail: data.thumbnail,
     })
+
+    // Os emojis das opções
+    const emojis = Object.keys(optionsList)
 
     // Adiciona reações a mensagem
     await MessageSent.react(emojis)
@@ -229,11 +270,8 @@ class Message {
       // Captura dados do emoji da reação
       const emoji = collected.first().emoji
 
-      // Opção pedida
-      const option = options[emojis.indexOf(emoji.name)]
-
-      // Executa callback
-      option.callback()
+      // Executa o callback
+      optionsList[emoji]()
     })
   }
 
