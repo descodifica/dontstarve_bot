@@ -44,49 +44,55 @@ class Profile extends DefaultCommand {
     // Se usuário possui perfil
     const profileExists = await ProfileService.get(_Message.authorId())
 
-    _Message.sendPrompt({
+    const defs = {
       title: Dictionary.get('profile.index', _config),
-      options: [
-        ...(
-          profileExists
-            ? [
-              {
-                icon: 'user',
-                name: Dictionary.get('profile.mainViewMenu', _config),
-                value: Dictionary.get('profile.mainViewMenuResume', _config),
-                callback: () => this.viewMain(_Message, _config),
-              },
-              {
-                icon: 'pencil',
-                name: Dictionary.get('profile.editMenu', _config),
-                value: Dictionary.get('profile.editMenuResume', _config),
-                callback: () => this.edit(_Message, _config),
-              },
-            ]
-            : [
-              {
-                icon: 'new',
-                name: Dictionary.get('profile.mainCreateMenu', _config),
-                value: Dictionary.get('profile.mainCreateMenuResume', _config),
-                callback: () => this.create(_Message, _config),
-              },
-            ]
-        ),
-        {
-          icon: 'magnifyingGlass',
-          name: Dictionary.get('profile.listMenu', _config),
-          value: Dictionary.get('profile.listMenuResume', _config),
-          callback: () => this.list(_Message, _config),
-        },
-        {
-          icon: 'eye',
-          name: Dictionary.get('profile.viewMenu', _config),
-          value: Dictionary.get('profile.viewMenuResume', _config),
-          callback: () => this.viewOther(_Message, _config),
-        },
-        require('./Init').options.backStart(_Message, _config),
-      ],
-    })
+      options: {
+        main: [
+          ...(
+            profileExists
+              ? [
+                {
+                  icon: 'user',
+                  name: Dictionary.get('profile.mainViewMenu', _config),
+                  value: Dictionary.get('profile.mainViewMenuResume', _config),
+                  callback: () => this.viewMain(_Message, _config),
+                },
+                {
+                  icon: 'pencil',
+                  name: Dictionary.get('profile.editMenu', _config),
+                  value: Dictionary.get('profile.editMenuResume', _config),
+                  callback: () => this.edit(_Message, _config),
+                },
+              ]
+              : [
+                {
+                  icon: 'new',
+                  name: Dictionary.get('profile.mainCreateMenu', _config),
+                  value: Dictionary.get('profile.mainCreateMenuResume', _config),
+                  callback: () => this.create(_Message, _config),
+                },
+              ]
+          ),
+          {
+            icon: 'magnifyingGlass',
+            name: Dictionary.get('profile.listMenu', _config),
+            value: Dictionary.get('profile.listMenuResume', _config),
+            callback: () => this.list(_Message, _config),
+          },
+          {
+            icon: 'eye',
+            name: Dictionary.get('profile.viewMenu', _config),
+            value: Dictionary.get('profile.viewMenuResume', _config),
+            callback: () => this.viewOther(_Message, _config),
+          },
+        ],
+        'general.navegateGroupOptions': [
+          require('./Init').options.backStart(_Message, _config),
+        ],
+      },
+    }
+
+    _Message.sendPrompt(defs, _config)
   }
 
   /**
@@ -97,13 +103,15 @@ class Profile extends DefaultCommand {
   async create (_Message, _config) {
     await ProfileService.create({ id: _Message.authorId(), })
 
-    _Message.sendPrompt({
+    const defs = {
       title: Dictionary.get('profile.createSuccess', _config),
       options: [
         require('./Profile').options.backProfile(_Message, _config),
         require('./Init').options.backStart(_Message, _config),
       ],
-    })
+    }
+
+    _Message.sendPrompt(defs, _config)
   }
 
   /**
@@ -139,34 +147,40 @@ class Profile extends DefaultCommand {
     }
 
     if (profiles.length === 0) {
-      _Message.sendPrompt({
+      const defs2 = {
         ...defs,
         title: Dictionary.get('profile.frofilesNotFound', _config),
-      })
+      }
+
+      _Message.sendPrompt(defs2, _config)
     }
     else {
+      const options = [
+        ...profiles.map((profile, pos) => {
+          const option = {
+            icon: `number_${pos + 1}`,
+            name: profile.nick || profile.name,
+            callback: () => {
+              const user = _Message.serverMembers().get(profiles[pos + 1].id).user
+
+              this.view(_Message, _config, [ user, ])
+            },
+          }
+
+          return option
+        }),
+        ...defs.options,
+      ]
+
       profiles.map(profile => {
-        _Message.sendPrompt({
+        const defs2 = {
           ...defs,
           title: Dictionary.get('profile.frofilesFound', _config),
           description: Dictionary.get('profile.frofilesFoundDescription', _config),
-          options: [
-            ...profiles.map((profile, pos) => {
-              const option = {
-                icon: `number_${pos + 1}`,
-                name: profile.nick || profile.name,
-                callback: () => {
-                  const user = _Message.serverMembers().get(profiles[pos + 1].id).user
+          options,
+        }
 
-                  this.view(_Message, _config, [ user, ])
-                },
-              }
-
-              return option
-            }),
-            ...defs.options,
-          ],
-        })
+        _Message.sendPrompt(defs2, _config)
       })
     }
   }
@@ -202,37 +216,43 @@ class Profile extends DefaultCommand {
         Dictionary.get('profile.moreInformation', _config, {}, { bold: true, })
       )
 
-      // Envia perfil básico com opções
-      // Se pediu mais detalhes de uma experiência
-      _Message.sendPrompt({
+      const defs = {
         title: Dictionary.get('profile.title', _config, { name: user.username, }),
         thumbnail: user.displayAvatarURL(),
         description: content,
-        options: [
-          {
-            icon: 'death',
-            name: Dictionary.get('experience.experienceIn', _config, { version: versions.ds, }),
-            callback: () => require('./Experience').view(_Message, _config, 'ds', user),
-          },
-          {
-            icon: 'island',
-            name: Dictionary.get('experience.experienceIn', _config, { version: versions.sw, }),
-            callback: () => require('./Experience').view(_Message, _config, 'sw', user),
-          },
-          {
-            icon: 'castle',
-            name: Dictionary.get('experience.experienceIn', _config, { version: versions.ham, }),
-            callback: () => require('./Experience').view(_Message, _config, 'ham', user),
-          },
-          {
-            icon: 'ghost',
-            name: Dictionary.get('experience.experienceIn', _config, { version: versions.dst, }),
-            callback: () => require('./Experience').view(_Message, _config, 'dst', user),
-          },
-          this.options.backProfileModule(_Message, _config),
-          require('./Init').options.backStart(_Message, _config),
-        ],
-      })
+        options: {
+          main: [
+            {
+              icon: 'death',
+              name: Dictionary.get('experience.experienceIn', _config, { version: versions.ds, }),
+              callback: () => require('./Experience').view(_Message, _config, 'ds', user),
+            },
+            {
+              icon: 'island',
+              name: Dictionary.get('experience.experienceIn', _config, { version: versions.sw, }),
+              callback: () => require('./Experience').view(_Message, _config, 'sw', user),
+            },
+            {
+              icon: 'castle',
+              name: Dictionary.get('experience.experienceIn', _config, { version: versions.ham, }),
+              callback: () => require('./Experience').view(_Message, _config, 'ham', user),
+            },
+            {
+              icon: 'ghost',
+              name: Dictionary.get('experience.experienceIn', _config, { version: versions.dst, }),
+              callback: () => require('./Experience').view(_Message, _config, 'dst', user),
+            },
+          ],
+          'general.navegateGroupOptions': [
+            this.options.backProfileModule(_Message, _config),
+            require('./Init').options.backStart(_Message, _config),
+          ],
+        },
+      }
+
+      // Envia perfil básico com opções
+      // Se pediu mais detalhes de uma experiência
+      _Message.sendPrompt(defs, _config)
     })
 
     // Informa perfis não encontrados
@@ -357,20 +377,20 @@ class Profile extends DefaultCommand {
           return Dictionary.get(`profile.${_prop}UpdateError`, _config)
         })
         .then(async title => { // Menu
-          _Message.sendPrompt({
+          const defs = {
             title: title,
             options: [
               require('./Profile').options.backProfileModule(_Message, _config),
               require('./Init').options.backStart(_Message, _config),
             ],
-          }, _config)
+          }
+
+          _Message.sendPrompt(defs, _config)
         })
     }
 
-    // Envia menu e executa comando desejado
-    await _Message.sendPrompt({
-      title: Dictionary.get('profile.editAsk', _config),
-      options: [
+    const options = {
+      main: [
         {
           icon: 'ticket',
           name: Dictionary.get('profile.name', _config),
@@ -445,10 +465,20 @@ class Profile extends DefaultCommand {
           ),
           callback: () => require('./Experience').edit(_Message, _config, 'dst'),
         },
+      ],
+      'general.navegateGroupOptions': [
         require('./Profile').options.backProfileModule(_Message, _config),
         require('./Init').options.backStart(_Message, _config),
       ],
-    })
+    }
+
+    const defs = {
+      title: Dictionary.get('profile.editAsk', _config),
+      options,
+    }
+
+    // Envia menu e executa comando desejado
+    await _Message.sendPrompt(defs, _config)
   }
 }
 
