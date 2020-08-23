@@ -266,13 +266,17 @@ class Message {
     const reactionFilter = { emojis, user: this.authorId(), }
 
     // Aguarda uma reação válida e executa o callback
-    return MessageSent.awaitReactions(reactionFilter).then(collected => {
-      // Captura dados do emoji da reação
-      const emoji = collected.first().emoji
+    return MessageSent.awaitReactions(reactionFilter)
+      .then(collected => {
+        // Captura dados do emoji da reação
+        const emoji = collected.first().emoji
 
-      // Executa o callback
-      optionsList[emoji]()
-    })
+        // Executa o callback
+        optionsList[emoji]()
+
+        // Remove mensagem reagida
+        MessageSent.message.delete()
+      })
   }
 
   /**
