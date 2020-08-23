@@ -279,7 +279,11 @@ class Message {
       })
       .catch(e => {
         // Remove mensagem
-        MessageSent.message.delete()
+        MessageSent.message.edit(
+          new MessageEmbed()
+            .setTitle(Dictionary.get('general.timeoutTitle', _config))
+            .setDescription(Dictionary.get('general.timeoutContent', _config))
+        )
       })
   }
 

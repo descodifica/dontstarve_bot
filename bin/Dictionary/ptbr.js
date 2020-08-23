@@ -102,6 +102,9 @@ Dictionary.add('ptbr', {
       init: 'Início',
       backStart: 'Volte para o início',
       navegateGroupOptions: 'Navegação',
+      timeoutTitle: 'zzzzzz...',
+      timeoutContent: 'Você ainda esta ai? Como demorou muito para responder, tive que parar de ' +
+        'escutar.\n\n Quando puder, volte a me chamar!',
     },
     profile: {
       profile: 'Perfil',
