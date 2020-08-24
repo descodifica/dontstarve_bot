@@ -40,7 +40,7 @@
             "base": "develop"
         },
         {
-            "name": "feature/group_options",
+            "name": "feature/delete_messages",
             "base": "develop"
         }
     ]
