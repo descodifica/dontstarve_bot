@@ -168,7 +168,7 @@ Dictionary.add('ptbr', {
     },
     stream: {
       stream: 'Stream',
-      resume: 'Descruba Streamers focados em Don\'t Starve',
+      resume: 'Descubra Streamers focados em Don\'t Starve',
     },
   },
 })
