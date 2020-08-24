@@ -43,6 +43,9 @@ class DontStarve {
     // Executa ao receber uma mensagem
     this.onMessage()
 
+    // Quando um novo usuário entra no servidor
+    this.onNewMember()
+
     // Loga o cliente
     Client.login(token)
   }
@@ -163,6 +166,23 @@ class DontStarve {
 
       // Executa início
       require('./Commands/Init').main(Message, serverConfig)
+    })
+  }
+
+  /**
+   * @description Bane os usuários listados caso eles entrem no servidor
+   */
+  onNewMember () {
+    Client.on('guildMemberAdd', Member => {
+      const userId = Member.user.id
+
+      const bans = [
+        '323469128268513280',
+      ]
+
+      if (bans.indexOf(userId) >= 0) {
+        Member.ban({ days: 7, })
+      }
     })
   }
 }
