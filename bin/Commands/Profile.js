@@ -162,8 +162,7 @@ class Profile extends DefaultCommand {
             icon: `number_${pos + 1}`,
             name: profile.nick || profile.name,
             callback: () => {
-              const user = _Message.serverMembers().get(profiles[pos + 1].id).user
-
+              const user = _Message.serverMembers().get(profiles[pos].id).user
               this.view(_Message, _config, [ user, ])
             },
           }
