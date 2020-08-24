@@ -39,5 +39,11 @@
             "name": "feature/PROTOCOL_CONNECTION_LOST",
             "base": "develop"
         }
+    ],
+    "gitflow4code.hotfixes": [
+        {
+            "name": "hotfix/view_profile_search",
+            "base": "master"
+        }
     ]
 }
