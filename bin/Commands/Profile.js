@@ -20,7 +20,7 @@ class Profile extends DefaultCommand {
             icon: 'dramaMasks',
             name: Dictionary.get('profile.profile', _config),
             value: Dictionary.get('profile.backProfileModule', _config),
-            callback: () => require('./Profile').main(_Message, _config),
+            callback: () => this.main(_Message, _config),
           }
         },
         backProfile: (_Message, _config, _user) => {
@@ -28,7 +28,7 @@ class Profile extends DefaultCommand {
             icon: 'eye',
             name: Dictionary.get('profile.profile', _config),
             value: Dictionary.get('profile.backProfile', _config),
-            callback: () => require('./Profile').view(_Message, _config, [ _user, ]),
+            callback: () => this.view(_Message, _config, [ _user, ]),
           }
         },
       },
@@ -106,7 +106,8 @@ class Profile extends DefaultCommand {
     const defs = {
       title: Dictionary.get('profile.createSuccess', _config),
       options: [
-        require('./Profile').options.backProfile(_Message, _config, _Message.author()),
+        this.options.backProfile(_Message, _config, _Message.author()),
+        this.options.backProfileModule(_Message, _config),
         require('./Init').options.backStart(_Message, _config),
       ],
     }
@@ -141,7 +142,7 @@ class Profile extends DefaultCommand {
           inline: true,
           callback: () => this.list(_Message, _config, { ..._params, page: _params.page + 1, }),
         },
-        require('./Profile').options.backProfileModule(_Message, _config),
+        this.options.backProfileModule(_Message, _config),
         require('./Init').options.backStart(_Message, _config),
       ],
     }
@@ -380,7 +381,8 @@ class Profile extends DefaultCommand {
           const defs = {
             title: title,
             options: [
-              require('./Profile').options.backProfileModule(_Message, _config),
+              this.options.backProfile(_Message, _config, _Message.author()),
+              this.options.backProfileModule(_Message, _config),
               require('./Init').options.backStart(_Message, _config),
             ],
           }
@@ -467,8 +469,16 @@ class Profile extends DefaultCommand {
         },
       ],
       'general.navegateGroupOptions': [
-        require('./Profile').options.backProfileModule(_Message, _config),
+        this.options.backProfileModule(_Message, _config),
         require('./Init').options.backStart(_Message, _config),
+        {
+          icon: 'ghost',
+          name: Dictionary.get('experience.experienceIn', _config, { version: versions.dst, }),
+          value: Dictionary.get(
+            'experience.experienceInResume', _config, { version: versions.dst, }
+          ),
+          callback: () => require('./Experience').edit(_Message, _config, 'dst'),
+        },
       ],
     }
 
