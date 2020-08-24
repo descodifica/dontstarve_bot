@@ -106,7 +106,7 @@ class Profile extends DefaultCommand {
     const defs = {
       title: Dictionary.get('profile.createSuccess', _config),
       options: [
-        require('./Profile').options.backProfile(_Message, _config),
+        require('./Profile').options.backProfile(_Message, _config, _Message.author()),
         require('./Init').options.backStart(_Message, _config),
       ],
     }
