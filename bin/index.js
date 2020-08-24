@@ -1,3 +1,4 @@
+// TODO: Deletar ao reagir e não bugar reaçoes ainda não inseridas
 // TODO: Refatorar updateProp e afns
 // TODO: Boolean com react
 // TODO: Command.edit virar genérico

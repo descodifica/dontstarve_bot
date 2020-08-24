@@ -275,7 +275,7 @@ class Message {
         optionsList[emoji]()
 
         // Remove mensagem reagida
-        MessageSent.message.delete()
+        // MessageSent.message.delete()
       })
       .catch(e => {
         // Remove mensagem

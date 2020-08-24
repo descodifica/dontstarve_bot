@@ -38,10 +38,6 @@
         {
             "name": "feature/PROTOCOL_CONNECTION_LOST",
             "base": "develop"
-        },
-        {
-            "name": "feature/delete_messages",
-            "base": "develop"
         }
     ]
 }
