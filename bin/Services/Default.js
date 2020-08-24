@@ -323,7 +323,7 @@ class Default {
     data[_prop] = selectedOption.toString()
 
     // Atualiza e informa
-    return this.update(data, _where)
+    return this.update(data, _where, _log)
   }
 
   /**
@@ -378,7 +378,7 @@ class Default {
     data[_prop] = selectedOption.toString()
 
     // Atualiza e informa
-    return this.update(data, _where)
+    return this.update(data, _where, _log)
   }
 
   /**

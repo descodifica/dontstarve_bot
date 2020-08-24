@@ -158,11 +158,10 @@ class Experience extends DefaultCommand {
    */
   edit (_Message, _config, _version) {
     const update = _prop => {
-      // Dados a serem atualizados
-      const data = { id: _Message.authorId(), }
+      const where = { version: _version, user: _Message.authorId(), }
 
       // Atualiza
-      return ExperienceService.updateProp(_prop, data, _Message, _config, versionParams)
+      return ExperienceService.updateProp(_prop, where, _Message, _config, versionParams, true)
         .then(response => {
           return Dictionary.get(`experience.${_prop}UpdateSuccess`, _config)
         })
