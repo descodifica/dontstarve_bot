@@ -7,12 +7,6 @@ const ExperienceService = require('../Services/Experience')
 // Importa versões
 const versions = require('../versions')
 
-// Níveis de rank
-const levels = [
-  'allyOfThem', 'kingOfConstant', 'charliesFriend', 'constantian', 'backpacker', 'survivor',
-  'explorer', 'hungry', 'abducted',
-]
-
 // O comando de Experiência
 class Experience extends DefaultCommand {
   /**
@@ -136,13 +130,11 @@ class Experience extends DefaultCommand {
       }
 
       if (_experience.level) {
-        const level = levels[_experience.level - 1]
-
         description.push(
           Dictionary.get('experience.level', _config, {}, labelFormat) +
-          Dictionary.get('experience.' + level + 'Name', _config, {}, { bold: true, }) +
+          Dictionary.get('experience.' + _experience.level + 'Name', _config, {}, { bold: true, }) +
           ' - ' +
-          Dictionary.get('experience.' + level + 'Resume', _config)
+          Dictionary.get('experience.' + _experience.level + 'Resume', _config)
         )
       }
     }
@@ -161,7 +153,7 @@ class Experience extends DefaultCommand {
       const where = { version: _version, user: _Message.authorId(), }
 
       // Atualiza
-      return ExperienceService.updateProp(_prop, where, _Message, _config, versionParams, true)
+      return ExperienceService.updateProp(_prop, where, _Message, _config, versionParams)
         .then(response => {
           return Dictionary.get(`experience.${_prop}UpdateSuccess`, _config)
         })

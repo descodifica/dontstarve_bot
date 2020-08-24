@@ -45,6 +45,10 @@ const emojis = {
   calendarCheck: '🗓️',
   medal: '🏅',
   home: '🏠',
+  check: '✅',
+  cancel: '❌',
+  man: '🧑',
+  girl: '👩',
 }
 
 /**

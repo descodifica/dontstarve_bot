@@ -6,7 +6,7 @@ class Experience extends DefaultEntity {
     super({
       table: 'experiences',
       props: {
-        have: { type: 'Option', values: [ 'general.no', 'general.yes', ], },
+        have: { type: 'Boolean', },
         platform: {
           type: 'Option',
           noTranslate: true,
@@ -18,8 +18,8 @@ class Experience extends DefaultEntity {
         level: {
           type: 'Option',
           values: [
-            'abductedName', 'hungryName', 'explorerName', 'survivorName', 'backpackerName',
-            'constantianName', 'charliesFriendName', 'kingOfConstantName', 'allyOfThemName',
+            'abducted', 'hungry', 'explorer', 'survivor', 'backpacker', 'constantian',
+            'charliesFriend', 'kingOfConstant', 'allyOfThem',
           ],
         },
       },

@@ -276,18 +276,24 @@ class Default {
     // Id básico do dicionário
     const basicDictionaryId = `${this.entity}.${_prop}`
 
-    // Opções válidas
-    const validOptions = (
-      this.props[_prop].noTranslate
-        ? this.props[_prop].values
-        : this.props[_prop].values.map(v => {
-          if (v.split('.').length === 1) {
-            v = `${this.entity}.${v}`
-          }
+    // Opções
+    const options = {}
 
-          return Dictionary.get(v, _config)
-        })
-    )
+    // Traduz opções
+    this.props[_prop].values.map(v => {
+      if (this.props[_prop].noTranslate) {
+        options[v] = v
+      }
+      else {
+        let k = v
+
+        if (v.split('.').length === 1) {
+          k = `${this.entity}.${v}`
+        }
+
+        options[Dictionary.get(k + 'Name', _config)] = v
+      }
+    })
 
     // Captura pergunta
     const ask = (
@@ -297,8 +303,8 @@ class Default {
         'general.infoOptionField',
         _config,
         {
-          options: validOptions.slice(0, -1).map(i => `"${i}"`),
-          lastOption: `"${validOptions.slice(-1)[0]}"`,
+          options: Object.keys(options).slice(0, -1).map(i => `"${i}"`),
+          lastOption: `"${Object.keys(options).slice(-1)[0]}"`,
         },
         { italic: true, })
     )
@@ -307,10 +313,12 @@ class Default {
     const response = await _Message.ask(ask)
 
     // Opção selecionada
-    const selectedOption = validOptions.indexOf(response.message.content)
+    const selectedOption = options[response.message.content]
+
+    console.log(selectedOption)
 
     // Se não deu uma resposta válida, informa e finaliza
-    if (selectedOption === -1) {
+    if (!selectedOption) {
       _Message.sendFromDictionary('general.optionNotValid', _config)
 
       return Promise.reject(new Error())
@@ -320,7 +328,7 @@ class Default {
     const data = {}
 
     // Insere dados no json
-    data[_prop] = selectedOption.toString()
+    data[_prop] = selectedOption
 
     // Atualiza e informa
     return this.update(data, _where, _log)
@@ -379,6 +387,55 @@ class Default {
 
     // Atualiza e informa
     return this.update(data, _where, _log)
+  }
+
+  /**
+   * @description Atualiza uma dada propriedade do tipo Boolean
+   * @params {String} _prop Nome da propriedade
+   * @params {Object} _where Condições da atualização
+   * @params {Object} _Message Mensagem enviada
+   * @params {Object} _config Configurações do servidor
+   * @params {Object} _messageParams Parâmetros das mensagens
+   * @params {Boolean} _log Se deve exibir log
+   */
+  async updatePropBoolean (_prop, _where, _Message, _config, _messageParams = {}, _log) {
+    const update = val => {
+      const data = {}
+
+      data[_prop] = val
+
+      // Atualiza e informa
+      return this.update(data, _where, _log)
+    }
+
+    const prop = this.props[_prop]
+
+    console.log(
+
+    )
+
+    const defs = {
+      title: Dictionary.get(`${this.entity}.${_prop}Resume`, _config, _messageParams),
+      options: [
+        {
+          icon: (((prop.values || [])[0]) || {}).icon || 'cancel',
+          name: Dictionary.get(
+            (((prop.values || [])[0]) || {}).title || 'general.no', _config
+          ),
+          callback: () => update('0'),
+        },
+        {
+          icon: (((prop.values || [])[1]) || {}).icon || 'check',
+          name: Dictionary.get(
+            (((prop.values || [])[1]) || {}).title || 'general.yes', _config
+          ),
+          callback: () => update('1'),
+        },
+      ],
+    }
+
+    // Pergunta e recebe  resposta
+    return _Message.sendPrompt(defs, _config)
   }
 
   /**

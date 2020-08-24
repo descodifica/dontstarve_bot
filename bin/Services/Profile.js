@@ -8,7 +8,13 @@ class Profile extends DefaultEntity {
       table: 'profiles',
       props: {
         birth: { type: 'Date', },
-        genre: { type: 'Option', values: [ 'female', 'male', ], },
+        genre: {
+          type: 'Boolean',
+          values: [
+            { title: 'profile.female', icon: 'girl', },
+            { title: 'profile.male', icon: 'man', },
+          ],
+        },
       },
       relations: {
         oneToMany: [ { entity: 'Experience', fk: 'user', }, ],
