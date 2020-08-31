@@ -100,7 +100,7 @@ class Message {
    * @returns {Boolean}
    */
   forBot (_bot) {
-    return this.mentions().has(_bot)
+    return this.mentions().has(_bot, { ignoreEveryone: true, })
   }
 
   /**

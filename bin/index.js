@@ -1,3 +1,4 @@
+// TODO: Aumentar ao infinito ou próximo o número de vezes que pode reagir
 // TODO: Refatorar updateProp e afns
 // TODO: Command.edit virar genérico
 
